@@ -1,0 +1,50 @@
+[[plugins]]
+repo = 'Shougo/dein.vim'
+
+[[plugins]]
+repo = 'Shougo/denite.nvim'
+hook_add = '''
+  nmap [denite] <Nop>
+  map <C-j> [denite]
+
+  " プロジェクト内のファイル検索"
+  nmap <silent> [denite]<C-P> :<C-u>Denite file_rec -highlight-mode-insert=Search<CR>
+  " ファイル内の関数/クラス等の検索
+  nmap <silent> [denite]<C-O> :<C-u>Denite outline -highlight-mode-insert=Search<CR>
+
+  "検索対象外のファイル指定"
+  call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
+    \ [ '.git/', '.ropeproject/', '__pycache__/',
+    \   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
+
+  '''
+
+[[plugins]]
+repo = 'Shougo/deoplete.nvim'
+hook_add = '''
+  let g:deoplete#enable_at_startup = 1
+  '''
+[[plugins]]
+repo = 'cohama/lexima.vim'
+
+[[plugins]]
+repo = 'jacoborus/tender.vim'
+
+[[plugins]]
+repo = 'lifepillar/vim-solarized8'
+
+[[plugins]]
+repo = 'itchyny/lightline.vim'
+hook_add = '''
+  let g:lightline = {
+    \'colorscheme': 'tender',
+    \'active': {
+    \  'left': [
+    \    ['mode', 'paste'],
+    \    ['readonly', 'filename', 'modified', 'ale'],
+    \  ]
+    \},
+    \'component_function': {
+    \  'ale': 'ALEGetStatusLine'
+    \}
+  \ }'''
