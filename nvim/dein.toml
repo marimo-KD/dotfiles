@@ -34,17 +34,16 @@ repo = 'jacoborus/tender.vim'
 repo = 'lifepillar/vim-solarized8'
 
 [[plugins]]
-repo = 'itchyny/lightline.vim'
+repo = 'vim-airline/vim-airline'
+depends = ['vim-airline-thmes']
 hook_add = '''
-  let g:lightline = {
-    \'colorscheme': 'tender',
-    \'active': {
-    \  'left': [
-    \    ['mode', 'paste'],
-    \    ['readonly', 'filename', 'modified', 'ale'],
-    \  ]
-    \},
-    \'component_function': {
-    \  'ale': 'ALEGetStatusLine'
-    \}
-  \ }'''
+  let g:airline_powerline_fonts = 1
+  let g:airline_theme = 'base16'
+  let g:airline#extensions#tabline#enabled = 1
+  let g:airline#extensions#ale#enabled = 1
+  let g:airline#extensions#ale#error_symbol = 'E'
+  let g:airline#extensions#ale#warning_symbol = 'W'
+  '''
+
+[[plugins]]
+repo = 'vim-airline/vim-airline-themes'

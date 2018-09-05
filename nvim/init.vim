@@ -1,4 +1,3 @@
-set t_Co=256
 set termguicolors
 set number
 set backspace=indent,eol,start
@@ -7,11 +6,11 @@ set laststatus=2
 set list
 set listchars=tab:»\ ,trail:-,extends:»,precedes:«,nbsp:%
 set ruler
-set clipboard=unnamed
+set clipboard=unnamedplus
 set autoindent
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
 set expandtab
 set smartindent
 set incsearch
@@ -21,6 +20,8 @@ set hlsearch
 set ambiwidth=double
 
 autocmd BufWritePre * :%s/\s\+$//ge "行末の空白を自動消去"
+
+autocmd FileType python setlocal sw=4 ts=4 sts=4 et
 
 inoremap <silent> jj <ESC>
 

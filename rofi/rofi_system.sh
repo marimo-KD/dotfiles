@@ -4,7 +4,7 @@ declare -A list=(
   ['Suspend']='systemctl suspend'
   ['Poweroff']='systemctl poweroff'
   ['Reboot']='systemctl reboot'
-  ['Hibernate']='systemctl hibernate'
+#  ['Hibernate']='systemctl hibernate'
   ['Logout']='i3-msg exit'
 )
 
