@@ -54,11 +54,9 @@ if dein#load_state(s:dein_dir)
   call dein#end()
   call dein#save_state()
 endif
-" プラグインの追加・削除やtomlファイルの設定を変更した後は
-" 適宜 call dein#update や call dein#clear_state を呼んでください。
-" そもそもキャッシュしなくて良いならload_state/save_stateを呼ばないようにしてください。
+" 適宜 call dein#update や call dein#clear_state を呼ぶ。
 
-" インストールしていないものはこちらに入れる
+" インストールしていないものはここに入れる
 if dein#check_install()
   call dein#install()
 endif
@@ -69,4 +67,4 @@ endif
 " カラースキーム及びシンタックスの設定
 syntax enable
 set background=dark
-colorscheme solarized8
+colorscheme onedark

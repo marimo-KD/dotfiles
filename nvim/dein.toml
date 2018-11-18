@@ -23,27 +23,31 @@ hook_add = '''
 repo = 'Shougo/deoplete.nvim'
 hook_add = '''
   let g:deoplete#enable_at_startup = 1
-  '''
-[[plugins]]
-repo = 'cohama/lexima.vim'
+'''
 
 [[plugins]]
-repo = 'jacoborus/tender.vim'
+repo = 'cohama/lexima.vim'
+#括弧の補完プラグイン
+
+[[plugins]]
+repo = 'scrooloose/nerdtree'
+hook_add = '''
+  map <C-n> :NERDTreeToggle<CR>
+'''
 
 [[plugins]]
 repo = 'lifepillar/vim-solarized8'
 
 [[plugins]]
-repo = 'vim-airline/vim-airline'
-depends = ['vim-airline-thmes']
-hook_add = '''
-  let g:airline_powerline_fonts = 1
-  let g:airline_theme = 'base16'
-  let g:airline#extensions#tabline#enabled = 1
-  let g:airline#extensions#ale#enabled = 1
-  let g:airline#extensions#ale#error_symbol = 'E'
-  let g:airline#extensions#ale#warning_symbol = 'W'
-  '''
+repo = 'joshdick/onedark.vim'
 
 [[plugins]]
-repo = 'vim-airline/vim-airline-themes'
+repo = 'vim-airline/vim-airline'
+hook_add = '''
+  let g:airline_powerline_fonts = 1
+  let g:airline_theme = 'onedark'
+  let g:airline#extensions#tabline#enabled = 1
+  let g:airline#extensions#ale#enabled = 1
+  let g:airline#extensions#ale#error_symbol = '❕'
+  let g:airline#extensions#ale#warning_symbol = '❌'
+  '''
