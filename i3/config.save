@@ -31,7 +31,7 @@ font pango:Dejavu Sans,IPAGothic 8
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec termite
+bindsym $mod+Return exec terminator
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -42,7 +42,7 @@ bindsym $mod+Shift+q kill
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
 #bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
-bindsym $mod+u exec rofi -show combi
+bindsym $mod+space exec rofi -show combi
 
 # change focus
 bindsym $mod+h focus left
@@ -200,7 +200,7 @@ exec --no-startup-id feh --bg-scale ~/Pictures/wallpaper.jpg
 
 exec --no-startup-id nm-applet
 exec --no-startup-id dunst
-exec --no-startup-id redshift
+exec --no-startup-id redshift-gtk
 exec --no-startup-id compton -bCG
 exec --no-startup-id xset s 3600 dpms 3600 3600 3600
 exec --no-startup-id light-locker --lock-on-suspend

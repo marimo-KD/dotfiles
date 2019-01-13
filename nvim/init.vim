@@ -1,4 +1,5 @@
 set termguicolors
+set encoding=utf8
 set number
 set backspace=indent,eol,start
 set mouse=a

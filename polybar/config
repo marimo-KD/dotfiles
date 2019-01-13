@@ -17,49 +17,53 @@
 ;==========================================================
 
 [colors]
-;background = ${xrdb:color0:#222}
-background = #222
-background-alt = #444
-;foreground = ${xrdb:color7:#222}
-foreground = #dfdfdf
-foreground-alt = #555
-primary = #ffb52a
-secondary = #e60053
-alert = #bd2c40
+mono0 = #282c34
+mono1 = #545862
+mono2 = #abb2bf
+mono3 = #c8ccd4
+mono4 = #353b45
+red = #e06c75
+green = #98c379
+yellow = #e5c07b
+blue = #61afef
+purple = #c678dd
+teal = #56b6c2
 
 [bar/statusbar]
 monitor = ${env:MONITOR:eDP-1}
 width = 100%
-height = 17
+height = 23
 radius = 0.0
-fixed-center = false
+fixed-center = true
+bottom = false
 
-background = ${colors.background}
-foreground = ${colors.foreground}
-dim-value = 1
+background = ${colors.mono0}
+foreground = ${colors.green}
+dim-value = 0.25
 
-line-size = 2
+line-size = 3
 line-color = #f00
 
 border-size = 0
-border-color = #00000000
+border-color = #00282c34
 
-padding-left = 2
-padding-right = 2
+padding-left = 0
+padding-right = 0
 
-module-margin = 3
+module-margin = 0
 
-font-0 = Noto Sans CJK JP Demilight:pixelsize=10;3
-font-1 = icomoon:pixelsize=10;3
-font-2 = FontAwesome:pixelsize=10;3
+font-0 = Cica:style=Bold:pixelsize=12;3
 
-modules-left = i3
-modules-center =
-modules-right =  xbacklight pulseaudio battery memory cpu temperature date
+modules-left =  i3
+modules-center = date
+modules-right = battery memory cpu temperature
 
 tray-position = right
 tray-padding = 2
+tray-background = ${colors.mono4}
 
+override-redirect = true
+#wm-restack = i3
 
 [module/bspwm]
 type = internal/bspwm
@@ -71,19 +75,19 @@ enable-scroll = false
 reverse-scroll = false
 
 label-focused = %index%
-label-focused-background = ${colors.background-alt}
-label-focused-underline= ${colors.primary}
+label-focused-background = ${colors.green}
+label-focused-underline= ${colors.mono0}
 label-focused-padding = 4
 
 label-occupied = %index%
 label-occupied-padding = 4
 
 label-urgent = %index%!
-label-urgent-background = ${colors.alert}
+label-urgent-background = ${colors.red}
 label-urgent-padding = 4
 
 label-empty = %index%
-label-empty-foreground = ${colors.foreground-alt}
+label-empty-foreground = ${colors.mono2}
 label-empty-padding = 4
 
 [module/i3]
@@ -91,145 +95,134 @@ type = internal/i3
 format = <label-state> <label-mode>
 index-sort = true
 wrapping-scroll = false
-
-; Only show workspaces on the same output as the bar
-;pin-workspaces = true
-
-label-mode-padding = 4
-label-mode-foreground = #000
-label-mode-background = ${colors.primary}
+;label-mode-padding = 2
+;label-mode-foreground = #000
+;label-mode-background = ${colors.mono0}
 
 ; focused = Active workspace on focused monitor
 label-focused = %index%
-label-focused-background = ${module/bspwm.label-focused-background}
-label-focused-underline = ${module/bspwm.label-focused-underline}
-label-focused-padding = ${module/bspwm.label-focused-padding}
+label-focused-background = ${colors.green}
+label-focused-foreground = ${colors.mono0}
+label-focused-padding = 2
 
 ; unfocused = Inactive workspace on any monitor
 label-unfocused = %index%
-label-unfocused-padding = ${module/bspwm.label-occupied-padding}
+label-unfocused-background = ${colors.mono4}
+label-unfocused-foreground = ${colors.mono2}
+label-unfocused-padding = 2
 
 ; visible = Active workspace on unfocused monitor
 label-visible = %index%
-label-visible-background = ${self.label-focused-background}
-label-visible-underline = ${self.label-focused-underline}
-label-visible-padding = ${self.label-focused-padding}
+label-visible-background = ${colors.mono4}
+label-visible-foreground = ${colors.mono2}
+label-visible-padding = 2
 
 ; urgent = Workspace with urgency hint set
 label-urgent = %index%
-label-urgent-background = ${module/bspwm.label-urgent-background}
-label-urgent-padding = ${module/bspwm.label-urgent-padding}
-
-; Separator in between workspaces
-; label-separator = |
-
-
-
-[module/xbacklight]
-type = internal/xbacklight
-
-format = <label>
-label = BL %percentage%%
+label-urgent-background = ${colors.red}
+label-urgent-foreground = ${colors.mono0}
+label-urgent-padding = 2
 
 [module/cpu]
 type = internal/cpu
 interval = 2
-format = <label>
+format = <label> <ramp-coreload>
+format-background = ${colors.mono4}
+format-foreground = ${colors.mono2}
+format-padding = 1
 label = CPU %percentage%%
+ramp-coreload-spacing = 1
+ramp-coreload-0 = ▁
+ramp-coreload-1 = ▂
+ramp-coreload-2 = ▃
+ramp-coreload-3 = ▄
+ramp-coreload-4 = ▅
+ramp-coreload-5 = ▆
+ramp-coreload-6 = ▇
+ramp-coreload-7 = █
 
 [module/memory]
 type = internal/memory
 interval = 2
 format = <label>
-format-foreground = ${colors.foreground-alt}
-format-underline = #4bffdc
-label = RAM %gb_used%/%gb_total%
+format-prefix = ""
+format-background = ${colors.mono4}
+format-foreground = ${colors.mono2}
+format-padding = 1
+label = %gb_used%
 
-[module/wlan]
-type = internal/network
-interface = wlp3s0
-interval = 3.0
-
-format-connected = <label-connected>
-format-connected-underline = #9f78e1
-label-connected = %essid%
-
-format-disconnected = <label-disconnected>
-format-disconnected-underline = ${self.format-connected-underline}
-label-disconnected = %ifname% disconnected
-label-disconnected-foreground = ${colors.foreground-alt}
-
-
-[module/eth]
-type = internal/network
-interface = enp0s25
-interval = 3.0
-
-format-connected = <label-connected>
-format-connected-underline = #55aa55
-label-connected = %local_ip%
-
-format-disconnected = <label-disconnected>
-format-disconnected-underline = ${self.format-connected-underline}
-label-disconnected = %ifname% disconnected
-label-disconnected-foreground = ${colors.foreground-alt}
 
 [module/date]
 type = internal/date
 interval = 5
-
-date = %Y/%m/%d
+date = %Y-%m-%d
 date-alt = " %Y-%m-%d"
-
-time = %H:%M:%S
-
+time = %H:%M
 format = <label>
-format-underline = #0a6cf5
-
+format-prefix =  " "
+format-padding = 1
+format-background = ${colors.green}
+format-foreground = ${colors.mono0}
 label = %date% %time%
-
-[module/pulseaudio]
-type = internal/pulseaudio
-
-format-volume = <label-volume>
-label-volume = VOL %percentage%%
-label-volume-foreground = ${root.foreground}
-
-label-muted = muted
-label-muted-foreground = #666
-
-[module/battery]
-type = internal/battery
-battery = BAT0
-adapter = AC
-full-at = 98
-
-format-charging = BAT <label-charging>
-format-charging-underline = #ffb52a
-
-format-discharging = BAT <label-discharging>
-format-discharging-underline = ${self.format-charging-underline}
-
-format-full = BAT FULL
-format-full-foreground = ${colors.foreground-alt}
-format-full-underline = ${self.format-charging-underline}
-
-
 
 [module/temperature]
 type = internal/temperature
 thermal-zone = 0
 warn-temperature = 60
-
-format = <label>
-format-underline = #f50a4d
-format-warn = <label-warn>
-format-warn-underline = ${self.format-underline}
-
+format = <ramp> <label>
+format-padding = 1
+format-background = ${colors.mono4}
+format-foreground = ${colors.mono2}
+format-warn = <ramp> <label-warn>
+format-warn-background = ${colors.mono4}
+format-warn-foreground = ${colors.mono2}
+format-warn-padding = 1
 label = %temperature-c%
 label-warn = %temperature-c%
-label-warn-foreground = ${colors.secondary}
+label-warn-foreground = ${colors.red}
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
+ramp-3 = 
+ramp-4 = 
 
+[module/battery]
+type = internal/battery
+full-at = 98
+battery = BAT0
+adapter = AC
+interval = 20
+time-format = %H:%M
+format-charging = <animation-charging> <label-charging>
+format-discharging =  <animation-discharging> <label-discharging>
+format-full =  <label-full>
+format-full-prefix = ""
+label-charging =  %percentage%% CHR
+label-discharging =  %percentage%% %time%
+label-full = %percentage%% FULL
+format-charging-background = ${colors.mono4}
+format-charging-foreground = ${colors.mono2}
+format-discharging-background = ${colors.mono4}
+format-discharging-foreground = ${colors.mono2}
+format-full-background = ${colors.mono4}
+format-full-foreground = ${colors.mono2}
+format-charging-padding = 1
+format-discharging-padding = 1
+format-full-padding = 1
+
+animation-charging-0 = 
+animation-charging-1 = 
+animation-charging-2 = 
+animation-charging-3 = 
+animation-charging-4 = 
+animation-charging-framerate = 750
+
+animation-discharging-0 = 
+animation-discharging-1 = 
+animation-discharging-2 = 
+animation-discharging-3 = 
+animation-discharging-4 = 
+animation-discharging-framerate = 500
 
 [settings]
 screenchange-reload = true
