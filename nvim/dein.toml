@@ -36,7 +36,6 @@ hook_add = '''
 
 [[plugins]]
 repo = 'cohama/lexima.vim'
-#括弧の補完プラグイン
 
 [[plugins]]
 repo = 'scrooloose/nerdtree'
@@ -45,23 +44,22 @@ hook_add = '''
   map <C-n> :NERDTreeToggle<CR>
 '''
 
-[[plugins]]
-repo = 'ryanoasis/vim-devicons'
-
 
 [[plugins]]
 repo = 'joshdick/onedark.vim'
+
+[[plugins]]
+repo = 'ryanoasis/vim-devicons'
 
 [[plugins]]
 repo = 'vim-airline/vim-airline-themes'
 
 [[plugins]]
 repo = 'vim-airline/vim-airline'
-depends = ['vim-devicons','vim-airline-themes']
+depends = ['vim-airline-themes','vim-devicons']
 hook_add = '''
-  let g:airline_powerline_fonts = 1
+  let g:airline_powerline_fonts = 0
   let g:airline_theme = 'luna'
-  let g:airline#extensions#whitespace#mixed_indent_algo = 2
   let g:airline#extensions#tabline#enabled = 1
   let g:airline#extensions#ale#enabled = 1
   let g:airline#extensions#ale#error_symbol = 'E'
