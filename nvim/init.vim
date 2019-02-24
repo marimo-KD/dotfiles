@@ -20,6 +20,8 @@ set smartcase
 set hlsearch
 set ambiwidth=double
 
+set hidden
+
 autocmd BufWritePre * :%s/\s\+$//ge "行末の空白を自動消去"
 
 autocmd FileType python setlocal sw=4 ts=4 sts=4 et
@@ -28,6 +30,11 @@ inoremap <silent> jj <ESC>
 
 nnoremap <S-h> ^
 nnoremap <S-l> $
+nnoremap <silent> <ESC><ESC> :noh<CR>
+
+nnoremap <C-w>v :vsplit<CR>
+nnoremap <C-w>b :split<CR>
+"WMの設定と揃える
 
 " dein settings {{{
 if &compatible
