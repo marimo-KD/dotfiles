@@ -19,40 +19,7 @@ hook_add = '''
     \ [ '.git/', '.ropeproject/', '__pycache__/',
     \   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
 
-  '''
-
-[[plugins]]
-repo = 'Shougo/deoplete.nvim'
-hook_add = '''
-  let g:deoplete#enable_at_startup = 1
-  let g:deoplete#auto_complete_delay = 0
-  let g:deoplete#auto_complete_start_length = 1
-  let g:deoplete#enable_camel_case = 0
-  let g:deoplete#enable_ignore_case = 0
-  let g:deoplete#enable_refresh_always = 0
-  let g:deoplete#enable_smart_case = 1
-  let g:deoplete#file#enable_buffer_path = 1
-  let g:deoplete#max_list = 10000
-  set completeopt+=noinsert
 '''
-
-[[plugins]]
-repo = 'Shougo/neosnippet-snippets'
-
-[[plugins]]
-repo = 'Shougo/neosnippet'
-depends = ['neosnippet-snippets']
-hook_add = '''
-  imap <C-k> <Plug>(neosnippet_expand_or_jump)
-  smap <C-k> <Plug>(neosnippet_expand_or_jump)
-  xmap <C-k> <Plug>(neosnippet_expand_target)
-  if has('conceal')
-    set conceallevel=2 concealcursor=niv
-  endif
-'''
-
-[[plugins]]
-repo = 'cohama/lexima.vim'
 
 [[plugins]]
 repo = 'scrooloose/nerdtree'
@@ -62,70 +29,66 @@ hook_add = '''
 '''
 
 
+
+
 [[plugins]]
-repo = 'joshdick/onedark.vim'
+repo = 'autozimu/LanguageClient-neovim'
+build = './install.sh'
+hook_add = '''
+  set hidden
+  let g:LanguageClient_serverCommands = {
+    \ 'python' : ['/usr/bin/pyls'],
+    \ 'c' : ['/usr/bin/clangd'],
+    \ 'cpp' : ['/usr/bin/clangd']
+  \}
+  let g:LanguageClient_autostart = 1
+  nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
+  nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+  nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
+  '''
+
+[[plugins]]
+repo = 'Shougo/neosnippet-snippets'
+
+[[plugins]]
+repo = 'cohama/lexima.vim'
+
+[[plugins]]
+repo = 'tpope/vim-surround'
+
+
+
+
+[[plugins]]
+repo = 'vim-airline/vim-airline'
+depends = ['vim-devicons']
+hook_add = '''
+  let g:airline_powerline_fonts = 1
+  let g:airline_theme = 'onedark'
+  '''
 
 [[plugins]]
 repo = 'ryanoasis/vim-devicons'
 
 [[plugins]]
-repo = 'vim-airline/vim-airline-themes'
+repo = 'sheerun/vim-polyglot'
 
 [[plugins]]
-repo = 'vim-airline/vim-airline'
-depends = ['vim-airline-themes','vim-devicons']
+repo = 'tomasr/molokai'
+
+[[plugins]]
+repo = 'joshdick/onedark.vim'
 hook_add = '''
-  let g:airline_powerline_fonts = 0
-  let g:airline_theme = 'luna'
-  let g:airline#extensions#tabline#enabled = 1
-  let g:airline#extensions#ale#enabled = 1
-  let g:airline#extensions#ale#error_symbol = 'E'
-  let g:airline#extensions#ale#warning_symbol = 'W'
-  let g:airline#extensions#tabline#buffer_idx_mode = 1
-  let g:airline#extensions#tabline#buffer_idx_format = {
-  	\ '0': '0 ',
-  	\ '1': '1 ',
-  	\ '2': '2 ',
-  	\ '3': '3 ',
-  	\ '4': '4 ',
-  	\ '5': '5 ',
-  	\ '6': '6 ',
-  	\ '7': '7 ',
-  	\ '8': '8 ',
-  	\ '9': '9 '
-  	\}
+  let g:onedark_hide_endofbuffer = 1
+  let g:onedark_terminal_italics = 1
   '''
 
 [[plugins]]
-repo = 'w0rp/ale'
+repo = 'lifepillar/vim-solarized8'
 hook_add = '''
-  let g:ale_sign_error = '!'
-  let g:ale_sign_warning = '*'
-  let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-  let g:ale_sign_column_always = 1
-
-  let g:ale_lint_on_enter = 1
-  let g:ale_lint_on_save = 1
-  let g:ale_lint_on_text_changed = 'never'
-
-  let g:ale_set_loclist = 0
-  let g:ale_set_quickfix = 1
-  let g:ale_open_list = 0
-  let g:ale_keep_list_window_open = 0
+  let g:solarized_visibility = 'high'
+  let g:solarized_termtrans = 1
+  let g:solarized_term_italics = 1
+'''
 
 
-  let g:ale_linters = {
-  \   'python': ['flake8'],
-  \   'c': ['clang'],
-  \   'cpp': ['clang']
-  \}
-
-  let g:ale_fixers = {
-  \   'python': ['yapf'],
-  \   'c': ['clang-format'],
-  \   'cpp': ['clang-format']
-  \}
-
-  let g:ale_fix_on_save = 1
-
-  '''

@@ -14,23 +14,35 @@ set softtabstop=2
 set shiftwidth=2
 set expandtab
 set smartindent
+
 set incsearch
 set ignorecase
 set smartcase
 set hlsearch
-set ambiwidth=double
-
+set ambiwidth=single
+set signcolumn=yes
 set hidden
 
 autocmd BufWritePre * :%s/\s\+$//ge "行末の空白を自動消去"
 
 autocmd FileType python setlocal sw=4 ts=4 sts=4 et
 
+autocmd VimLeave * set guicursor=a:ver2-blinkon0
+
 inoremap <silent> jj <ESC>
+inoremap <silent> っｊ <ESC>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-h> <Left>
+inoremap <C-l> <Right>
 
 nnoremap <S-h> ^
 nnoremap <S-l> $
 nnoremap <silent> <ESC><ESC> :noh<CR>
+nnoremap あ a
+nnoremap い i
+nnoremap う u
+nnoremap お o
 
 nnoremap <C-w>v :vsplit<CR>
 nnoremap <C-w>b :split<CR>
@@ -76,3 +88,5 @@ endif
 syntax enable
 set background=dark
 colorscheme onedark
+
+highlight Normal guibg=none

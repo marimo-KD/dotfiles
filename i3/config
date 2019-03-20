@@ -31,7 +31,7 @@ font pango:Dejavu Sans,IPAGothic 8
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec alacritty
+bindsym $mod+Return exec --no-startup-id alacritty
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -42,7 +42,7 @@ bindsym $mod+Shift+q kill
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
 #bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
-bindsym $mod+u exec rofi -show combi
+bindsym $mod+u exec --no-startup-id rofi -show combi -show-icons
 
 # change focus
 bindsym $mod+h focus left
@@ -96,16 +96,16 @@ bindsym $mod+a focus parent
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
-set $ws1 "1"
-set $ws2 "2"
+set $ws1 "1: Terminal"
+set $ws2 "2: firefox"
 set $ws3 "3"
 set $ws4 "4"
 set $ws5 "5"
 set $ws6 "6"
 set $ws7 "7"
 set $ws8 "8"
-set $ws9 "9"
-set $ws10 "10"
+set $ws9 "9: Audio"
+set $ws10 "10: Skype"
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1
@@ -177,39 +177,71 @@ bindsym $mod+r mode "resize"
 #        position       top
 #        font pango:Noto Mono for Powerline 11.5px
 #}
+#
+# 色
+set $background #2b303bc4
+set $foreground #c0c5ce
+set $secondary #3f4751
+set $black #2b303b
+set $red #bf616a
+set $green #a3be8c
+set $yellow #ebcb8b
+set $blue #8fa1b3c4
+set $magenta #b48ead
+set $cyan #96b5b4
+set $white #c0c5ce
 
-# color
-# class                 border  backgr. text    indicator child_border
-client.focused          #98c379 #98c379 #282c34 #98c379   #545862
-client.focused_inactive #545862 #545862 #abb2bf #545862   #545862
-client.unfocused        #545862 #545862 #abb2bf #545862   #545862
+bar {
+    i3bar_command i3bar -t
+    status_command i3blocks
+    font pango:Noto Sans CJK JP 10,Inconsolata Nerd Font 10
+    mode dock
+    position bottom
+    separator_symbol " │ "
+    workspace_buttons yes
+    strip_workspace_numbers yes
+    binding_mode_indicator yes
+    tray_padding 3
+    colors {
+        background $background
+        focused_background $background
+        statusline $blue
+        focused_statusline $blue
+        separator $secondary
+        focused_separator $secondary
+        # 左からborder, bg, fg
+        focused_workspace  $blue $blue $background
+        active_workspace $background $background $foreground
+        inactive_workspace $background $background $foreground
+        urgent_workspace   $red $red $background
+        binding_mode       $blue $blue $background
+    }
+}
 
 # Screen brightness controls
-bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 1 # increase screen brightness
-bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 1 # decrease screen brightness
+bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 1 && pkill -SIGRTMIN+2 i3blocks # increase screen brightness and refresh bar
+bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 1 && pkill -SIGRTMIN+2 i3blocks # decrease screen brightness and refresh bar
 
 # Audio controls
 bindsym XF86AudioMicMute exec --no-startup-id ~/.config/i3/micmute.sh
 bindsym XF86AudioMute exec --no-startup-id ~/.config/i3/audiomute.sh
 
 gaps inner 6
-gaps outer 0
 new_window none
 new_float none
 
+for_window [class="mozc_tool"] floating enable, resize set 800 400
 
-for_window [class="mozc_tool"] floating enable, resize set 600 400
-
-exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+#exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
 exec --no-startup-id $HOME/.config/i3/set_wallpaper.sh
 exec --no-startup-id nm-applet
 exec --no-startup-id dunst
 exec --no-startup-id redshift
-exec --no-startup-id compton -bCG
+exec --no-startup-id compton -b
 exec --no-startup-id xset s 3600 dpms 3600 3600 3600
 exec --no-startup-id light-locker --lock-on-suspend
 # exec --no-startup-id /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 &
 # exec --no-startup-id skypeforlinux
 exec --no-startup-id start-pulseaudio-x11
-exec --no-startup-id pulseeffects --gapplication-service
+
