@@ -8,55 +8,87 @@ hook_add = '''
   nmap [denite] <Nop>
   map <C-j> [denite]
 
-  "カレントディレクトリ内のファイル検索"
-  nmap <silent> [denite]<C-p> :<C-u>Denite -mode=normal file_rec
-  "プレビュー付きgrep"
-  nmap <silent> [denite]<C-g> :<C-u>Denite -auto-preview -mode=normal grep<CR>
+  "キーバインド"
+  nmap <silent> [denite]f :<C-u>Denite file/rec<CR>
+  nmap <silent> [denite]g :<C-u>Denite grep<CR>
+  nmap <silent> [denite]b :<C-u>Denite buffer<CR>
+  "depend on LanguageClient-neovim
+  nmap <silent> [denite]s :<C-u>Denite -auto-action="preview" documentSymbol<CR>
+  nmap <silent> [denite]ws :<C-u>Denite -auto-action="preview" workspaceSymbol<CR>
 
 
-  "検索対象外のファイル指定"
-  call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
-    \ [ '.git/', '.ropeproject/', '__pycache__/',
-    \   'venv/', 'images/', '*.min.*', 'img/', 'fonts/'])
+  autocmd FileType denite call s:denite_my_setting()
+  function! s:denite_my_setting()abort
+    nnoremap <silent><buffer><expr> <CR>
+    \ denite#do_map('do_action')
+    nnoremap <silent><buffer><expr> p
+    \ denite#do_map('do_action', 'preview')
+    nnoremap <silent><buffer><expr> q
+    \ denite#do_map('quit')
+    nnoremap <silent><buffer><expr> i
+    \ denite#do_map('open_filter_buffer')
+  endfunction
 
+  let s:denite_win_width_percent = 0.85
+  let s:denite_win_height_percent = 0.7
+
+  call denite#custom#option('default', {
+      \ 'split': 'floating',
+      \ 'winwidth': float2nr(&columns * s:denite_win_width_percent),
+      \ 'wincol': float2nr((&columns - (&columns * s:denite_win_width_percent)) / 2),
+      \ 'winheight': float2nr(&lines * s:denite_win_height_percent),
+      \ 'winrow': float2nr((&lines - (&lines * s:denite_win_height_percent)) / 2),
+      \ })
+
+  autocmd FileType denite set winblend=10
+  autocmd FileType denite-filter set winblend=10
 '''
 
 [[plugins]]
 repo = 'scrooloose/nerdtree'
 depends = ['vim-devicons']
 hook_add = '''
-  map <C-n> :NERDTreeToggle<CR>
+  nmap <C-n> :NERDTreeToggle<CR>
 '''
-
-
 
 
 [[plugins]]
 repo = 'autozimu/LanguageClient-neovim'
-build = './install.sh'
+rev = 'next'
+build = 'bash install.sh'
 hook_add = '''
-  set hidden
   let g:LanguageClient_serverCommands = {
-    \ 'python' : ['/usr/bin/pyls'],
+    \ 'python' : ['/home/marimo-kd/.local/share/virtualenvs/.neovim-L4xtE3iV/bin/pyls'],
+    \ 'rust': ['rustup','run','stable','rls'],
     \ 'c' : ['/usr/bin/clangd'],
-    \ 'cpp' : ['/usr/bin/clangd']
+    \ 'cpp' : ['/usr/bin/clangd'],
+    \ 'objc' : ['/usr/bin/clangd']
   \}
   let g:LanguageClient_autostart = 1
-  nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
-  nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-  nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
-  '''
+  let g:LanguageClient_useFloatingHover = 1
+  let g:LanguageClient_hoverPreview = "Always"
+
+  nmap [LSP] <Nop>
+  map <C-l> [LSP]
+  nnoremap <silent> [LSP]h :<C-u>call LanguageClient#textDocument_hover()<CR>
+  nnoremap <silent> [LSP]d :<C-u>call LanguageClient#textDocument_definition()<CR>
+  nnoremap <silent> [LSP]t :<C-u>call LanguageClient#textDocument_typeDefinition()<CR>
+  nnoremap <silent> [LSP]r :<C-u>call LanguageClient#textDocument_rename()<CR>
+  nnoremap <silent> [LSP]f :<C-u>call LanguageClient#textDocument_formatting()<CR>
+'''
 
 [[plugins]]
-repo = 'Shougo/neosnippet-snippets'
-
-[[plugins]]
-repo = 'cohama/lexima.vim'
+repo = 'deton/jasegment.vim'
+hook_add = '''
+  let g:jasegment#model = 'mecab'
+  let g:jasegment#highlight = 0
+'''
 
 [[plugins]]
 repo = 'tpope/vim-surround'
 
-
+[[plugins]]
+repo = 'cohama/lexima.vim'
 
 
 [[plugins]]
@@ -65,30 +97,14 @@ depends = ['vim-devicons']
 hook_add = '''
   let g:airline_powerline_fonts = 1
   let g:airline_theme = 'onedark'
-  '''
+'''
 
 [[plugins]]
 repo = 'ryanoasis/vim-devicons'
 
 [[plugins]]
-repo = 'sheerun/vim-polyglot'
-
-[[plugins]]
-repo = 'tomasr/molokai'
-
-[[plugins]]
 repo = 'joshdick/onedark.vim'
 hook_add = '''
   let g:onedark_hide_endofbuffer = 1
-  let g:onedark_terminal_italics = 1
-  '''
-
-[[plugins]]
-repo = 'lifepillar/vim-solarized8'
-hook_add = '''
-  let g:solarized_visibility = 'high'
-  let g:solarized_termtrans = 1
-  let g:solarized_term_italics = 1
+  let g:onedark_terminal_italics = 0
 '''
-
-

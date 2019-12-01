@@ -1,0 +1,46 @@
+#### Pipenv setting
+def _pipenv(args, stdin=None):
+    """ Based on:
+    https://github.com/xonsh/xonsh/issues/2397
+    https://xsteadfastx.org/tag/pipenv.html
+    """
+    import os
+    from pipenv.project import Project
+
+    if args and args[0] == 'shell':
+        print('WARNING: using own xonsh alias function '
+              'instead of pipenv shell.')
+
+        if os.path.isdir('.venv'):
+            venv_path = '.venv'
+        else:
+            venv_path = Project().virtualenv_location
+
+        if os.path.isfile(os.path.join(venv_path, 'bin/activate')):
+            vox activate @(venv_path)
+            print('Use `vox deactivate` to exit.')
+        else:
+            print('No environment found.')
+    else:
+        /usr/bin/pipenv @(args)
+
+aliases['pipenv'] = _pipenv
+
+#### Translation
+aliases['trans'] = "~/Dev/GoogleTransCLI/main.py"
+aliases['ls'] = "ls --color=auto -a"
+
+
+#### xontribs
+xontrib load vox
+
+#### environment variables
+$CASE_SENSITIVE_COMPLETIONS = False
+$INDENT = "    "
+$IGNOREEOF = True
+$UPDATE_COMPLETIONS_ON_KEYPRESS = True
+$VI_MODE = False
+$XONSH_AUTOPAIR = True
+
+#### Prompt
+
