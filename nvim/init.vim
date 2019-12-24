@@ -21,19 +21,23 @@ set smartindent
 set softtabstop=2
 set tabstop=2
 set termguicolors
+set relativenumber
 set ruler
 
-nnoremap <S-h> ^
-nnoremap <S-l> $
+noremap <S-h> ^
+noremap <S-l> $
+
+nnoremap j gj
+nnoremap k gk
 nnoremap <silent> <ESC><ESC> :noh<CR>
 
 nnoremap <C-w>v :vsplit<CR>
 nnoremap <C-w>s :split<CR>
 "WMの設定と揃える
-"
+
 let g:python3_host_prog = "/home/marimo-kd/.local/share/virtualenvs/.neovim-L4xtE3iV/bin/python"
 
-" dein settings {{{
+" dein settings
 if &compatible
   set nocompatible
 endif
@@ -61,13 +65,14 @@ if dein#load_state(s:dein_dir)
 endif
 " 適宜 call dein#update や call dein#clear_state を呼ぶ。
 
-" インストールしていないものはここに入れる
+" インストールしていないものをインストール
 if dein#check_install()
   call dein#install()
 endif
-" }}}
 
-autocmd BufWritePre * :%s/\s\+$//ge "行末の空白を自動消去"
+
+autocmd BufWritePre * :%s/\s\+$//ge
+"行末の空白を自動消去
 
 autocmd FileType python setlocal sw=4 ts=4 sts=4 et
 
@@ -77,4 +82,4 @@ autocmd VimLeave * set guicursor=a:ver2-blinkon0
 " カラースキーム及びシンタックスの設定
 syntax enable
 set background=dark
-colorscheme onedark
+colorscheme one

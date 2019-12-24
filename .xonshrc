@@ -24,11 +24,11 @@ def _pipenv(args, stdin=None):
     else:
         /usr/bin/pipenv @(args)
 
+#### aliases
 aliases['pipenv'] = _pipenv
-
-#### Translation
 aliases['trans'] = "~/Dev/GoogleTransCLI/main.py"
 aliases['ls'] = "ls --color=auto -a"
+aliases['todo'] = "nvim ~/Documents/todo.md"
 
 
 #### xontribs

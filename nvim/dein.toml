@@ -5,8 +5,7 @@ repo = 'Shougo/dein.vim'
 repo = 'Shougo/denite.nvim'
 depends = ['vim-devicons']
 hook_add = '''
-  nmap [denite] <Nop>
-  map <C-j> [denite]
+  map <Space>d [denite]
 
   "キーバインド"
   nmap <silent> [denite]f :<C-u>Denite file/rec<CR>
@@ -45,10 +44,32 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo = 'scrooloose/nerdtree'
-depends = ['vim-devicons']
+repo = 'Shougo/defx.nvim'
+depends = ['defx-icons']
 hook_add = '''
-  nmap <C-n> :NERDTreeToggle<CR>
+  nmap <Space>f :<C-u>Defx -split=vertical -listed -resume -auto-cd -winwidth=40<CR>
+  call defx#custom#option('_', {'columns': 'indent:icons:filename:type'})
+  autocmd FileType defx call s:my_defx_setting()
+  function! s:my_defx_setting() abort
+    nnoremap <silent><buffer><expr> <CR> defx#async_action('drop')
+    nnoremap <silent><buffer><expr> o defx#do_action('open_or_close_tree')
+    nnoremap <silent><buffer><expr> v defx#do_action('drop', 'vsplit')
+    nnoremap <silent><buffer><expr> s defx#do_action('drop', 'split')
+
+    nnoremap <silent><buffer><expr> h defx#async_action('cd', ['..'])
+    nnoremap <silent><buffer><expr> ~ defx#async_action('cd')
+
+    nnoremap <silent><buffer><expr> nf defx#do_action('new_file')
+    nnoremap <silent><buffer><expr> nd defx#do_action('new_directory')
+
+    nnoremap <silent><buffer><expr> yy defx#do_action('copy')
+    nnoremap <silent><buffer><expr> m defx#do_action('move')
+    nnoremap <silent><buffer><expr> p defx#do_action('paste')
+
+    nnoremap <silent><buffer><expr> d defx#do_action('remove')
+    nnoremap <silent><buffer><expr> r defx#do_action('rename')
+    nnoremap <silent><buffer><expr> q defx#do_action('quit')
+  endfunction
 '''
 
 
@@ -69,7 +90,7 @@ hook_add = '''
   let g:LanguageClient_hoverPreview = "Always"
 
   nmap [LSP] <Nop>
-  map <C-l> [LSP]
+  map <Space>l [LSP]
   nnoremap <silent> [LSP]h :<C-u>call LanguageClient#textDocument_hover()<CR>
   nnoremap <silent> [LSP]d :<C-u>call LanguageClient#textDocument_definition()<CR>
   nnoremap <silent> [LSP]t :<C-u>call LanguageClient#textDocument_typeDefinition()<CR>
@@ -88,7 +109,10 @@ hook_add = '''
 repo = 'tpope/vim-surround'
 
 [[plugins]]
-repo = 'cohama/lexima.vim'
+repo = 'andymass/vim-matchup'
+
+[[plugins]]
+repo = 'machakann/vim-highlightedyank'
 
 
 [[plugins]]
@@ -96,15 +120,32 @@ repo = 'vim-airline/vim-airline'
 depends = ['vim-devicons']
 hook_add = '''
   let g:airline_powerline_fonts = 1
-  let g:airline_theme = 'onedark'
+  let g:airline_theme = 'one'
 '''
 
 [[plugins]]
 repo = 'ryanoasis/vim-devicons'
 
 [[plugins]]
-repo = 'joshdick/onedark.vim'
+repo = 'kristijanhusak/defx-icons'
 hook_add = '''
-  let g:onedark_hide_endofbuffer = 1
-  let g:onedark_terminal_italics = 0
+  let g:defx_icons_enable_syntax_highlight = 1
+  let g:defx_icons_column_length = 2
+  let g:defx_icons_directory_icon = ''
+  let g:defx_icons_mark_icon = '*'
+  let g:defx_icons_parent_icon = ''
+  let g:defx_icons_default_icon = ''
+  let g:defx_icons_directory_symlink_icon = ''
+  let g:defx_icons_root_opened_tree_icon = ''
+  let g:defx_icons_nested_opened_tree_icon = ''
+  let g:defx_icons_nested_closed_tree_icon = ''
 '''
+
+[[plugins]]
+repo = 'rakr/vim-one'
+
+[[plugins]]
+repo = 'morhetz/gruvbox'
+
+[[plugins]]
+repo = 'nanotech/jellybeans.vim'

@@ -17,7 +17,9 @@ set $right l
 set $term termite
 # Your preferred application launcher
 # Note: it's recommended that you pass the final command to sway
-set $menu rofi -show combi
+# set $menu rofi -show combi
+set $menu $term --name=launcher -e "bash -c 'compgen -c | sort -u | fzf --no-extended --print-query | tail -n1 | xrgs -r swaymsg -t command exec'"
+for_window [app_id="^launcher$"] floating enable, border none
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)

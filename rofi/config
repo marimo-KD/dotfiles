@@ -1,10 +1,17 @@
-rofi.modi:run,combi,system:~/.config/rofi/rofi_system.sh
-rofi.combi-modi: window,drun
-rofi.sidebar-mode:  true
+rofi.modi:drun,system:~/.config/rofi/rofi_system.sh,run
+
+rofi.matching: fuzzy
+rofi.threads: 4
+
 rofi.hide-scrollbar: true
+rofi.width: 30
+rofi.lines: 15
+rofi.location: 5
 rofi.font: Noto Sans CJK JP Bold 12
+rofi.show-icons: true
 rofi.color-enabled: true
 rofi.color-window: #3a4c54, #2a373e, #c3c6c8
 rofi.color-normal: #455a64, #fafbfc, #455a64, #00bcd4, #fafbfc
 rofi.color-active: #455a64, #00bcd4, #455a64, #009688, #fdf6e3
 rofi.color-urgent: #455a64, #ff5252, #455a64, #ff5252, #fdf6e3
+rofi.theme: /usr/share/rofi/themes/Arc-Dark.rasi
