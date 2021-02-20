@@ -17,9 +17,7 @@ set $right l
 set $term termite
 # Your preferred application launcher
 # Note: it's recommended that you pass the final command to sway
-# set $menu rofi -show combi
-set $menu $term --name=launcher -e "bash -c 'compgen -c | sort -u | fzf --no-extended --print-query | tail -n1 | xrgs -r swaymsg -t command exec'"
-for_window [app_id="^launcher$"] floating enable, border none
+set $menu wofi -S drun -I
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
@@ -53,7 +51,12 @@ input "2:10:TPPS/2_IBM_TrackPoint" {
     accel_profile adaptive
     pointer_accel -0.25
 }
-input * xkb_layout jp-fixed,ru
+input "1739:0:Synaptics_tm2964-001" {
+    accel_profile adaptive
+    dwt enabled
+}
+input * xkb_layout jp
+input * xkb_options ctrl:nocaps
 input * xkb_model pc106
 #
 # You can get the names of your inputs by running: swaymsg -t get_inputs
@@ -197,21 +200,23 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
-bindsym XF86MonBrightnessDown exec sudo brightnessctl set 2%-
-bindsym XF86MonBrightnessUp exec sudo brightnessctl set +2%
+bindsym XF86MonBrightnessDown exec sudo brightnessctl set 1%-
+bindsym XF86MonBrightnessUp exec sudo brightnessctl set +1%
 
 default_border none
 
 set $gnome-schema org.gnome.desktop.interface
 
 exec_always {
-  gsettings set $gnome-schema gtk-theme "Adapta-Nokto"
-  gsettings set $gnome-schema icon-theme "Arc"
-  gsettings set $gnome-schema cursor-theme "capitaine-cursors-light"
+  gsettings set $gnome-schema gtk-theme "ChromeOS-dark-compact"
+  gsettings set $gnome-schema icon-theme "Tela-blue"
+  gsettings set $gnome-schema cursor-theme "capitaine-cursors"
 }
 
 exec mako
-exec fcitx-autostart
 exec waybar
+exec --no-startup-id fcitx5 -d
+
+gaps inner 3
 
 include /etc/sway/config.d/*

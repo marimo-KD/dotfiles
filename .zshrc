@@ -7,9 +7,9 @@ autoload -Uz url-quote-magic
 colors
 compinit
 
-zle -N self-insert url-quote-magic
-
 bindkey -e
+
+zle -N self-insert url-quote-magic
 
 setopt auto_pushd
 setopt pushd_ignore_dups
@@ -28,39 +28,42 @@ setopt no_list_beep
 setopt notify
 
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs status virtualenv)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(  )
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir dir_writable vcs virtualenv)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(background_jobs status time)
 
 # Alias
 alias ls='ls --color=auto'
+alias start_sway='~/Bin/start_sway'
+alias trans='~/Bin/Translation.py'
 
-xonsh
+# Thefuck
+eval $(thefuck --alias)
 
-# #plugins
-# source ~/.zplug/init.zsh
-# #zplug "agnoster/agnoster-zsh-theme", as:theme
-# #zplug "sindresorhus/pure", use:pure.zsh, as:theme
-# zplug "bhilburn/powerlevel9k", as:theme
-# zplug "mafredri/zsh-async"
-# zplug "b4b4r07/enhancd", use:init.sh
-# zplug "zsh-users/zsh-autosuggestions"
-# zplug "zsh-users/zsh-completions"
-# zplug "zsh-users/zsh-syntax-highlighting"
-#
-# zplug "plugins/gnu-utils", from:oh-my-zsh
-# zplug "plugins/archlinux", from:oh-my-zsh
-# zplug "plugins/pip", from:oh-my-zsh
-# zplug "plugins/colored-man-pages", from:oh-my-zsh
-#
-# #Install
-# if ! zplug check --verbose; then
-#     printf "Install? [y/N]: "
-#     if read -q; then
-#         echo; zplug install
-#     fi
-# fi
-#
-# #load plugins
-# zplug load --verbose
-#
 
+#plugins
+source ~/.zplug/init.zsh
+#zplug "agnoster/agnoster-zsh-theme", as:theme
+#zplug "sindresorhus/pure", use:pure.zsh, as:theme
+#zplug "bhilburn/powerlevel9k", as:theme
+zplug "romkatv/powerlevel10k", as:theme, depth:1
+zplug "mafredri/zsh-async"
+zplug "b4b4r07/enhancd", use:init.sh
+zplug "zsh-users/zsh-autosuggestions"
+zplug "zsh-users/zsh-completions"
+zplug "zsh-users/zsh-syntax-highlighting"
+
+zplug "plugins/gnu-utils", from:oh-my-zsh
+zplug "plugins/archlinux", from:oh-my-zsh
+zplug "plugins/pip", from:oh-my-zsh
+zplug "plugins/colored-man-pages", from:oh-my-zsh
+
+#Install
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
+fi
+
+#load plugins
+zplug load --verbose

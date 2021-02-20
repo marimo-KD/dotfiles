@@ -3,8 +3,9 @@ set autoindent
 set backspace=indent,eol,start
 set clipboard=unnamedplus
 set completeopt-=preview
-set encoding=utf8
+set encoding=utf-8
 set expandtab
+set foldmethod=marker
 set hidden
 set hlsearch
 set ignorecase
@@ -29,13 +30,17 @@ noremap <S-l> $
 
 nnoremap j gj
 nnoremap k gk
-nnoremap <silent> <ESC><ESC> :noh<CR>
-
+nnoremap <silent><ESC><ESC> :noh<CR>
 nnoremap <C-w>v :vsplit<CR>
 nnoremap <C-w>s :split<CR>
-"WMの設定と揃える
 
-let g:python3_host_prog = "/home/marimo-kd/.local/share/virtualenvs/.neovim-L4xtE3iV/bin/python"
+inoremap <C-e> <ESC>A
+inoremap <C-a> <ESC>I
+" from Emacs Key Bind
+
+tnoremap <silent><ESC> <C-\><C-n>
+
+let g:python3_host_prog = '/home/marimo-kd/.local/share/virtualenvs/.neovim-L4xtE3iV/bin/python'
 
 " dein settings
 if &compatible
@@ -70,10 +75,6 @@ if dein#check_install()
   call dein#install()
 endif
 
-
-autocmd BufWritePre * :%s/\s\+$//ge
-"行末の空白を自動消去
-
 autocmd FileType python setlocal sw=4 ts=4 sts=4 et
 
 autocmd VimLeave * set guicursor=a:ver2-blinkon0
@@ -82,4 +83,4 @@ autocmd VimLeave * set guicursor=a:ver2-blinkon0
 " カラースキーム及びシンタックスの設定
 syntax enable
 set background=dark
-colorscheme one
+colorscheme gruvbox

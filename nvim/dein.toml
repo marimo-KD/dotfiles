@@ -11,9 +11,6 @@ hook_add = '''
   nmap <silent> [denite]f :<C-u>Denite file/rec<CR>
   nmap <silent> [denite]g :<C-u>Denite grep<CR>
   nmap <silent> [denite]b :<C-u>Denite buffer<CR>
-  "depend on LanguageClient-neovim
-  nmap <silent> [denite]s :<C-u>Denite -auto-action="preview" documentSymbol<CR>
-  nmap <silent> [denite]ws :<C-u>Denite -auto-action="preview" workspaceSymbol<CR>
 
 
   autocmd FileType denite call s:denite_my_setting()
@@ -28,7 +25,7 @@ hook_add = '''
     \ denite#do_map('open_filter_buffer')
   endfunction
 
-  let s:denite_win_width_percent = 0.85
+  let s:denite_win_width_percent = 0.7
   let s:denite_win_height_percent = 0.7
 
   call denite#custom#option('default', {
@@ -72,55 +69,68 @@ hook_add = '''
   endfunction
 '''
 
-
 [[plugins]]
-repo = 'autozimu/LanguageClient-neovim'
-rev = 'next'
-build = 'bash install.sh'
+repo = 'neovim/nvim-lspconfig'
 hook_add = '''
-  let g:LanguageClient_serverCommands = {
-    \ 'python' : ['/home/marimo-kd/.local/share/virtualenvs/.neovim-L4xtE3iV/bin/pyls'],
-    \ 'rust': ['rustup','run','stable','rls'],
-    \ 'c' : ['/usr/bin/clangd'],
-    \ 'cpp' : ['/usr/bin/clangd'],
-    \ 'objc' : ['/usr/bin/clangd']
-  \}
-  let g:LanguageClient_autostart = 1
-  let g:LanguageClient_useFloatingHover = 1
-  let g:LanguageClient_hoverPreview = "Always"
-
-  nmap [LSP] <Nop>
-  map <Space>l [LSP]
-  nnoremap <silent> [LSP]h :<C-u>call LanguageClient#textDocument_hover()<CR>
-  nnoremap <silent> [LSP]d :<C-u>call LanguageClient#textDocument_definition()<CR>
-  nnoremap <silent> [LSP]t :<C-u>call LanguageClient#textDocument_typeDefinition()<CR>
-  nnoremap <silent> [LSP]r :<C-u>call LanguageClient#textDocument_rename()<CR>
-  nnoremap <silent> [LSP]f :<C-u>call LanguageClient#textDocument_formatting()<CR>
-'''
-
-[[plugins]]
-repo = 'deton/jasegment.vim'
-hook_add = '''
-  let g:jasegment#model = 'mecab'
-  let g:jasegment#highlight = 0
+lua << END_LUA
+  local nvim_lsp = require('lspconfig')
+  vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, { virtual_text = false })
+  local servers = {"bashls", "clangd", "rust_analyzer", "pyls", "vimls"} 
+  for _, serv in ipairs(servers) do
+    nvim_lsp[serv].setup{}
+  end
+END_LUA
+  augroup lsp_show_diagnostics_under_cursor
+    autocmd!
+    autocmd CursorMoved * lua vim.lsp.diagnostic.show_line_diagnostics()
+  augroup END
+  nnoremap <Space>gd <cmd>lua vim.lsp.buf.definition()<CR>
+  nnoremap <Space>gi <cmd>lua vim.lsp.buf.implemention()<CR>
+  nnoremap <Space>r  <cmd>lua vim.lsp.buf.rename()<CR>
+  nnoremap <Space>h  <cmd>lua vim.lsp.buf.hover()<CR>
+  nnoremap <Space>f  <cmd>lua vim.lsp.buf.formatting()<CR>
 '''
 
 [[plugins]]
 repo = 'tpope/vim-surround'
 
 [[plugins]]
-repo = 'andymass/vim-matchup'
+repo = 'rhysd/clever-f.vim'
+hook_add = '''
+  let g:clever_f_smart_case=1
+  let g:clever_f_use_migemo=1
+'''
 
 [[plugins]]
-repo = 'machakann/vim-highlightedyank'
+repo = "tyru/eskk.vim"
+hook_add = '''
+  let g:eskk#directory = "~/.neovim/eskk"
+  let g:eskk#dictionary = "~/SKK/skk-jisyo"
+  let g:eskk#large_dictionary = "/usr/share/skk/SKK-JISYO.L"
+  let g:egg_like_newline = 1
+'''
 
+
+# Eye Candy {{{
+[[plugins]]
+repo = 'Yggdroot/indentLine'
+hook_add = '''
+  let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+'''
+
+[[plugins]]
+repo = 'luochen1990/rainbow'
+hook_add = '''
+  let g:rainbow_active = 1
+'''
 
 [[plugins]]
 repo = 'vim-airline/vim-airline'
 depends = ['vim-devicons']
 hook_add = '''
   let g:airline_powerline_fonts = 1
-  let g:airline_theme = 'one'
+  let g:airline_theme = 'gruvbox'
+  let g:airline#extensions#languageclient#enabled = 1
 '''
 
 [[plugins]]
@@ -141,11 +151,9 @@ hook_add = '''
   let g:defx_icons_nested_closed_tree_icon = ''
 '''
 
-[[plugins]]
-repo = 'rakr/vim-one'
+# }}}
 
+# ColorScheme {{{
 [[plugins]]
-repo = 'morhetz/gruvbox'
-
-[[plugins]]
-repo = 'nanotech/jellybeans.vim'
+repo = 'gruvbox-community/gruvbox'
+# }}}
