@@ -1,56 +1,271 @@
 [[plugins]]
 repo = 'Shougo/deoplete.nvim'
-on_i = 1
+on_event = 'InsertEnter'
+depends = 'context_filetype.vim'
 hook_source = '''
   let g:deoplete#enable_at_startup = 1
+'''
+hook_post_source = '''
   call deoplete#custom#option({
     \'auto_complete_delay': 0,
+    \'auto_complete_start_length': 1,
     \'smart_case': v:true,
     \})
-
 '''
 
+
+
 [[plugins]]
-repo = 'deoplete-plugins/deoplete-lsp'
-on_i = 1
-depends = ['deoplete.nvim']
+repo = 'lighttiger2505/deoplete-vim-lsp'
+depends = 'deoplete.nvim'
+on_source = 'vim-lsp'
+
+
+
+[[plugins]]
+repo = 'Shougo/context_filetype.vim'
+
+
+
+[[plugins]]
+repo = 'nvim-telescope/telescope.nvim'
+on_command = 'Telescope'
+depends = ['popup.nvim', 'plenary.nvim']
+hook_add = '''
+  nnoremap <Space>g  <cmd>Telescope live_grep<CR>
+  nnoremap <Space>ff <cmd>Telescope find_files<CR>
+  nnoremap <Space>fb <cmd>Telescope buffers<CR>
+'''
+hook_post_source = '''
+lua << END_LUA
+  require('telescope').setup{
+    defaults = {
+      initial_mode = "normal",
+      winblend = 10,
+      file_previewer = require('telescope.previewers').vim_buffer_cat.new,
+    },
+  }
+END_LUA
+'''
+
+
+
+[[plugins]]
+repo = 'nvim-lua/popup.nvim'
+on_event = ['FocusLost','CursorHold']
+depends = 'plenary.nvim'
+
+
+
+[[plugins]]
+repo = 'nvim-lua/plenary.nvim'
+on_event = ['FocusLost','CursorHold']
+
+
+
+[[plugins]]
+repo = 'Shougo/defx.nvim'
+on_command = 'Defx'
+depends = 'defx-icons'
+hook_add = '''
+  nmap <Space>df :<C-u>Defx -split=vertical -listed -resume -auto-cd -winwidth=40<CR>
+  function! s:open_defx_if_directory()
+    " when open a directory, open defx instead of netrw
+    try
+      let l:full_path = expand(expand('%:p'))
+    catch
+      return
+    endtry
+
+    if isdirectory(l:full_path)
+      execute "Defx `expand('%:p')` | bd " . expand('%:r')
+    endif
+  endfunction
+  augroup defx_config
+    autocmd!
+    autocmd BufEnter * call s:open_defx_if_directory()
+  augroup END
+'''
+hook_post_source = '''
+  call defx#custom#option('_', {'columns': 'indent:icons:filename:type'})
+'''
+[plugins.ftplugin]
+defx = '''
+  nnoremap <silent><buffer><expr> <CR> defx#async_action('drop')
+  nnoremap <silent><buffer><expr> o defx#do_action('open_or_close_tree')
+  nnoremap <silent><buffer><expr> v defx#do_action('drop', 'vsplit')
+  nnoremap <silent><buffer><expr> s defx#do_action('drop', 'split')
+
+  nnoremap <silent><buffer><expr> h defx#async_action('cd', ['..'])
+  nnoremap <silent><buffer><expr> ~ defx#async_action('cd')
+
+  nnoremap <silent><buffer><expr> nf defx#do_action('new_file')
+  nnoremap <silent><buffer><expr> nd defx#do_action('new_directory')
+
+  nnoremap <silent><buffer><expr> yy defx#do_action('copy')
+  nnoremap <silent><buffer><expr> m defx#do_action('move')
+  nnoremap <silent><buffer><expr> p defx#do_action('paste')
+
+  nnoremap <silent><buffer><expr> d defx#do_action('remove')
+  nnoremap <silent><buffer><expr> r defx#do_action('rename')
+  nnoremap <silent><buffer><expr> q defx#do_action('quit')
+  nnoremap <silent><buffer><expr> <ESC> defx#do_action('quit')
+'''
+
+
+
+[[plugins]]
+repo = 'kristijanhusak/defx-icons'
 hook_source = '''
-  let g:deoplete#lsp#handler_enabled = v:true
-  let g:deoplete#lsp#use_icons_for_candidates = v:true
+  let g:defx_icons_enable_syntax_highlight = 1
+  let g:defx_icons_column_length = 2
+  let g:defx_icons_directory_icon = ''
+  let g:defx_icons_mark_icon = '*'
+  let g:defx_icons_parent_icon = ''
+  let g:defx_icons_default_icon = ''
+  let g:defx_icons_directory_symlink_icon = ''
+  let g:defx_icons_root_opened_tree_icon = ''
+  let g:defx_icons_nested_opened_tree_icon = ''
+  let g:defx_icons_nested_closed_tree_icon = ''
+'''
+
+
+
+[[plugins]]
+repo = "tyru/eskk.vim"
+on_map = { ic = '<Plug>' }
+hook_add = '''
+  imap <C-j>  <Plug>(eskk:toggle)
+  cmap <C-j>  <Plug>(eskk:toggle)
+'''
+hook_source = '''
+  let s:config_home = empty($XDG_CONFIG_HOME) ? expand('~/.config') : $XDG_CONFIG_HOME
+  let g:eskk#directory = s:config_home . "/nvim/eskk"
+  let g:eskk#dictionary = "~/SKK/skk-jisyo"
+  let g:eskk#large_dictionary = "/usr/share/skk/SKK-JISYO.L"
+  let g:egg_like_newline = 1
+'''
+
+
+
+[[plugins]]
+repo = 'nvim-treesitter/nvim-treesitter'
+on_event = 'BufRead'
+hook_source = '''
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+    ensure_installed = 'all',
+    highlight = {
+        enable = true,
+    },
+    indent = {
+      enable = true,
+    },
+}
+EOF
+'''
+
+
+
+[[plugins]]
+repo = 'prabirshrestha/vim-lsp'
+hook_source = '''
+  let g:lsp_fold_enabled = 0
+  let g:lsp_diagnostics_float_cursor = 1
+  let g:lsp_diagnostics_virtual_text_enabled = 0
 '''
 
 [[plugins]]
-repo = 'dhruvasagar/vim-table-mode'
-on_command = ['TableModeToggle']
+repo = 'mattn/vim-lsp-settings'
+on_ft = ['bash', 'c', 'cpp', 'python', 'rust', 'vim']
+depends = 'vim-lsp'
+
+
 
 [[plugins]]
 repo = 'cohama/lexima.vim'
-on_i = 1
+on_event = 'InsertEnter'
+
+
+
+[[plugins]]
+repo = 'dhruvasagar/vim-table-mode'
+on_command = 'TableModeToggle'
+
+
 
 [[plugins]]
 repo = 'plytophogy/vim-virtualenv'
-on_ft = ['python']
+on_ft = 'python'
 hook_source = '''
   let g:virtualenv_directory = '~/.local/share/virtualenvs'
 '''
 
+
+
 [[plugins]]
-repo = 'cespare/vim-toml'
-on_ft = ['toml']
+repo = 'Shougo/neco-vim'
+on_ft = 'vim'
+
 
 [[plugins]]
 repo = 'tpope/vim-markdown'
-on_ft = ['markdown']
-depends = ['vim-table-mode']
+on_ft = 'markdown'
+depends = 'vim-table-mode'
 hook_source = '''
   let g:markdown_minlines = 100
   let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'rust', 'cpp', 'c']
 '''
 
+
+
 [[plugins]]
 repo = 'previm/previm'
-on_ft = ['markdown']
+on_command = 'PrevimOpen'
+depends = 'open-browser.vim'
 hook_source = '''
-  let g:previm_open_cmd = 'firefox'
   let g:previm_enable_realtime = 1
-  '''
+'''
+
+
+
+[[plugins]]
+repo = "tyru/open-browser.vim"
+on_command = 'OpenBrowser'
+
+
+
+
+[[plugins]]
+repo = 'rhysd/clever-f.vim'
+on_map = { nxo = '<Plug>'}
+hook_add = '''
+    nmap f <Plug>(clever-f-f)
+    xmap f <Plug>(clever-f-f)
+    omap f <Plug>(clever-f-f)
+    nmap F <Plug>(clever-f-F)
+    xmap F <Plug>(clever-f-F)
+    omap F <Plug>(clever-f-F)
+    nmap t <Plug>(clever-f-t)
+    xmap t <Plug>(clever-f-t)
+    omap t <Plug>(clever-f-t)
+    nmap T <Plug>(clever-f-T)
+    xmap T <Plug>(clever-f-T)
+    omap T <Plug>(clever-f-T)
+'''
+hook_source = '''
+  let g:clever_f_smart_case=1
+  let g:clever_f_use_migemo=1
+'''
+
+
+
+[[plugins]]
+repo = 'rhysd/vim-operator-surround'
+on_map = {n = '<Plug>'}
+hook_add = '''
+  nmap <silent>sa <Plug>(operator-surround-append)a
+  nmap <silent>sd <Plug>(operator-surround-delete)a
+  nmap <silent>sr <Plug>(operator-surround-replace)a
+  nmap <silent>sc <Plug>(operator-surround-replace)a
+'''

@@ -1,86 +1,27 @@
-set ambiwidth=single
-set autoindent
-set backspace=indent,eol,start
-set clipboard=unnamedplus
-set completeopt-=preview
-set encoding=utf-8
-set expandtab
-set foldmethod=marker
-set hidden
-set hlsearch
-set ignorecase
-set incsearch
-set laststatus=2
-set list
-set listchars=tab:»\ ,trail:-,extends:»,precedes:«,nbsp:%
-set mouse=a
-set number
-set shiftwidth=2
-set signcolumn=yes
-set smartcase
-set smartindent
-set softtabstop=2
-set tabstop=2
-set termguicolors
-set relativenumber
-set ruler
-
-noremap <S-h> ^
-noremap <S-l> $
-
-nnoremap j gj
-nnoremap k gk
-nnoremap <silent><ESC><ESC> :noh<CR>
-nnoremap <C-w>v :vsplit<CR>
-nnoremap <C-w>s :split<CR>
-
-inoremap <C-e> <ESC>A
-inoremap <C-a> <ESC>I
-" from Emacs Key Bind
-
-tnoremap <silent><ESC> <C-\><C-n>
-
-let g:python3_host_prog = '/home/marimo-kd/.local/share/virtualenvs/.neovim-L4xtE3iV/bin/python'
-
 " dein settings
 if &compatible
   set nocompatible
 endif
-" dein.vimのディレクトリ
-let s:dein_dir = expand('~/.neovim/plugin/')
-let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 
-" なければgit clone
-if !isdirectory(s:dein_repo_dir)
-  execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
-endif
-execute 'set runtimepath^=' . s:dein_repo_dir
+let g:config_home = empty($XDG_CONFIG_HOME) ? expand('~/.config') : $XDG_CONFIG_HOME
+let g:cache_home = empty($XDG_CACHE_HOME) ? expand('~/.cache') : $XDG_CACHE_HOME
+let g:python3_host_prog = '/usr/bin/python3'
 
-if dein#load_state(s:dein_dir)
-  call dein#begin(s:dein_dir)
+function! s:source_rc(path) abort
+  let abspath = resolve(expand(g:config_home . '/nvim/rc/' . a:path))
+  execute 'source' fnameescape(abspath)
+endfunction
 
-  " 管理するプラグインを記述したファイル
-  let s:toml = '~/.config/nvim/dein.toml'
-  let s:toml_lazy = '~/.config/nvim/dein_lazy.toml'
-  call dein#load_toml(s:toml, {'lazy': 0})
-  call dein#load_toml(s:toml_lazy, {'lazy': 1})
-
-  call dein#end()
-  call dein#save_state()
-endif
-" 適宜 call dein#update や call dein#clear_state を呼ぶ。
-
-" インストールしていないものをインストール
-if dein#check_install()
-  call dein#install()
+if has('vim_starting')
+  call s:source_rc('init.rc.vim')
 endif
 
-autocmd FileType python setlocal sw=4 ts=4 sts=4 et
+call s:source_rc('dein.rc.vim')
+
+silent! filetype plugin indent on
+syntax on
+filetype detect
 
 autocmd VimLeave * set guicursor=a:ver2-blinkon0
 
-
-" カラースキーム及びシンタックスの設定
-syntax enable
-set background=dark
-colorscheme gruvbox
+set secure

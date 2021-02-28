@@ -1,122 +1,7 @@
 [[plugins]]
 repo = 'Shougo/dein.vim'
 
-[[plugins]]
-repo = 'Shougo/denite.nvim'
-depends = ['vim-devicons']
-hook_add = '''
-  map <Space>d [denite]
 
-  "キーバインド"
-  nmap <silent> [denite]f :<C-u>Denite file/rec<CR>
-  nmap <silent> [denite]g :<C-u>Denite grep<CR>
-  nmap <silent> [denite]b :<C-u>Denite buffer<CR>
-
-
-  autocmd FileType denite call s:denite_my_setting()
-  function! s:denite_my_setting()abort
-    nnoremap <silent><buffer><expr> <CR>
-    \ denite#do_map('do_action')
-    nnoremap <silent><buffer><expr> p
-    \ denite#do_map('do_action', 'preview')
-    nnoremap <silent><buffer><expr> q
-    \ denite#do_map('quit')
-    nnoremap <silent><buffer><expr> i
-    \ denite#do_map('open_filter_buffer')
-  endfunction
-
-  let s:denite_win_width_percent = 0.7
-  let s:denite_win_height_percent = 0.7
-
-  call denite#custom#option('default', {
-      \ 'split': 'floating',
-      \ 'winwidth': float2nr(&columns * s:denite_win_width_percent),
-      \ 'wincol': float2nr((&columns - (&columns * s:denite_win_width_percent)) / 2),
-      \ 'winheight': float2nr(&lines * s:denite_win_height_percent),
-      \ 'winrow': float2nr((&lines - (&lines * s:denite_win_height_percent)) / 2),
-      \ })
-
-  autocmd FileType denite set winblend=10
-  autocmd FileType denite-filter set winblend=10
-'''
-
-[[plugins]]
-repo = 'Shougo/defx.nvim'
-depends = ['defx-icons']
-hook_add = '''
-  nmap <Space>f :<C-u>Defx -split=vertical -listed -resume -auto-cd -winwidth=40<CR>
-  call defx#custom#option('_', {'columns': 'indent:icons:filename:type'})
-  autocmd FileType defx call s:my_defx_setting()
-  function! s:my_defx_setting() abort
-    nnoremap <silent><buffer><expr> <CR> defx#async_action('drop')
-    nnoremap <silent><buffer><expr> o defx#do_action('open_or_close_tree')
-    nnoremap <silent><buffer><expr> v defx#do_action('drop', 'vsplit')
-    nnoremap <silent><buffer><expr> s defx#do_action('drop', 'split')
-
-    nnoremap <silent><buffer><expr> h defx#async_action('cd', ['..'])
-    nnoremap <silent><buffer><expr> ~ defx#async_action('cd')
-
-    nnoremap <silent><buffer><expr> nf defx#do_action('new_file')
-    nnoremap <silent><buffer><expr> nd defx#do_action('new_directory')
-
-    nnoremap <silent><buffer><expr> yy defx#do_action('copy')
-    nnoremap <silent><buffer><expr> m defx#do_action('move')
-    nnoremap <silent><buffer><expr> p defx#do_action('paste')
-
-    nnoremap <silent><buffer><expr> d defx#do_action('remove')
-    nnoremap <silent><buffer><expr> r defx#do_action('rename')
-    nnoremap <silent><buffer><expr> q defx#do_action('quit')
-  endfunction
-'''
-
-[[plugins]]
-repo = 'neovim/nvim-lspconfig'
-hook_add = '''
-lua << END_LUA
-  local nvim_lsp = require('lspconfig')
-  vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, { virtual_text = false })
-  local servers = {"bashls", "clangd", "rust_analyzer", "pyls", "vimls"} 
-  for _, serv in ipairs(servers) do
-    nvim_lsp[serv].setup{}
-  end
-END_LUA
-  augroup lsp_show_diagnostics_under_cursor
-    autocmd!
-    autocmd CursorMoved * lua vim.lsp.diagnostic.show_line_diagnostics()
-  augroup END
-  nnoremap <Space>gd <cmd>lua vim.lsp.buf.definition()<CR>
-  nnoremap <Space>gi <cmd>lua vim.lsp.buf.implemention()<CR>
-  nnoremap <Space>r  <cmd>lua vim.lsp.buf.rename()<CR>
-  nnoremap <Space>h  <cmd>lua vim.lsp.buf.hover()<CR>
-  nnoremap <Space>f  <cmd>lua vim.lsp.buf.formatting()<CR>
-'''
-
-[[plugins]]
-repo = 'tpope/vim-surround'
-
-[[plugins]]
-repo = 'rhysd/clever-f.vim'
-hook_add = '''
-  let g:clever_f_smart_case=1
-  let g:clever_f_use_migemo=1
-'''
-
-[[plugins]]
-repo = "tyru/eskk.vim"
-hook_add = '''
-  let g:eskk#directory = "~/.neovim/eskk"
-  let g:eskk#dictionary = "~/SKK/skk-jisyo"
-  let g:eskk#large_dictionary = "/usr/share/skk/SKK-JISYO.L"
-  let g:egg_like_newline = 1
-'''
-
-
-# Eye Candy {{{
-[[plugins]]
-repo = 'Yggdroot/indentLine'
-hook_add = '''
-  let g:indentLine_char_list = ['|', '¦', '┆', '┊']
-'''
 
 [[plugins]]
 repo = 'luochen1990/rainbow'
@@ -124,36 +9,16 @@ hook_add = '''
   let g:rainbow_active = 1
 '''
 
+
+
 [[plugins]]
-repo = 'vim-airline/vim-airline'
-depends = ['vim-devicons']
+repo = 'lifepillar/vim-gruvbox8'
 hook_add = '''
-  let g:airline_powerline_fonts = 1
-  let g:airline_theme = 'gruvbox'
-  let g:airline#extensions#languageclient#enabled = 1
+  let g:gruvbox_italicize_strings = 0
 '''
 
-[[plugins]]
-repo = 'ryanoasis/vim-devicons'
+
 
 [[plugins]]
-repo = 'kristijanhusak/defx-icons'
-hook_add = '''
-  let g:defx_icons_enable_syntax_highlight = 1
-  let g:defx_icons_column_length = 2
-  let g:defx_icons_directory_icon = ''
-  let g:defx_icons_mark_icon = '*'
-  let g:defx_icons_parent_icon = ''
-  let g:defx_icons_default_icon = ''
-  let g:defx_icons_directory_symlink_icon = ''
-  let g:defx_icons_root_opened_tree_icon = ''
-  let g:defx_icons_nested_opened_tree_icon = ''
-  let g:defx_icons_nested_closed_tree_icon = ''
-'''
-
-# }}}
-
-# ColorScheme {{{
-[[plugins]]
-repo = 'gruvbox-community/gruvbox'
-# }}}
+repo = 'tbodt/deoplete-tabnine'
+build = './install.sh'
