@@ -2,6 +2,7 @@
 if &compatible
   set nocompatible
 endif
+filetype off
 
 let g:config_home = empty($XDG_CONFIG_HOME) ? expand('~/.config') : $XDG_CONFIG_HOME
 let g:cache_home = empty($XDG_CACHE_HOME) ? expand('~/.cache') : $XDG_CACHE_HOME
@@ -18,7 +19,7 @@ endif
 
 call s:source_rc('dein.rc.vim')
 
-silent! filetype plugin indent on
+filetype plugin indent on
 syntax on
 filetype detect
 
