@@ -13,11 +13,6 @@ hook_post_source = '''
     \})
 '''
 
-# [[plugins]]
-# repo = 'lighttiger2505/deoplete-vim-lsp'
-# depends = 'deoplete.nvim'
-# on_source = 'vim-lsp'
-
 [[plugins]]
 repo = 'Shougo/deoplete-lsp'
 depends = 'deoplete.nvim'
@@ -29,6 +24,11 @@ on_ft = 'vim'
 
 [[plugins]]
 repo = 'Shougo/context_filetype.vim'
+
+[[plugins]]
+repo = 'tbodt/deoplete-tabnine'
+on_source = 'deoplete.nvim'
+build = './install.sh'
 
 
 
@@ -64,90 +64,6 @@ on_event = ['FocusLost','CursorHold']
 
 
 
-# {{{ Denite.nvim
-# [[plugins]]
-# repo = 'Shougo/denite.nvim'
-# on_command = 'Denite'
-# hook_add = '''
-#   map <Space>d [denite]
-#   nmap <silent> [denite]f :<C-u>Denite file/rec -auto-action='preview'<CR>
-#   nmap <silent> [denite]g :<C-u>Denite grep -auto-action='preview'<CR>
-#   nmap <silent> [denite]b :<C-u>Denite buffer -auto-action='preview'<CR>
-# '''
-# hook_source = '''
-#   let s:denite_win_width_ratio = 0.8
-#   let s:denite_win_height_ratio = 0.7
-#   let s:denite_winwidth = float2nr(&columns * s:denite_win_width_ratio)
-#   let s:denite_winwidth_with_preview = float2nr(&columns * s:denite_win_width_ratio / 2)
-#   let s:denite_wincol = float2nr((&columns - (&columns * s:denite_win_width_ratio)) / 2)
-#   let s:denite_winheight = float2nr(&lines * s:denite_win_height_ratio)
-#   let s:denite_winrow = float2nr((&lines - (&lines * s:denite_win_height_ratio)) / 2)
-#   call denite#custom#option('_', {
-#       \ 'split': 'floating',
-#       \ 'floating_preview' : v:true,
-#       \ 'vertical_preview' : v:true,
-#       \ 'preview_width' : s:denite_winwidth_with_preview,
-#       \ 'preview_height' : s:denite_winheight + 1,
-#       \ 'winwidth' : s:denite_winwidth_with_preview,
-#       \ 'wincol' : s:denite_wincol,
-#       \ 'winheight' : s:denite_winheight,
-#       \ 'winrow' : s:denite_winrow,
-#       \ 'prompt' : '> ',
-#       \ 'start_filter' : v:true,
-#       \ })
-#   call denite#custom#var('file/rec', 'command',
-#         \ ['rg', '--files', '--glob', '!.git', '--color', 'never'])
-#   call denite#custom#var('grep', {
-#         \ 'command': ['rg', '--threads', '1'],
-#         \ 'recursive_opts': [],
-#         \ 'final_opts': [],
-#         \ 'separator': ['--'],
-#         \ 'default_opts': ['--smart-case', '--vimgrep', '--no-heading'],
-#         \ })
-# '''
-# [plugins.ftplugin]
-# denite = '''
-#   set winblend=20
-#   nnoremap <silent><buffer><expr> <CR>
-#   \ denite#do_map('do_action')
-#   nnoremap <silent><buffer><expr> d
-#   \ denite#do_map('do_action', 'delete')
-#   nnoremap <silent><buffer><expr> p
-#   \ denite#do_map('do_action', 'preview')
-#   nnoremap <silent><buffer><expr> q
-#   \ denite#do_map('quit')
-#   nnoremap <silent><buffer><expr> i
-#   \ denite#do_map('open_filter_buffer')
-#   nnoremap <silent><buffer><expr> <Space>
-#   \ denite#do_map('toggle_select').'j'
-# '''
-# denite_filter = '''
-#   set winblend=20
-# '''
-# 
-# 
-# 
-# [[plugins]]
-# repo = 'lighttiger2505/denite-vim-lsp'
-# on_source = 'denite.nvim'
-# 
-# 
-# 
-# [[plugins]]
-# repo = 'raghur/fruzzy'
-# on_source = 'denite.nvim'
-# build = 'call fruzzy#install()'
-# hook_source = "call denite#custom#source('_', 'matchers', ['matcher/fruzzy'])"
-# 
-# 
-# 
-# [[plugins]]
-# repo = 'ryanoasis/vim-devicons'
-# on_source = 'denite.nvim'
-# }}}
-
-
-
 # {{{ Defx.nvim
 [[plugins]]
 repo = 'Shougo/defx.nvim'
@@ -156,13 +72,11 @@ depends = 'defx-icons'
 hook_add = '''
   nmap <Space>f :<C-u>Defx -split=vertical -listed -resume -auto-cd -winwidth=40<CR>
   function! s:open_defx_if_directory()
-    " when open a directory, open defx instead of netrw
     try
       let l:full_path = expand(expand('%:p'))
     catch
       return
     endtry
-
     if isdirectory(l:full_path)
       execute "Defx `expand('%:p')` | bd " . expand('%:r')
     endif
@@ -252,25 +166,10 @@ EOF
 
 
 
-# [[plugins]]
-# repo = 'prabirshrestha/vim-lsp'
-# hook_source = '''
-#   let g:lsp_fold_enabled = 0
-#   let g:lsp_diagnostics_float_cursor = 1
-#   let g:lsp_diagnostics_virtual_text_enabled = 0
-# '''
-# 
-# [[plugins]]
-# repo = 'mattn/vim-lsp-settings'
-# on_ft = ['bash', 'c', 'cpp', 'python', 'rust', 'vim']
-# depends = 'vim-lsp'
-
-
-
 [[plugins]]
 repo = 'neovim/nvim-lspconfig'
 on_lua = 'lspconfig'
-hook_source = '''
+hook_post_source = '''
 lua << EOF
   local nvim_lsp = require('lspconfig')
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, { virtual_text = false })

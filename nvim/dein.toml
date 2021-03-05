@@ -15,13 +15,8 @@ hook_add = '''
 repo = 'lifepillar/vim-gruvbox8'
 hook_add = '''
   let g:gruvbox_italicize_strings = 0
+  let g:gruvbox_plugin_hi_groups = 0
 '''
-
-
-
-[[plugins]]
-repo = 'tbodt/deoplete-tabnine'
-build = './install.sh'
 
 
 
@@ -33,21 +28,19 @@ hook_add = '''
 
 
 
-[[plugins]]
-repo = 'hoob3rt/lualine.nvim'
-hook_add = '''
-lua << EOF
-  local lualine = require('lualine')
-  lualine.options.theme = 'gruvbox'
-  lualine.sections.lualine_z = { 
-    {
-      'diagnostics',
-      sources = {'nvim_lsp'},
-    },
-    {
-      'location',
-    }
-  }
-  lualine.status()
-EOF
-'''
+# [[plugins]]
+# repo = 'hoob3rt/lualine.nvim'
+# hook_add = '''
+# lua << EOF
+#   local lualine = require('lualine')
+#   lualine.options.theme = 'gruvbox'
+#   lualine.sections.lualine_z = { 
+#     {
+#       'diagnostics',
+#       sources = {'nvim_lsp'},
+#     },
+#     'location',
+#   }
+#   lualine.status()
+# EOF
+# '''
