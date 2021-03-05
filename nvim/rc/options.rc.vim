@@ -44,7 +44,7 @@ set hidden
 set list
 set listchars=tab:»\ ,trail:-,extends:»,precedes:«,nbsp:%
 set shortmess=aTIcF
-
+set number
 set relativenumber
 set signcolumn=yes
 set noshowmode
