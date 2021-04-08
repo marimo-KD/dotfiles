@@ -1,38 +1,15 @@
-# {{{ Deoplete
-# [[plugins]]
-# repo = 'Shougo/deoplete.nvim'
-# on_event = 'InsertEnter'
-# hook_source = '''
-#   let g:deoplete#enable_at_startup = 1
-# '''
-# hook_post_source = '''
-#   call deoplete#custom#option({
-#     \'auto_complete_delay': 0,
-#     \'auto_complete_start_length': 1,
-#     \'smart_case': v:true,
-#     \})
-# '''
-# 
-# [[plugins]]
-# repo = 'Shougo/deoplete-lsp'
-# on_source = 'nvim-lspconfig'
-# depends = 'deoplete.nvim'
-# 
-# [[plugins]]
-# repo = 'tbodt/deoplete-tabnine'
-# on_source = 'deoplete.nvim'
-# build = './install.sh'
-# }}}
-
 [[plugins]]
 repo = 'hrsh7th/nvim-compe'
 on_event = 'InsertEnter'
-depends = ['compe-tabnine']
+depends = ['compe-tabnine', 'vim-vsnip', 'lexima.vim']
 hook_source = '''
   set completeopt=menuone,noselect
 
+  " NOTE: Order is important. You can't lazy loading lexima.vim.
+  let g:lexima_no_default_rules = v:true
+  call lexima#set_default_rules()
   inoremap <silent><expr> <C-Space> compe#complete()
-  inoremap <silent><expr> <CR>      compe#confirm('<CR>')
+  inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<LT>CR>', 'i'))
   inoremap <silent><expr> <C-e>     compe#close('<C-e>')
   inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
   inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
@@ -60,6 +37,7 @@ hook_source = '''
 
   let g:compe.source.treesitter = v:true
   let g:compe.source.tabnine = v:true
+  let g:compe.source.vsnip = v:true
 '''
 
 [[plugins]]
@@ -68,13 +46,24 @@ repo = 'tzachar/compe-tabnine'
 
 
 [[plugins]]
+repo = 'cohama/lexima.vim'
+
+
+
+[[plugins]]
+repo = 'hrsh7th/vim-vsnip'
+build = 'sh -c "./install.sh"'
+
+
+
+[[plugins]]
 repo = 'nvim-telescope/telescope.nvim'
 on_command = 'Telescope'
 depends = ['popup.nvim', 'plenary.nvim', 'nvim-web-devicons']
 hook_add = '''
-  nnoremap <Space>g  <cmd>Telescope live_grep<CR>
-  nnoremap <Space>ff <cmd>Telescope find_files<CR>
-  nnoremap <Space>fb <cmd>Telescope buffers<CR>
+  nnoremap <Space>tg  <cmd>Telescope live_grep<CR>
+  nnoremap <Space>tf <cmd>Telescope find_files<CR>
+  nnoremap <Space>tb <cmd>Telescope buffers<CR>
 '''
 hook_post_source = '''
 lua << END_LUA
@@ -91,13 +80,15 @@ lua << END_LUA
         '--smart-case'
       },
       initial_mode = "normal",
-      winblend = 10,
+      winblend = 0,
       color_devicons = true,
-      use_less = true,
       file_previewer = require('telescope.previewers').vim_buffer_cat.new,
       grep_previewer = require('telescope.previewers').vim_buffer_vimgrep.new,
       qflist_previewer = require('telescope.previewers').vim_buffer_qflist.new,
       mappings = {
+          n = {
+            ["q"] = actions.close,
+          },
       },
     }
   }
@@ -118,71 +109,6 @@ on_event = ['FocusLost','CursorHold']
 [[plugins]]
 repo = 'kyazdani42/nvim-web-devicons'
 
-
-
-# {{{ Defx.nvim
-[[plugins]]
-repo = 'Shougo/defx.nvim'
-on_command = 'Defx'
-depends = 'defx-icons'
-hook_add = '''
-  nmap <Space>f :<C-u>Defx -split=vertical -listed -resume -auto-cd -winwidth=40<CR>
-  function! s:open_defx_if_directory()
-    try
-      let l:full_path = expand(expand('%:p'))
-    catch
-      return
-    endtry
-    if isdirectory(l:full_path)
-      execute "Defx `expand('%:p')` | bd " . expand('%:r')
-    endif
-  endfunction
-  augroup defx_config
-    autocmd!
-    autocmd BufEnter * call s:open_defx_if_directory()
-  augroup END
-'''
-hook_post_source = '''
-  call defx#custom#option('_', {'columns': 'indent:icons:filename:type'})
-'''
-[plugins.ftplugin]
-defx = '''
-  nnoremap <silent><buffer><expr> <CR> defx#async_action('drop')
-  nnoremap <silent><buffer><expr> o defx#do_action('open_or_close_tree')
-  nnoremap <silent><buffer><expr> v defx#do_action('drop', 'vsplit')
-  nnoremap <silent><buffer><expr> s defx#do_action('drop', 'split')
-
-  nnoremap <silent><buffer><expr> h defx#async_action('cd', ['..'])
-  nnoremap <silent><buffer><expr> ~ defx#async_action('cd')
-
-  nnoremap <silent><buffer><expr> nf defx#do_action('new_file')
-  nnoremap <silent><buffer><expr> nd defx#do_action('new_directory')
-
-  nnoremap <silent><buffer><expr> yy defx#do_action('copy')
-  nnoremap <silent><buffer><expr> m defx#do_action('move')
-  nnoremap <silent><buffer><expr> p defx#do_action('paste')
-
-  nnoremap <silent><buffer><expr> d defx#do_action('remove')
-  nnoremap <silent><buffer><expr> r defx#do_action('rename')
-  nnoremap <silent><buffer><expr> q defx#do_action('quit')
-  nnoremap <silent><buffer><expr> <ESC> defx#do_action('quit')
-'''
-
-[[plugins]]
-repo = 'kristijanhusak/defx-icons'
-hook_source = '''
-  let g:defx_icons_enable_syntax_highlight = 1
-  let g:defx_icons_column_length = 2
-  let g:defx_icons_directory_icon = ''
-  let g:defx_icons_mark_icon = '*'
-  let g:defx_icons_parent_icon = ''
-  let g:defx_icons_default_icon = ''
-  let g:defx_icons_directory_symlink_icon = ''
-  let g:defx_icons_root_opened_tree_icon = ''
-  let g:defx_icons_nested_opened_tree_icon = ''
-  let g:defx_icons_nested_closed_tree_icon = ''
-'''
-# }}}
 
 
 
@@ -223,29 +149,49 @@ EOF
 
 [[plugins]]
 repo = 'neovim/nvim-lspconfig'
-on_lua = 'lspconfig'
 hook_source = '''
 lua << EOF
   local nvim_lsp = require('lspconfig')
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, { virtual_text = false })
 EOF
-  augroup lsp_show_diagnostics_under_cursor
-    autocmd!
-    autocmd CursorMoved * lua vim.lsp.diagnostic.show_line_diagnostics()
-  augroup END
-  nnoremap <Space>gd <cmd>lua vim.lsp.buf.definition()<CR>
   nnoremap <Space>gi <cmd>lua vim.lsp.buf.implemention()<CR>
-  nnoremap <Space>r  <cmd>lua vim.lsp.buf.rename()<CR>
-  nnoremap <Space>h  <cmd>lua vim.lsp.buf.hover()<CR>
   nnoremap <Space>f  <cmd>lua vim.lsp.buf.formatting()<CR>
 '''
 [plugins.ftplugin]
 bash = "lua require('lspconfig').bashls.setup{}"
+sh = "lua require('lspconfig').bashls.setup{}"
 c = "lua require('lspconfig').clangd.setup{}"
 cpp = "lua require('lspconfig').clangd.setup{}"
-rust = "lua require('lspconfig').rust_analyzer.setup{}"
+rust = """
+lua << EOF
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities.textDocument.completion.completionItem.snippetSupport = true
+  require('lspconfig').rust_analyzer.setup{
+    capabilities = capabilities,
+  }
+EOF
+"""
 python = "lua require('lspconfig').pyls.setup{}"
 vim = "lua require('lspconfig').vimls.setup{}"
+
+
+
+[[plugins]]
+repo = 'glepnir/lspsaga.nvim'
+on_lua = 'lspconfig'
+depends = 'nvim-lspconfig'
+hook_source = '''
+  lua require('lspsaga').init_lsp_saga()
+  augroup lsp_show_diagnostics_under_cursor
+    autocmd!
+    autocmd CursorMoved * lua require('lspsaga.diagnostic').show_line_diagnostics()
+  augroup END
+  nnoremap <Space>gd <cmd>lua require('lspsaga.provider').preview_definition()<CR>
+  nnoremap <Space>ca <cmd>lua require('lspsaga.codeaction').code_action()<CR>
+  vnoremap <Space>ca <cmd>'<,'>lua require('lspsaga.codeaction').range_code_action()<CR>
+  nnoremap <Space>r  <cmd>lua require('lspsaga.rename').rename()<CR>
+  nnoremap <Space>h  <cmd>lua require('lspsaga.hover').render_hover_doc()<CR>
+'''
 
 
 
@@ -275,18 +221,9 @@ hook_source = '''
 
 
 [[plugins]]
-repo = 'previm/previm'
-on_command = 'PrevimOpen'
-depends = 'open-browser.vim'
-hook_source = '''
-  let g:previm_enable_realtime = 1
-'''
-
-
-
-[[plugins]]
-repo = "tyru/open-browser.vim"
-on_command = 'OpenBrowser'
+repo = 'iamcco/markdown-preview.nvim'
+on_command = 'MarkdownPreview'
+build = 'sh -c "cd app && yarn install"'
 
 
 
@@ -295,22 +232,36 @@ on_command = 'OpenBrowser'
 repo = 'rhysd/clever-f.vim'
 on_map = { nxo = '<Plug>'}
 hook_add = '''
-    nmap f <Plug>(clever-f-f)
-    xmap f <Plug>(clever-f-f)
-    omap f <Plug>(clever-f-f)
-    nmap F <Plug>(clever-f-F)
-    xmap F <Plug>(clever-f-F)
-    omap F <Plug>(clever-f-F)
-    nmap t <Plug>(clever-f-t)
-    xmap t <Plug>(clever-f-t)
-    omap t <Plug>(clever-f-t)
-    nmap T <Plug>(clever-f-T)
-    xmap T <Plug>(clever-f-T)
-    omap T <Plug>(clever-f-T)
+  nmap f <Plug>(clever-f-f)
+  xmap f <Plug>(clever-f-f)
+  omap f <Plug>(clever-f-f)
+  nmap F <Plug>(clever-f-F)
+  xmap F <Plug>(clever-f-F)
+  omap F <Plug>(clever-f-F)
+  nmap t <Plug>(clever-f-t)
+  xmap t <Plug>(clever-f-t)
+  omap t <Plug>(clever-f-t)
+  nmap T <Plug>(clever-f-T)
+  xmap T <Plug>(clever-f-T)
+  omap T <Plug>(clever-f-T)
 '''
 hook_source = '''
   let g:clever_f_smart_case=1
   let g:clever_f_use_migemo=1
+'''
+
+
+
+[[plugins]]
+repo = 'monaqa/dial.nvim'
+on_map = { nv = '<Plug>' }
+hook_add = '''
+  nmap <C-a> <Plug>(dial-increment)
+  nmap <C-x> <Plug>(dial-decrement)
+  vmap <C-a> <Plug>(dial-increment)
+  vmap <C-x> <Plug>(dial-decrement)
+  vmap g<C-a> <Plug>(dial-increment-additional)
+  vmap g<C-x> <Plug>(dial-decrement-additional)
 '''
 
 
@@ -325,16 +276,5 @@ hook_add = '''
   nmap <silent>sr <Plug>(operator-surround-replace)
 '''
 
-
-
 [[plugins]]
 repo = 'kana/vim-operator-user'
-
-
-
-[[plugins]]
-repo = 'lambdalisue/suda.vim'
-on_event = 'BufRead'
-hook_source = '''
-  let g:suda_smart_edit = 1
-'''

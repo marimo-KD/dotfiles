@@ -1,0 +1,5 @@
+partial modifier_keys
+xkb_symbols "fix-modi" {
+  replace key <HKTG> { [ Super_R ] };
+  replace key <MUHE> { [ Alt_L ] };
+};

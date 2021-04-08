@@ -2197,3 +2197,1738 @@ times in msec
 037.630  000.120: before starting main loop
 051.055  013.425: first screen update
 051.061  000.006: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.027  000.027: --- NVIM STARTING ---
+000.592  000.566: locale set
+000.954  000.362: inits 1
+000.970  000.016: window checked
+000.974  000.004: parsing arguments
+001.022  000.048: expanding arguments
+001.063  000.041: inits 2
+001.492  000.429: init highlight
+001.493  000.001: waiting for UI
+002.633  001.140: done waiting for UI
+002.714  000.081: initialized screen early for UI
+002.866  000.017  000.017: sourcing /usr/share/nvim/archlinux.vim
+002.872  000.050  000.033: sourcing /etc/xdg//nvim/sysinit.vim
+003.031  000.025  000.025: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+003.308  000.151  000.151: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+005.407  000.027  000.027: sourcing /usr/share/nvim/runtime/ftoff.vim
+006.361  000.368  000.368: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/autoload.vim
+007.058  000.480  000.480: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/util.vim
+013.438  008.547  007.672: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+013.468  010.388  001.691: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+024.769  000.318  000.318: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+030.133  016.593  016.275: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox.vim
+039.785  000.427  000.427: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+044.127  012.126  011.699: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox.vim
+053.022  000.053  000.053: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+053.116  000.013  000.013: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+053.291  008.259  008.193: sourcing /usr/share/nvim/runtime/filetype.vim
+053.501  000.035  000.035: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+053.533  000.011  000.011: sourcing /usr/share/nvim/runtime/ftplugin.vim
+053.746  000.031  000.031: sourcing /usr/share/nvim/runtime/indent.vim
+061.389  000.358  000.358: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+064.221  000.565  000.565: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+068.777  014.752  013.829: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox.vim
+069.766  015.800  001.048: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+069.798  015.890  000.091: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+070.583  000.502  000.502: sourcing /usr/share/nvim/runtime/scripts.vim
+070.792  067.887  004.026: sourcing /home/marimo-kd/.config/nvim/init.vim
+070.797  000.146: sourcing vimrc file(s)
+071.052  000.041  000.041: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/lush.vim
+071.104  000.035  000.035: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+071.321  000.014  000.014: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+071.346  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/health.vim
+071.369  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/man.vim
+071.393  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+071.419  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+071.449  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+071.471  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+071.495  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+071.530  000.022  000.022: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+071.560  000.015  000.015: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+071.591  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+071.625  000.020  000.020: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+071.658  000.019  000.019: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+071.791  000.021  000.021: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+071.797  000.720: loading plugins
+071.980  000.184: loading packages
+072.100  000.120: loading after plugins
+072.120  000.020: inits 3
+072.347  000.226: opening buffers
+072.503  000.156: BufEnter autocommands
+072.506  000.003: editing files in windows
+072.510  000.004: VimEnter autocommands
+072.512  000.002: UIEnter autocommands
+072.805  000.242  000.242: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+072.813  000.058: before starting main loop
+081.557  008.744: first screen update
+081.569  000.012: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.005  000.005: --- NVIM STARTING ---
+000.281  000.276: locale set
+000.596  000.315: inits 1
+000.624  000.028: window checked
+000.628  000.004: parsing arguments
+000.703  000.075: expanding arguments
+000.762  000.059: inits 2
+001.579  000.818: init highlight
+001.586  000.007: waiting for UI
+002.876  001.290: done waiting for UI
+002.957  000.081: initialized screen early for UI
+003.241  000.029  000.029: sourcing /usr/share/nvim/archlinux.vim
+003.251  000.081  000.052: sourcing /etc/xdg//nvim/sysinit.vim
+003.538  000.054  000.054: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+004.345  000.421  000.421: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+007.284  000.044  000.044: sourcing /usr/share/nvim/runtime/ftoff.vim
+008.078  000.213  000.213: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/autoload.vim
+008.640  000.397  000.397: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/util.vim
+013.947  007.272  006.618: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+013.971  010.281  002.587: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+015.339  001.312  001.312: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+017.282  001.183  001.183: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+027.082  000.054  000.054: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+027.214  000.015  000.015: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+027.396  008.523  008.454: sourcing /usr/share/nvim/runtime/filetype.vim
+027.610  000.035  000.035: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+027.641  000.011  000.011: sourcing /usr/share/nvim/runtime/ftplugin.vim
+027.848  000.030  000.030: sourcing /usr/share/nvim/runtime/indent.vim
+028.708  000.208  000.208: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+030.214  002.087  001.879: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+031.189  003.125  001.039: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+031.234  003.229  000.104: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+032.062  000.508  000.508: sourcing /usr/share/nvim/runtime/scripts.vim
+032.299  028.996  003.832: sourcing /home/marimo-kd/.config/nvim/init.vim
+032.304  000.270: sourcing vimrc file(s)
+032.542  000.037  000.037: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+032.759  000.014  000.014: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+032.785  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/health.vim
+032.807  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/man.vim
+032.831  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+032.856  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+032.892  000.020  000.020: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+032.914  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+032.934  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+032.969  000.022  000.022: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+033.000  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+033.026  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+033.050  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+033.080  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+033.167  000.018  000.018: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+033.171  000.645: loading plugins
+033.278  000.107: loading packages
+033.379  000.102: loading after plugins
+033.391  000.012: inits 3
+033.612  000.221: opening buffers
+033.785  000.173: BufEnter autocommands
+033.788  000.003: editing files in windows
+033.792  000.004: VimEnter autocommands
+033.794  000.002: UIEnter autocommands
+034.185  000.342  000.342: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+034.234  000.098: before starting main loop
+046.353  012.119: first screen update
+046.359  000.006: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.008  000.008: --- NVIM STARTING ---
+000.319  000.311: locale set
+000.709  000.390: inits 1
+000.727  000.017: window checked
+000.730  000.003: parsing arguments
+000.784  000.054: expanding arguments
+000.839  000.055: inits 2
+001.405  000.566: init highlight
+001.407  000.002: waiting for UI
+002.658  001.251: done waiting for UI
+002.741  000.083: initialized screen early for UI
+002.893  000.018  000.018: sourcing /usr/share/nvim/archlinux.vim
+002.899  000.052  000.034: sourcing /etc/xdg//nvim/sysinit.vim
+003.069  000.030  000.030: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+003.441  000.206  000.206: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+005.598  000.027  000.027: sourcing /usr/share/nvim/runtime/ftoff.vim
+006.685  000.455  000.455: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/autoload.vim
+007.897  000.836  000.836: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/util.vim
+015.283  010.212  008.894: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+015.314  012.173  001.754: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+016.771  001.389  001.389: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+018.796  001.292  001.292: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+027.330  000.061  000.061: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+027.438  000.014  000.014: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+027.636  008.001  007.925: sourcing /usr/share/nvim/runtime/filetype.vim
+027.889  000.041  000.041: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+027.925  000.012  000.012: sourcing /usr/share/nvim/runtime/ftplugin.vim
+028.160  000.038  000.038: sourcing /usr/share/nvim/runtime/indent.vim
+029.127  000.224  000.224: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+030.291  001.814  001.590: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+031.189  002.781  000.968: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+031.223  002.882  000.101: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+032.107  000.543  000.543: sourcing /usr/share/nvim/runtime/scripts.vim
+032.319  029.393  002.994: sourcing /home/marimo-kd/.config/nvim/init.vim
+032.323  000.137: sourcing vimrc file(s)
+032.563  000.038  000.038: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+032.787  000.014  000.014: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+032.814  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/health.vim
+032.837  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/man.vim
+032.863  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+032.888  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+032.925  000.021  000.021: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+032.948  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+032.970  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+033.006  000.022  000.022: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+033.036  000.015  000.015: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+033.064  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+033.088  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+033.119  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+033.201  000.017  000.017: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+033.205  000.655: loading plugins
+033.309  000.104: loading packages
+033.407  000.098: loading after plugins
+033.419  000.011: inits 3
+033.658  000.239: opening buffers
+033.847  000.189: BufEnter autocommands
+033.850  000.003: editing files in windows
+033.855  000.005: VimEnter autocommands
+033.857  000.002: UIEnter autocommands
+034.146  000.236  000.236: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+034.184  000.091: before starting main loop
+042.879  008.695: first screen update
+042.885  000.006: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.024  000.024: --- NVIM STARTING ---
+000.842  000.818: locale set
+001.431  000.589: inits 1
+001.456  000.024: window checked
+001.460  000.004: parsing arguments
+001.533  000.073: expanding arguments
+001.591  000.058: inits 2
+002.168  000.576: init highlight
+002.172  000.004: waiting for UI
+003.364  001.192: done waiting for UI
+003.424  000.061: initialized screen early for UI
+003.649  000.027  000.027: sourcing /usr/share/nvim/archlinux.vim
+003.660  000.076  000.049: sourcing /etc/xdg//nvim/sysinit.vim
+003.927  000.050  000.050: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+004.324  000.235  000.235: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+007.764  000.059  000.059: sourcing /usr/share/nvim/runtime/ftoff.vim
+008.753  001.958  001.899: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+008.797  004.809  002.616: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+011.559  002.625  002.625: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+014.389  002.692  002.692: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+028.733  000.100  000.100: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+028.939  000.047  000.047: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+029.338  014.634  014.487: sourcing /usr/share/nvim/runtime/filetype.vim
+029.833  000.086  000.086: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+029.890  000.020  000.020: sourcing /usr/share/nvim/runtime/ftplugin.vim
+030.392  000.080  000.080: sourcing /usr/share/nvim/runtime/indent.vim
+032.385  000.548  000.548: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+035.008  004.033  003.485: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+035.218  004.370  000.337: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+035.273  004.545  000.175: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+036.862  000.991  000.991: sourcing /usr/share/nvim/runtime/scripts.vim
+037.327  033.631  003.099: sourcing /home/marimo-kd/.config/nvim/init.vim
+037.338  000.207: sourcing vimrc file(s)
+037.830  000.077  000.077: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+038.241  000.029  000.029: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+038.289  000.020  000.020: sourcing /usr/share/nvim/runtime/plugin/health.vim
+038.329  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/man.vim
+038.375  000.023  000.023: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+038.420  000.022  000.022: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+038.484  000.041  000.041: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+038.527  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+038.568  000.018  000.018: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+038.635  000.043  000.043: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+038.698  000.030  000.030: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+038.746  000.021  000.021: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+038.785  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+038.852  000.034  000.034: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+039.033  000.031  000.031: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+039.042  001.264: loading plugins
+039.273  000.231: loading packages
+039.493  000.220: loading after plugins
+039.521  000.028: inits 3
+039.881  000.359: opening buffers
+039.893  000.012: BufEnter autocommands
+039.896  000.003: editing files in windows
+039.905  000.008: VimEnter autocommands
+039.908  000.004: UIEnter autocommands
+040.455  000.427  000.427: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+040.471  000.135: before starting main loop
+042.013  001.542: first screen update
+042.023  000.009: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.007  000.007: --- NVIM STARTING ---
+000.255  000.247: locale set
+000.599  000.344: inits 1
+000.613  000.014: window checked
+000.616  000.002: parsing arguments
+000.662  000.046: expanding arguments
+000.707  000.045: inits 2
+001.122  000.415: init highlight
+001.123  000.001: waiting for UI
+002.178  001.054: done waiting for UI
+002.235  000.058: initialized screen early for UI
+002.404  000.017  000.017: sourcing /usr/share/nvim/archlinux.vim
+002.411  000.053  000.036: sourcing /etc/xdg//nvim/sysinit.vim
+002.590  000.032  000.032: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+002.942  000.193  000.193: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+005.702  000.040  000.040: sourcing /usr/share/nvim/runtime/ftoff.vim
+006.367  001.561  001.522: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+006.395  003.748  001.993: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+008.075  001.593  001.593: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+009.979  001.793  001.793: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+019.669  000.060  000.060: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+019.779  000.015  000.015: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+019.975  009.889  009.814: sourcing /usr/share/nvim/runtime/filetype.vim
+020.197  000.040  000.040: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+020.230  000.012  000.012: sourcing /usr/share/nvim/runtime/ftplugin.vim
+020.445  000.033  000.033: sourcing /usr/share/nvim/runtime/indent.vim
+021.327  000.214  000.214: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+022.446  001.706  001.492: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+022.543  001.865  000.158: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+022.573  001.955  000.090: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+023.449  000.585  000.585: sourcing /usr/share/nvim/runtime/scripts.vim
+023.764  021.328  001.650: sourcing /home/marimo-kd/.config/nvim/init.vim
+023.773  000.156: sourcing vimrc file(s)
+024.176  000.063  000.063: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+024.481  000.032  000.032: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+024.527  000.019  000.019: sourcing /usr/share/nvim/runtime/plugin/health.vim
+024.567  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/man.vim
+024.609  000.018  000.018: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+024.639  000.013  000.013: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+024.674  000.021  000.021: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+024.704  000.014  000.014: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+024.743  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+024.808  000.039  000.039: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+024.864  000.029  000.029: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+024.907  000.019  000.019: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+024.942  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+024.978  000.018  000.018: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+025.089  000.028  000.028: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+025.097  000.964: loading plugins
+025.237  000.141: loading packages
+025.371  000.134: loading after plugins
+025.391  000.020: inits 3
+025.726  000.336: opening buffers
+025.731  000.005: BufEnter autocommands
+025.733  000.002: editing files in windows
+025.740  000.007: VimEnter autocommands
+025.742  000.002: UIEnter autocommands
+026.174  000.371  000.371: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+026.184  000.071: before starting main loop
+027.118  000.934: first screen update
+027.123  000.005: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.009  000.009: --- NVIM STARTING ---
+000.269  000.260: locale set
+000.602  000.334: inits 1
+000.617  000.014: window checked
+000.619  000.003: parsing arguments
+000.665  000.046: expanding arguments
+000.705  000.040: inits 2
+001.530  000.825: init highlight
+001.535  000.005: waiting for UI
+002.681  001.146: done waiting for UI
+002.743  000.062: initialized screen early for UI
+002.916  000.016  000.016: sourcing /usr/share/nvim/archlinux.vim
+002.922  000.048  000.032: sourcing /etc/xdg//nvim/sysinit.vim
+003.077  000.026  000.026: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+003.377  000.173  000.173: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+005.534  000.031  000.031: sourcing /usr/share/nvim/runtime/ftoff.vim
+006.023  001.023  000.992: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+006.041  002.914  001.718: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+007.519  001.426  001.426: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+010.754  003.065  003.065: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+019.859  000.060  000.060: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+019.967  000.014  000.014: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+020.146  009.196  009.123: sourcing /usr/share/nvim/runtime/filetype.vim
+020.422  000.050  000.050: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+020.471  000.017  000.017: sourcing /usr/share/nvim/runtime/ftplugin.vim
+020.850  000.062  000.062: sourcing /usr/share/nvim/runtime/indent.vim
+021.870  000.245  000.245: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+023.216  002.025  001.780: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+023.317  002.188  000.163: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+023.353  002.287  000.099: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+025.071  001.324  001.324: sourcing /usr/share/nvim/runtime/scripts.vim
+026.991  001.085  001.085: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+027.071  024.126  002.674: sourcing /home/marimo-kd/.config/nvim/init.vim
+027.081  000.165: sourcing vimrc file(s)
+027.817  000.124  000.124: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+028.252  000.037  000.037: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+028.324  000.031  000.031: sourcing /usr/share/nvim/runtime/plugin/health.vim
+028.402  000.029  000.029: sourcing /usr/share/nvim/runtime/plugin/man.vim
+028.462  000.028  000.028: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+028.508  000.020  000.020: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+028.579  000.048  000.048: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+028.627  000.020  000.020: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+028.676  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+028.725  000.030  000.030: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+028.759  000.018  000.018: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+028.792  000.013  000.013: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+028.816  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+028.848  000.018  000.018: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+028.944  000.018  000.018: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+028.949  001.408: loading plugins
+029.113  000.165: loading packages
+029.314  000.201: loading after plugins
+029.397  000.082: inits 3
+030.080  000.683: opening buffers
+036.591  006.511: BufEnter autocommands
+036.603  000.011: editing files in windows
+044.745  008.143: VimEnter autocommands
+044.762  000.017: UIEnter autocommands
+045.733  000.830  000.830: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+045.784  000.192: before starting main loop
+049.013  003.229: first screen update
+049.020  000.007: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.019  000.019: --- NVIM STARTING ---
+001.145  001.126: locale set
+002.077  000.932: inits 1
+002.133  000.056: window checked
+002.143  000.010: parsing arguments
+002.309  000.166: expanding arguments
+002.453  000.144: inits 2
+003.240  000.787: init highlight
+003.254  000.014: waiting for UI
+005.025  001.771: done waiting for UI
+005.291  000.266: initialized screen early for UI
+005.591  000.025  000.025: sourcing /usr/share/nvim/archlinux.vim
+005.603  000.073  000.048: sourcing /etc/xdg//nvim/sysinit.vim
+005.779  000.029  000.029: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+006.292  000.208  000.208: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+009.621  000.032  000.032: sourcing /usr/share/nvim/runtime/ftoff.vim
+010.145  001.139  001.106: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+010.166  004.297  002.951: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+011.566  001.341  001.341: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+012.704  001.081  001.081: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+022.439  000.057  000.057: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+022.578  000.015  000.015: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+022.942  010.188  010.116: sourcing /usr/share/nvim/runtime/filetype.vim
+023.599  000.104  000.104: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+023.675  000.026  000.026: sourcing /usr/share/nvim/runtime/ftplugin.vim
+024.082  000.108  000.108: sourcing /usr/share/nvim/runtime/indent.vim
+025.581  000.263  000.263: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+026.821  002.257  001.994: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+026.915  002.480  000.223: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+026.944  002.584  000.104: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+027.814  000.568  000.568: sourcing /usr/share/nvim/runtime/scripts.vim
+028.384  000.294  000.294: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+028.399  022.761  002.141: sourcing /home/marimo-kd/.config/nvim/init.vim
+028.403  000.277: sourcing vimrc file(s)
+028.643  000.037  000.037: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+028.882  000.014  000.014: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+028.908  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/health.vim
+028.930  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/man.vim
+028.954  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+028.978  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+029.009  000.018  000.018: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+029.032  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+029.087  000.022  000.022: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+029.125  000.022  000.022: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+029.155  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+029.182  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+029.204  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+029.233  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+029.316  000.017  000.017: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+029.320  000.683: loading plugins
+029.423  000.103: loading packages
+029.520  000.098: loading after plugins
+029.532  000.012: inits 3
+029.752  000.220: opening buffers
+035.849  006.097: BufEnter autocommands
+035.860  000.011: editing files in windows
+046.855  010.996: VimEnter autocommands
+046.868  000.013: UIEnter autocommands
+047.268  000.324  000.324: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+047.281  000.090: before starting main loop
+048.749  001.467: first screen update
+048.756  000.007: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.010  000.010: --- NVIM STARTING ---
+000.380  000.370: locale set
+000.880  000.500: inits 1
+000.902  000.022: window checked
+000.906  000.004: parsing arguments
+000.977  000.070: expanding arguments
+001.039  000.062: inits 2
+001.636  000.597: init highlight
+001.640  000.004: waiting for UI
+003.085  001.445: done waiting for UI
+003.157  000.072: initialized screen early for UI
+003.359  000.018  000.018: sourcing /usr/share/nvim/archlinux.vim
+003.365  000.051  000.033: sourcing /etc/xdg//nvim/sysinit.vim
+003.510  000.064  000.064: sourcing /usr/share/nvim/runtime/ftoff.vim
+004.103  000.050  000.050: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+004.583  000.203  000.203: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+007.481  000.032  000.032: sourcing /usr/share/nvim/runtime/ftoff.vim
+008.258  001.499  001.467: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+008.294  004.090  002.388: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+010.779  002.379  002.379: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+013.173  002.231  002.231: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+023.452  000.057  000.057: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+023.591  000.015  000.015: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+023.944  010.546  010.474: sourcing /usr/share/nvim/runtime/filetype.vim
+024.339  000.059  000.059: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+024.394  000.020  000.020: sourcing /usr/share/nvim/runtime/ftplugin.vim
+024.825  000.064  000.064: sourcing /usr/share/nvim/runtime/indent.vim
+026.681  000.454  000.454: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+029.295  003.917  003.463: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+029.507  004.262  000.345: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+029.576  004.470  000.208: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+031.044  000.727  000.727: sourcing /usr/share/nvim/runtime/scripts.vim
+032.276  000.700  000.700: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+032.321  028.931  003.530: sourcing /home/marimo-kd/.config/nvim/init.vim
+032.328  000.190: sourcing vimrc file(s)
+032.728  000.094  000.094: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+033.036  000.026  000.026: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+033.075  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/health.vim
+033.102  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/man.vim
+033.135  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+033.165  000.014  000.014: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+033.215  000.034  000.034: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+033.249  000.015  000.015: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+033.294  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+033.350  000.038  000.038: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+033.390  000.023  000.023: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+033.433  000.020  000.020: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+033.463  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+033.502  000.023  000.023: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+033.618  000.023  000.023: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+033.624  000.919: loading plugins
+033.791  000.167: loading packages
+033.954  000.162: loading after plugins
+033.980  000.026: inits 3
+034.353  000.373: opening buffers
+043.032  008.679: BufEnter autocommands
+043.048  000.017: editing files in windows
+053.676  010.627: VimEnter autocommands
+053.711  000.036: UIEnter autocommands
+054.549  000.605  000.605: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+054.577  000.262: before starting main loop
+056.940  002.363: first screen update
+056.971  000.030: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.011  000.011: --- NVIM STARTING ---
+000.342  000.331: locale set
+000.706  000.363: inits 1
+000.720  000.015: window checked
+000.723  000.003: parsing arguments
+000.770  000.047: expanding arguments
+000.814  000.044: inits 2
+001.271  000.457: init highlight
+001.273  000.002: waiting for UI
+003.278  002.005: done waiting for UI
+003.520  000.242: initialized screen early for UI
+003.986  000.038  000.038: sourcing /usr/share/nvim/archlinux.vim
+004.007  000.100  000.061: sourcing /etc/xdg//nvim/sysinit.vim
+004.297  000.091  000.091: sourcing /usr/share/nvim/runtime/ftoff.vim
+005.219  000.094  000.094: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+005.962  000.296  000.296: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+010.321  000.088  000.088: sourcing /usr/share/nvim/runtime/ftoff.vim
+010.924  001.889  001.800: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+010.945  005.512  003.328: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+012.180  001.178  001.178: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+013.322  001.091  001.091: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+022.158  000.089  000.089: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+022.373  000.054  000.054: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+022.937  009.566  009.423: sourcing /usr/share/nvim/runtime/filetype.vim
+023.596  000.106  000.106: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+023.695  000.040  000.040: sourcing /usr/share/nvim/runtime/ftplugin.vim
+024.355  000.121  000.121: sourcing /usr/share/nvim/runtime/indent.vim
+025.792  000.304  000.304: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+027.086  002.142  001.838: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+027.183  002.378  000.235: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+027.211  002.527  000.150: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+028.015  000.532  000.532: sourcing /usr/share/nvim/runtime/scripts.vim
+028.611  000.314  000.314: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+028.627  024.527  003.356: sourcing /home/marimo-kd/.config/nvim/init.vim
+028.631  000.484: sourcing vimrc file(s)
+028.874  000.038  000.038: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+029.120  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+029.149  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/health.vim
+029.172  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/man.vim
+029.198  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+029.224  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+029.257  000.019  000.019: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+029.284  000.014  000.014: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+029.309  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+029.347  000.024  000.024: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+029.389  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+029.418  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+029.440  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+029.471  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+029.552  000.017  000.017: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+029.556  000.692: loading plugins
+029.662  000.106: loading packages
+029.760  000.098: loading after plugins
+029.772  000.012: inits 3
+030.000  000.227: opening buffers
+037.808  007.809: BufEnter autocommands
+037.856  000.048: editing files in windows
+047.503  009.647: VimEnter autocommands
+047.513  000.010: UIEnter autocommands
+047.917  000.326  000.326: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+047.935  000.096: before starting main loop
+049.740  001.804: first screen update
+049.749  000.009: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.024  000.024: --- NVIM STARTING ---
+000.541  000.517: locale set
+000.955  000.414: inits 1
+000.971  000.015: window checked
+000.973  000.003: parsing arguments
+001.021  000.048: expanding arguments
+001.061  000.040: inits 2
+001.496  000.435: init highlight
+001.497  000.001: waiting for UI
+002.526  001.029: done waiting for UI
+002.585  000.059: initialized screen early for UI
+002.766  000.022  000.022: sourcing /usr/share/nvim/archlinux.vim
+002.773  000.059  000.038: sourcing /etc/xdg//nvim/sysinit.vim
+002.873  000.030  000.030: sourcing /usr/share/nvim/runtime/ftoff.vim
+003.180  000.026  000.026: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+003.551  000.246  000.246: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+006.814  000.101  000.101: sourcing /usr/share/nvim/runtime/ftoff.vim
+009.629  004.081  003.979: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+009.675  006.446  002.119: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+011.788  001.996  001.996: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+013.188  001.251  001.251: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+020.701  000.056  000.056: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+020.814  000.014  000.014: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+021.104  007.800  007.730: sourcing /usr/share/nvim/runtime/filetype.vim
+021.369  000.045  000.045: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+021.406  000.013  000.013: sourcing /usr/share/nvim/runtime/ftplugin.vim
+021.643  000.035  000.035: sourcing /usr/share/nvim/runtime/indent.vim
+023.197  000.400  000.400: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+025.086  003.005  002.604: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+025.316  003.340  000.336: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+025.374  003.523  000.182: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+027.318  001.259  001.259: sourcing /usr/share/nvim/runtime/scripts.vim
+028.368  000.327  000.327: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+028.403  025.606  002.855: sourcing /home/marimo-kd/.config/nvim/init.vim
+028.409  000.159: sourcing vimrc file(s)
+028.787  000.097  000.097: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+029.103  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+029.134  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/health.vim
+029.157  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/man.vim
+029.184  000.013  000.013: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+029.208  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+029.242  000.020  000.020: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+029.265  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+029.291  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+029.330  000.024  000.024: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+029.374  000.025  000.025: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+029.413  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+029.455  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+029.524  000.045  000.045: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+029.700  000.032  000.032: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+029.710  000.945: loading plugins
+029.839  000.128: loading packages
+029.994  000.155: loading after plugins
+030.022  000.028: inits 3
+030.520  000.499: opening buffers
+030.532  000.012: BufEnter autocommands
+030.535  000.003: editing files in windows
+030.548  000.013: VimEnter autocommands
+030.552  000.004: UIEnter autocommands
+030.862  000.235  000.235: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+030.870  000.083: before starting main loop
+032.008  001.137: first screen update
+032.012  000.005: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.031  000.031: --- NVIM STARTING ---
+000.837  000.807: locale set
+001.803  000.966: inits 1
+001.866  000.064: window checked
+001.877  000.011: parsing arguments
+002.091  000.214: expanding arguments
+002.214  000.124: inits 2
+003.270  001.055: init highlight
+003.283  000.013: waiting for UI
+005.591  002.308: done waiting for UI
+005.647  000.056: initialized screen early for UI
+005.859  000.026  000.026: sourcing /usr/share/nvim/archlinux.vim
+005.867  000.072  000.046: sourcing /etc/xdg//nvim/sysinit.vim
+006.051  000.053  000.053: sourcing /usr/share/nvim/runtime/ftoff.vim
+006.689  000.118  000.118: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+007.132  000.189  000.189: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+011.145  000.049  000.049: sourcing /usr/share/nvim/runtime/ftoff.vim
+012.002  001.831  001.783: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+012.038  005.248  003.227: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+014.219  002.099  002.099: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+016.893  002.506  002.506: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+032.768  000.125  000.125: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+033.139  000.055  000.055: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+033.761  016.547  016.367: sourcing /usr/share/nvim/runtime/filetype.vim
+034.728  000.175  000.175: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+034.884  000.053  000.053: sourcing /usr/share/nvim/runtime/ftplugin.vim
+035.677  000.126  000.126: sourcing /usr/share/nvim/runtime/indent.vim
+039.351  001.403  001.403: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+043.454  006.757  005.354: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+043.716  007.262  000.505: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+043.776  007.535  000.273: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+045.424  001.038  001.038: sourcing /usr/share/nvim/runtime/scripts.vim
+046.236  000.280  000.280: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+046.274  040.362  004.584: sourcing /home/marimo-kd/.config/nvim/init.vim
+046.283  000.203: sourcing vimrc file(s)
+046.823  000.079  000.079: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+047.260  000.030  000.030: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+047.309  000.020  000.020: sourcing /usr/share/nvim/runtime/plugin/health.vim
+047.353  000.020  000.020: sourcing /usr/share/nvim/runtime/plugin/man.vim
+047.402  000.025  000.025: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+047.450  000.023  000.023: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+047.515  000.041  000.041: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+047.555  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+047.597  000.015  000.015: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+047.669  000.047  000.047: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+047.727  000.034  000.034: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+047.773  000.022  000.022: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+047.818  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+047.879  000.036  000.036: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+048.045  000.032  000.032: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+048.053  001.314: loading plugins
+048.223  000.170: loading packages
+048.374  000.151: loading after plugins
+048.395  000.021: inits 3
+048.753  000.358: opening buffers
+048.763  000.010: BufEnter autocommands
+048.766  000.003: editing files in windows
+048.776  000.011: VimEnter autocommands
+048.780  000.003: UIEnter autocommands
+049.352  000.468  000.468: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+049.369  000.122: before starting main loop
+052.637  003.268: first screen update
+052.646  000.009: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.028  000.028: --- NVIM STARTING ---
+000.424  000.395: locale set
+000.758  000.334: inits 1
+000.773  000.015: window checked
+000.776  000.003: parsing arguments
+000.823  000.048: expanding arguments
+000.865  000.041: inits 2
+001.295  000.430: init highlight
+001.296  000.001: waiting for UI
+002.704  001.408: done waiting for UI
+002.778  000.074: initialized screen early for UI
+002.962  000.019  000.019: sourcing /usr/share/nvim/archlinux.vim
+002.969  000.055  000.036: sourcing /etc/xdg//nvim/sysinit.vim
+003.125  000.055  000.055: sourcing /usr/share/nvim/runtime/ftoff.vim
+003.490  000.028  000.028: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+003.795  000.153  000.153: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+006.172  000.065  000.065: sourcing /usr/share/nvim/runtime/ftoff.vim
+006.994  001.504  001.439: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+007.039  003.474  001.817: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+018.612  000.066  000.066: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+018.716  000.014  000.014: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+018.900  011.794  011.715: sourcing /usr/share/nvim/runtime/filetype.vim
+019.119  000.040  000.040: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+019.153  000.012  000.012: sourcing /usr/share/nvim/runtime/ftplugin.vim
+019.365  000.034  000.034: sourcing /usr/share/nvim/runtime/indent.vim
+019.976  000.319  000.319: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+020.215  000.619  000.301: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+020.243  000.707  000.087: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+021.090  000.613  000.613: sourcing /usr/share/nvim/runtime/scripts.vim
+021.683  000.234  000.234: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+021.727  018.722  001.730: sourcing /home/marimo-kd/.config/nvim/init.vim
+021.736  000.181: sourcing vimrc file(s)
+022.141  000.077  000.077: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+022.424  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+022.452  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/health.vim
+022.475  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/man.vim
+022.508  000.018  000.018: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+022.547  000.013  000.013: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+022.584  000.021  000.021: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+022.606  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+022.630  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+022.669  000.024  000.024: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+022.701  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+022.725  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+022.746  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+022.778  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+022.860  000.017  000.017: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+022.864  000.851: loading plugins
+022.971  000.107: loading packages
+023.069  000.098: loading after plugins
+023.082  000.013: inits 3
+023.319  000.237: opening buffers
+023.323  000.005: BufEnter autocommands
+023.325  000.002: editing files in windows
+023.332  000.007: VimEnter autocommands
+023.333  000.002: UIEnter autocommands
+023.641  000.256  000.256: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+023.648  000.059: before starting main loop
+025.392  001.743: first screen update
+025.411  000.019: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.008  000.008: --- NVIM STARTING ---
+000.502  000.493: locale set
+001.030  000.529: inits 1
+001.061  000.031: window checked
+001.067  000.006: parsing arguments
+001.172  000.105: expanding arguments
+001.273  000.101: inits 2
+001.738  000.465: init highlight
+001.740  000.002: waiting for UI
+002.817  001.077: done waiting for UI
+002.890  000.073: initialized screen early for UI
+003.108  000.028  000.028: sourcing /usr/share/nvim/archlinux.vim
+003.118  000.078  000.050: sourcing /etc/xdg//nvim/sysinit.vim
+003.290  000.050  000.050: sourcing /usr/share/nvim/runtime/ftoff.vim
+003.713  000.061  000.061: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+004.094  000.150  000.150: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+006.262  000.024  000.024: sourcing /usr/share/nvim/runtime/ftoff.vim
+006.800  001.093  001.068: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+006.819  003.000  001.757: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+017.024  000.086  000.086: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+017.162  000.014  000.014: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+017.371  010.499  010.398: sourcing /usr/share/nvim/runtime/filetype.vim
+017.670  000.075  000.075: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+017.738  000.021  000.021: sourcing /usr/share/nvim/runtime/ftplugin.vim
+018.068  000.065  000.065: sourcing /usr/share/nvim/runtime/indent.vim
+018.840  000.338  000.338: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+019.093  000.678  000.340: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+019.122  000.816  000.138: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+019.908  000.521  000.521: sourcing /usr/share/nvim/runtime/scripts.vim
+020.294  000.139  000.139: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+020.312  017.152  001.904: sourcing /home/marimo-kd/.config/nvim/init.vim
+020.322  000.201: sourcing vimrc file(s)
+020.619  000.043  000.043: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+020.850  000.015  000.015: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+020.878  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/health.vim
+020.903  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/man.vim
+020.931  000.013  000.013: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+020.958  000.013  000.013: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+020.995  000.020  000.020: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+021.020  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+021.043  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+021.084  000.025  000.025: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+021.119  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+021.148  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+021.171  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+021.206  000.019  000.019: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+021.298  000.023  000.023: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+021.305  000.735: loading plugins
+021.452  000.147: loading packages
+021.552  000.100: loading after plugins
+021.564  000.012: inits 3
+021.786  000.222: opening buffers
+021.791  000.005: BufEnter autocommands
+021.792  000.002: editing files in windows
+021.799  000.006: VimEnter autocommands
+021.800  000.002: UIEnter autocommands
+022.078  000.228  000.228: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+022.085  000.057: before starting main loop
+023.488  001.403: first screen update
+023.494  000.006: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.011  000.011: --- NVIM STARTING ---
+000.384  000.373: locale set
+001.061  000.677: inits 1
+001.099  000.038: window checked
+001.104  000.005: parsing arguments
+001.181  000.077: expanding arguments
+001.251  000.070: inits 2
+001.910  000.659: init highlight
+001.921  000.011: waiting for UI
+003.756  001.835: done waiting for UI
+003.813  000.057: initialized screen early for UI
+004.020  000.026  000.026: sourcing /usr/share/nvim/archlinux.vim
+004.030  000.072  000.046: sourcing /etc/xdg//nvim/sysinit.vim
+004.185  000.050  000.050: sourcing /usr/share/nvim/runtime/ftoff.vim
+004.894  000.064  000.064: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+005.414  000.274  000.274: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+009.288  000.070  000.070: sourcing /usr/share/nvim/runtime/ftoff.vim
+010.626  002.468  002.398: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+010.733  005.723  002.981: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+025.389  000.094  000.094: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+025.533  000.015  000.015: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+025.742  014.796  014.686: sourcing /usr/share/nvim/runtime/filetype.vim
+026.126  000.064  000.064: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+026.184  000.024  000.024: sourcing /usr/share/nvim/runtime/ftplugin.vim
+026.662  000.135  000.135: sourcing /usr/share/nvim/runtime/indent.vim
+041.040  013.647  013.647: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+041.513  014.301  000.654: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+041.562  014.513  000.212: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+042.447  000.573  000.573: sourcing /usr/share/nvim/runtime/scripts.vim
+043.704  000.324  000.324: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+045.947  003.184  002.860: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+047.242  000.445  000.445: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+049.196  003.136  002.691: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+049.576  000.188  000.188: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+049.616  045.547  003.098: sourcing /home/marimo-kd/.config/nvim/init.vim
+049.622  000.190: sourcing vimrc file(s)
+050.015  000.079  000.079: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+050.397  000.035  000.035: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+050.462  000.029  000.029: sourcing /usr/share/nvim/runtime/plugin/health.vim
+050.518  000.024  000.024: sourcing /usr/share/nvim/runtime/plugin/man.vim
+050.602  000.057  000.057: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+050.656  000.024  000.024: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+050.732  000.049  000.049: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+050.777  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+050.834  000.025  000.025: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+050.947  000.064  000.064: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+051.010  000.033  000.033: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+051.052  000.018  000.018: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+051.078  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+051.130  000.035  000.035: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+051.270  000.019  000.019: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+051.275  001.136: loading plugins
+051.392  000.116: loading packages
+051.511  000.119: loading after plugins
+051.525  000.015: inits 3
+051.795  000.270: opening buffers
+051.802  000.007: BufEnter autocommands
+051.804  000.002: editing files in windows
+051.811  000.007: VimEnter autocommands
+051.813  000.002: UIEnter autocommands
+052.141  000.266  000.266: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+052.175  000.096: before starting main loop
+053.482  001.306: first screen update
+053.488  000.006: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.007  000.007: --- NVIM STARTING ---
+000.369  000.362: locale set
+000.744  000.375: inits 1
+000.760  000.016: window checked
+000.763  000.003: parsing arguments
+000.813  000.050: expanding arguments
+000.857  000.044: inits 2
+001.333  000.476: init highlight
+001.334  000.001: waiting for UI
+002.378  001.044: done waiting for UI
+002.454  000.076: initialized screen early for UI
+002.616  000.018  000.018: sourcing /usr/share/nvim/archlinux.vim
+002.623  000.057  000.039: sourcing /etc/xdg//nvim/sysinit.vim
+002.742  000.037  000.037: sourcing /usr/share/nvim/runtime/ftoff.vim
+003.085  000.034  000.034: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+003.414  000.184  000.184: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+006.633  000.046  000.046: sourcing /usr/share/nvim/runtime/ftoff.vim
+007.343  001.859  001.813: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+007.397  004.254  002.210: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+015.785  000.052  000.052: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+015.881  000.013  000.013: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+016.218  008.661  008.596: sourcing /usr/share/nvim/runtime/filetype.vim
+016.744  000.084  000.084: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+016.807  000.020  000.020: sourcing /usr/share/nvim/runtime/ftplugin.vim
+017.082  000.045  000.045: sourcing /usr/share/nvim/runtime/indent.vim
+017.981  000.443  000.443: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+018.283  000.865  000.422: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+018.316  001.025  000.160: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+019.232  000.605  000.605: sourcing /usr/share/nvim/runtime/scripts.vim
+020.086  000.192  000.192: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+021.515  001.996  001.804: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+022.747  000.407  000.407: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+024.729  003.122  002.715: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8.vim
+025.348  000.531  000.531: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+025.447  022.796  002.382: sourcing /home/marimo-kd/.config/nvim/init.vim
+025.460  000.153: sourcing vimrc file(s)
+025.851  000.052  000.052: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+026.101  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+026.133  000.013  000.013: sourcing /usr/share/nvim/runtime/plugin/health.vim
+026.159  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/man.vim
+026.188  000.014  000.014: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+026.221  000.014  000.014: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+026.263  000.025  000.025: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+026.290  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+026.317  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+026.362  000.027  000.027: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+026.397  000.018  000.018: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+026.448  000.015  000.015: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+026.477  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+026.513  000.020  000.020: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+026.613  000.019  000.019: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+026.617  000.881: loading plugins
+026.736  000.119: loading packages
+026.847  000.112: loading after plugins
+026.861  000.014: inits 3
+027.120  000.259: opening buffers
+027.126  000.006: BufEnter autocommands
+027.128  000.002: editing files in windows
+027.136  000.008: VimEnter autocommands
+027.138  000.002: UIEnter autocommands
+027.466  000.272  000.272: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+027.505  000.094: before starting main loop
+028.948  001.443: first screen update
+028.956  000.008: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.011  000.011: --- NVIM STARTING ---
+000.323  000.312: locale set
+000.719  000.395: inits 1
+000.735  000.017: window checked
+000.738  000.003: parsing arguments
+000.799  000.060: expanding arguments
+000.847  000.049: inits 2
+001.393  000.546: init highlight
+001.394  000.001: waiting for UI
+002.610  001.216: done waiting for UI
+002.681  000.071: initialized screen early for UI
+002.914  000.026  000.026: sourcing /usr/share/nvim/archlinux.vim
+002.923  000.075  000.048: sourcing /etc/xdg//nvim/sysinit.vim
+003.098  000.054  000.054: sourcing /usr/share/nvim/runtime/ftoff.vim
+003.580  000.052  000.052: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+004.151  000.321  000.321: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+008.575  000.037  000.037: sourcing /usr/share/nvim/runtime/ftoff.vim
+009.229  001.767  001.730: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+009.254  005.579  003.491: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+020.553  000.093  000.093: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+020.725  000.023  000.023: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+021.080  011.756  011.639: sourcing /usr/share/nvim/runtime/filetype.vim
+021.484  000.066  000.066: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+021.541  000.021  000.021: sourcing /usr/share/nvim/runtime/ftplugin.vim
+021.952  000.060  000.060: sourcing /usr/share/nvim/runtime/indent.vim
+023.021  000.480  000.480: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+023.520  001.135  000.654: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+023.657  001.402  000.267: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+024.709  000.748  000.748: sourcing /usr/share/nvim/runtime/scripts.vim
+025.580  000.173  000.173: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+026.208  000.142  000.142: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+026.511  000.088  000.088: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/autoload/dracula.vim
+030.492  005.474  005.072: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/dracula.vim
+031.358  000.251  000.251: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+032.378  000.250  000.250: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+035.451  004.834  004.333: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/dracula.vim
+035.650  000.137  000.137: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+035.668  032.704  002.520: sourcing /home/marimo-kd/.config/nvim/init.vim
+035.672  000.212: sourcing vimrc file(s)
+035.956  000.039  000.039: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+036.185  000.014  000.014: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+036.221  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/health.vim
+036.243  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/man.vim
+036.266  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+036.290  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+036.324  000.021  000.021: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+036.345  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+036.369  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+036.403  000.021  000.021: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+036.439  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+036.466  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+036.490  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+036.522  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+036.604  000.017  000.017: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+036.608  000.712: loading plugins
+036.711  000.104: loading packages
+037.118  000.191  000.191: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/autoload.vim
+037.677  000.392  000.392: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/util.vim
+038.963  002.178  001.595: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/after/plugin/dracula.vim
+039.067  000.178: loading after plugins
+039.084  000.016: inits 3
+039.320  000.237: opening buffers
+039.325  000.005: BufEnter autocommands
+039.327  000.002: editing files in windows
+039.332  000.004: VimEnter autocommands
+039.334  000.002: UIEnter autocommands
+039.633  000.243  000.243: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+039.640  000.064: before starting main loop
+041.079  001.439: first screen update
+041.086  000.006: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.006  000.006: --- NVIM STARTING ---
+000.353  000.347: locale set
+000.763  000.410: inits 1
+000.782  000.019: window checked
+000.785  000.003: parsing arguments
+000.844  000.059: expanding arguments
+000.898  000.054: inits 2
+001.562  000.664: init highlight
+001.565  000.004: waiting for UI
+002.915  001.350: done waiting for UI
+002.978  000.062: initialized screen early for UI
+003.190  000.024  000.024: sourcing /usr/share/nvim/archlinux.vim
+003.199  000.066  000.043: sourcing /etc/xdg//nvim/sysinit.vim
+003.355  000.053  000.053: sourcing /usr/share/nvim/runtime/ftoff.vim
+003.785  000.040  000.040: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+004.242  000.271  000.271: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+007.665  000.040  000.040: sourcing /usr/share/nvim/runtime/ftoff.vim
+008.483  001.694  001.653: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+008.510  004.652  002.686: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+016.778  000.084  000.084: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+016.925  000.021  000.021: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+017.195  008.606  008.501: sourcing /usr/share/nvim/runtime/filetype.vim
+017.483  000.063  000.063: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+017.526  000.013  000.013: sourcing /usr/share/nvim/runtime/ftplugin.vim
+017.752  000.033  000.033: sourcing /usr/share/nvim/runtime/indent.vim
+018.692  000.559  000.559: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+019.084  001.060  000.501: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+019.316  001.382  000.322: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+020.576  000.723  000.723: sourcing /usr/share/nvim/runtime/scripts.vim
+021.530  000.220  000.220: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+022.365  000.222  000.222: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+022.685  000.081  000.081: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/autoload/dracula.vim
+026.021  005.200  004.676: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/dracula.vim
+026.640  000.178  000.178: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+027.366  000.155  000.155: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+030.928  004.851  004.518: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/dracula.vim
+031.161  000.154  000.154: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+031.185  027.949  002.180: sourcing /home/marimo-kd/.config/nvim/init.vim
+031.189  000.196: sourcing vimrc file(s)
+031.489  000.043  000.043: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+031.737  000.015  000.015: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+031.764  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/health.vim
+031.786  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/man.vim
+031.811  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+031.835  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+031.871  000.022  000.022: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+031.893  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+031.918  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+031.954  000.023  000.023: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+031.991  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+032.018  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+032.043  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+032.077  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+032.180  000.018  000.018: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+032.185  000.760: loading plugins
+032.330  000.144: loading packages
+032.855  000.232  000.232: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/autoload.vim
+033.421  000.416  000.416: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/util.vim
+034.165  001.742  001.093: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/after/plugin/dracula.vim
+034.260  000.189: loading after plugins
+034.275  000.014: inits 3
+034.503  000.229: opening buffers
+034.508  000.004: BufEnter autocommands
+034.510  000.002: editing files in windows
+034.514  000.004: VimEnter autocommands
+034.516  000.002: UIEnter autocommands
+034.794  000.226  000.226: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+034.802  000.060: before starting main loop
+035.992  001.190: first screen update
+035.998  000.006: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.007  000.007: --- NVIM STARTING ---
+000.354  000.347: locale set
+000.810  000.455: inits 1
+000.831  000.021: window checked
+000.835  000.004: parsing arguments
+000.904  000.069: expanding arguments
+000.962  000.058: inits 2
+001.664  000.702: init highlight
+001.669  000.005: waiting for UI
+003.274  001.605: done waiting for UI
+003.519  000.245: initialized screen early for UI
+003.930  000.035  000.035: sourcing /usr/share/nvim/archlinux.vim
+003.940  000.102  000.067: sourcing /etc/xdg//nvim/sysinit.vim
+004.113  000.053  000.053: sourcing /usr/share/nvim/runtime/ftoff.vim
+004.808  000.079  000.079: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+005.429  000.327  000.327: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+009.005  000.046  000.046: sourcing /usr/share/nvim/runtime/ftoff.vim
+009.841  001.637  001.591: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+009.885  004.954  002.990: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+016.747  000.050  000.050: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+016.841  000.013  000.013: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+017.019  007.036  006.974: sourcing /usr/share/nvim/runtime/filetype.vim
+017.228  000.037  000.037: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+017.260  000.012  000.012: sourcing /usr/share/nvim/runtime/ftplugin.vim
+017.501  000.067  000.067: sourcing /usr/share/nvim/runtime/indent.vim
+018.078  000.298  000.298: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+018.310  000.595  000.297: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+018.393  000.735  000.140: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+019.110  000.499  000.499: sourcing /usr/share/nvim/runtime/scripts.vim
+019.852  000.162  000.162: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+020.472  000.152  000.152: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+020.763  000.081  000.081: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/autoload/dracula.vim
+024.091  004.759  004.365: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/dracula.vim
+024.687  000.176  000.176: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+025.529  000.296  000.296: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+028.897  004.754  004.282: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/dracula.vim
+029.150  000.190  000.190: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+029.179  025.197  002.023: sourcing /home/marimo-kd/.config/nvim/init.vim
+029.183  000.365: sourcing vimrc file(s)
+029.433  000.037  000.037: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+029.684  000.015  000.015: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+029.710  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/health.vim
+029.732  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/man.vim
+029.755  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+029.779  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+029.812  000.020  000.020: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+029.833  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+029.852  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+029.889  000.022  000.022: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+029.923  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+029.950  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+029.972  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+030.002  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+030.079  000.016  000.016: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+030.083  000.680: loading plugins
+030.188  000.105: loading packages
+030.579  000.206  000.206: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/autoload.vim
+031.791  000.526  000.526: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/util.vim
+032.663  002.423  001.691: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/after/plugin/dracula.vim
+032.769  000.158: loading after plugins
+032.788  000.018: inits 3
+033.044  000.257: opening buffers
+033.049  000.005: BufEnter autocommands
+033.051  000.002: editing files in windows
+033.056  000.005: VimEnter autocommands
+033.058  000.002: UIEnter autocommands
+033.361  000.247  000.247: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+033.368  000.063: before starting main loop
+044.238  010.870: first screen update
+044.247  000.008: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.009  000.009: --- NVIM STARTING ---
+000.268  000.259: locale set
+000.594  000.326: inits 1
+000.610  000.015: window checked
+000.613  000.003: parsing arguments
+000.665  000.052: expanding arguments
+000.706  000.041: inits 2
+001.387  000.680: init highlight
+001.391  000.004: waiting for UI
+003.043  001.652: done waiting for UI
+003.128  000.085: initialized screen early for UI
+003.343  000.022  000.022: sourcing /usr/share/nvim/archlinux.vim
+003.350  000.066  000.044: sourcing /etc/xdg//nvim/sysinit.vim
+003.503  000.057  000.057: sourcing /usr/share/nvim/runtime/ftoff.vim
+003.911  000.043  000.043: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+004.338  000.233  000.233: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+007.536  000.039  000.039: sourcing /usr/share/nvim/runtime/ftoff.vim
+008.230  001.441  001.403: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+008.260  004.272  002.598: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+019.107  000.079  000.079: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+019.253  000.020  000.020: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+019.571  011.232  011.133: sourcing /usr/share/nvim/runtime/filetype.vim
+019.912  000.055  000.055: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+019.961  000.019  000.019: sourcing /usr/share/nvim/runtime/ftplugin.vim
+020.303  000.050  000.050: sourcing /usr/share/nvim/runtime/indent.vim
+021.269  000.496  000.496: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+021.667  000.991  000.495: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+021.797  001.215  000.224: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+023.035  000.859  000.859: sourcing /usr/share/nvim/runtime/scripts.vim
+023.796  000.237  000.237: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+024.707  000.186  000.186: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+025.336  000.172  000.172: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+027.725  004.355  003.759: sourcing /home/marimo-kd/.config/nvim/colors/elly.vim
+028.351  000.205  000.205: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+029.060  000.168  000.168: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+030.759  002.978  002.605: sourcing /home/marimo-kd/.config/nvim/colors/elly.vim
+030.988  000.166  000.166: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+031.015  027.631  002.330: sourcing /home/marimo-kd/.config/nvim/init.vim
+031.019  000.194: sourcing vimrc file(s)
+031.271  000.038  000.038: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/rainbow_main.vim
+031.509  000.034  000.034: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+031.548  000.021  000.021: sourcing /usr/share/nvim/runtime/plugin/health.vim
+031.570  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/man.vim
+031.594  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+031.619  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+031.653  000.022  000.022: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+031.676  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+031.696  000.008  000.008: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+031.731  000.023  000.023: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+031.768  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+031.794  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+031.817  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+031.848  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+031.930  000.016  000.016: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+031.934  000.657: loading plugins
+032.041  000.107: loading packages
+032.140  000.099: loading after plugins
+032.153  000.013: inits 3
+032.390  000.237: opening buffers
+032.395  000.005: BufEnter autocommands
+032.421  000.026: editing files in windows
+032.428  000.007: VimEnter autocommands
+032.430  000.002: UIEnter autocommands
+032.734  000.255  000.255: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+032.742  000.057: before starting main loop
+033.839  000.206  000.206: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/autoload.vim
+034.378  000.411  000.411: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/util.vim
+041.492  008.133: first screen update
+041.499  000.007: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.012  000.012: --- NVIM STARTING ---
+000.368  000.355: locale set
+000.754  000.387: inits 1
+000.771  000.016: window checked
+000.773  000.002: parsing arguments
+000.816  000.042: expanding arguments
+000.854  000.038: inits 2
+001.270  000.416: init highlight
+001.271  000.001: waiting for UI
+002.283  001.011: done waiting for UI
+002.356  000.073: initialized screen early for UI
+002.502  000.016  000.016: sourcing /usr/share/nvim/archlinux.vim
+002.508  000.048  000.032: sourcing /etc/xdg//nvim/sysinit.vim
+002.625  000.043  000.043: sourcing /usr/share/nvim/runtime/ftoff.vim
+002.919  000.029  000.029: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+003.207  000.158  000.158: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+005.132  000.211  000.211: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/autoload.vim
+005.674  000.476  000.476: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/util.vim
+005.922  000.022  000.022: sourcing /usr/share/nvim/runtime/ftoff.vim
+006.556  000.292  000.292: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/types/git.vim
+006.757  000.536  000.244: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/parse.vim
+007.062  000.208  000.208: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/toml.vim
+065.208  000.129  000.129: sourcing /home/marimo-kd/dotfiles/nvim/rc/options.rc.vim
+065.286  000.044  000.044: sourcing /home/marimo-kd/dotfiles/nvim/rc/mappings.rc.vim
+066.748  000.932  000.932: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/install.vim
+240.810  000.051  000.051: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/types/raw.vim
+248.455  245.484  242.717: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+255.458  000.057  000.057: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+255.557  000.015  000.015: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+255.785  007.251  007.179: sourcing /usr/share/nvim/runtime/filetype.vim
+256.030  000.039  000.039: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+256.064  000.012  000.012: sourcing /usr/share/nvim/runtime/ftplugin.vim
+256.280  000.035  000.035: sourcing /usr/share/nvim/runtime/indent.vim
+256.921  000.331  000.331: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+257.205  000.680  000.349: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+257.368  000.908  000.228: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+258.746  000.929  000.929: sourcing /usr/share/nvim/runtime/scripts.vim
+259.702  000.217  000.217: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+262.705  003.659  003.441: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8_soft.vim
+263.353  000.201  000.201: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+265.498  002.722  002.521: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8_soft.vim
+265.736  000.173  000.173: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+265.757  263.223  001.939: sourcing /home/marimo-kd/.config/nvim/init.vim
+265.763  000.136: sourcing vimrc file(s)
+266.249  000.274  000.274: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/parenmatch.vim
+266.502  000.016  000.016: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+266.530  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/health.vim
+266.554  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/man.vim
+266.580  000.013  000.013: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+266.609  000.013  000.013: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+266.641  000.019  000.019: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+266.664  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+266.715  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+266.753  000.024  000.024: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+266.785  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+266.816  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+266.842  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+266.875  000.018  000.018: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+266.960  000.018  000.018: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+266.964  000.724: loading plugins
+267.069  000.104: loading packages
+267.172  000.104: loading after plugins
+267.186  000.013: inits 3
+267.569  000.075  000.075: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/autoload/parenmatch.vim
+267.646  000.385: opening buffers
+267.649  000.003: BufEnter autocommands
+267.652  000.003: editing files in windows
+267.727  000.074: VimEnter autocommands
+267.730  000.003: UIEnter autocommands
+268.017  000.232  000.232: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+268.025  000.063: before starting main loop
+276.989  008.965: first screen update
+276.995  000.006: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.011  000.011: --- NVIM STARTING ---
+000.363  000.352: locale set
+000.765  000.401: inits 1
+000.781  000.017: window checked
+000.784  000.002: parsing arguments
+000.830  000.046: expanding arguments
+000.868  000.038: inits 2
+001.284  000.416: init highlight
+001.285  000.001: waiting for UI
+002.582  001.297: done waiting for UI
+002.661  000.080: initialized screen early for UI
+002.847  000.018  000.018: sourcing /usr/share/nvim/archlinux.vim
+002.854  000.053  000.035: sourcing /etc/xdg//nvim/sysinit.vim
+002.978  000.044  000.044: sourcing /usr/share/nvim/runtime/ftoff.vim
+003.315  000.034  000.034: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+003.666  000.200  000.200: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+006.283  000.027  000.027: sourcing /usr/share/nvim/runtime/ftoff.vim
+006.876  001.252  001.225: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+006.894  003.517  002.065: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+013.947  000.075  000.075: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+014.083  000.017  000.017: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+014.288  007.343  007.251: sourcing /usr/share/nvim/runtime/filetype.vim
+014.531  000.044  000.044: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+014.569  000.014  000.014: sourcing /usr/share/nvim/runtime/ftplugin.vim
+014.828  000.035  000.035: sourcing /usr/share/nvim/runtime/indent.vim
+015.462  000.339  000.339: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+015.729  000.669  000.329: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+015.820  000.820  000.151: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+016.596  000.520  000.520: sourcing /usr/share/nvim/runtime/scripts.vim
+017.385  000.177  000.177: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+019.895  003.044  002.868: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8_soft.vim
+020.542  000.192  000.192: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+022.710  002.737  002.545: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8_soft.vim
+022.956  000.176  000.176: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+023.013  020.132  001.804: sourcing /home/marimo-kd/.config/nvim/init.vim
+023.020  000.173: sourcing vimrc file(s)
+023.721  000.383  000.383: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/parenmatch.vim
+023.966  000.018  000.018: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+023.995  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/health.vim
+024.024  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/man.vim
+024.053  000.013  000.013: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+024.079  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+024.112  000.019  000.019: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+024.136  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+024.162  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+024.198  000.023  000.023: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+024.230  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+024.258  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+024.285  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+024.318  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+024.426  000.018  000.018: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+024.431  000.829: loading plugins
+024.541  000.109: loading packages
+024.666  000.126: loading after plugins
+024.696  000.030: inits 3
+025.167  000.108  000.108: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/autoload/parenmatch.vim
+025.248  000.444: opening buffers
+025.251  000.004: BufEnter autocommands
+025.253  000.002: editing files in windows
+025.321  000.068: VimEnter autocommands
+025.349  000.028: UIEnter autocommands
+025.718  000.316  000.316: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+025.727  000.062: before starting main loop
+027.585  000.249  000.249: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/autoload.vim
+028.462  000.699  000.699: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/util.vim
+038.266  011.592: first screen update
+038.272  000.006: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.013  000.013: --- NVIM STARTING ---
+000.370  000.357: locale set
+000.768  000.397: inits 1
+000.785  000.017: window checked
+000.787  000.002: parsing arguments
+000.830  000.043: expanding arguments
+000.867  000.037: inits 2
+001.477  000.609: init highlight
+001.480  000.003: waiting for UI
+003.088  001.609: done waiting for UI
+003.155  000.067: initialized screen early for UI
+003.349  000.019  000.019: sourcing /usr/share/nvim/archlinux.vim
+003.356  000.057  000.038: sourcing /etc/xdg//nvim/sysinit.vim
+003.483  000.046  000.046: sourcing /usr/share/nvim/runtime/ftoff.vim
+003.836  000.037  000.037: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+004.184  000.190  000.190: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+006.831  000.026  000.026: sourcing /usr/share/nvim/runtime/ftoff.vim
+007.315  001.135  001.109: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+007.333  003.434  002.109: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+015.329  000.055  000.055: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+015.429  000.014  000.014: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+015.636  008.251  008.183: sourcing /usr/share/nvim/runtime/filetype.vim
+015.858  000.040  000.040: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+015.892  000.013  000.013: sourcing /usr/share/nvim/runtime/ftplugin.vim
+016.109  000.034  000.034: sourcing /usr/share/nvim/runtime/indent.vim
+016.740  000.347  000.347: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+016.992  000.663  000.316: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+017.081  000.811  000.147: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+017.907  000.554  000.554: sourcing /usr/share/nvim/runtime/scripts.vim
+018.676  000.180  000.180: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+021.171  003.022  002.841: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8_soft.vim
+021.852  000.197  000.197: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+024.078  002.823  002.626: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8_soft.vim
+024.340  000.179  000.179: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+024.366  020.982  001.739: sourcing /home/marimo-kd/.config/nvim/init.vim
+024.370  000.175: sourcing vimrc file(s)
+025.040  000.424  000.424: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/parenmatch.vim
+025.485  000.047  000.047: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+025.546  000.031  000.031: sourcing /usr/share/nvim/runtime/plugin/health.vim
+025.599  000.029  000.029: sourcing /usr/share/nvim/runtime/plugin/man.vim
+025.636  000.020  000.020: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+025.693  000.021  000.021: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+025.747  000.032  000.032: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+025.786  000.018  000.018: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+025.821  000.015  000.015: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+025.890  000.044  000.044: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+025.931  000.023  000.023: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+025.962  000.014  000.014: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+025.997  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+026.037  000.022  000.022: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+026.157  000.024  000.024: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+026.163  001.017: loading plugins
+026.286  000.123: loading packages
+026.398  000.112: loading after plugins
+026.422  000.023: inits 3
+026.985  000.084  000.084: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/autoload/parenmatch.vim
+027.063  000.557: opening buffers
+027.067  000.003: BufEnter autocommands
+027.068  000.002: editing files in windows
+027.139  000.070: VimEnter autocommands
+027.200  000.061: UIEnter autocommands
+027.652  000.377  000.377: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+027.668  000.092: before starting main loop
+029.563  000.288  000.288: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/autoload.vim
+030.249  000.437  000.437: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/util.vim
+037.894  009.501: first screen update
+037.900  000.005: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.019  000.019: --- NVIM STARTING ---
+000.390  000.371: locale set
+000.724  000.334: inits 1
+000.741  000.017: window checked
+000.743  000.002: parsing arguments
+000.787  000.043: expanding arguments
+000.829  000.043: inits 2
+001.259  000.429: init highlight
+001.260  000.001: waiting for UI
+002.302  001.042: done waiting for UI
+002.372  000.070: initialized screen early for UI
+002.577  000.020  000.020: sourcing /usr/share/nvim/archlinux.vim
+002.585  000.068  000.047: sourcing /etc/xdg//nvim/sysinit.vim
+002.787  000.079  000.079: sourcing /usr/share/nvim/runtime/ftoff.vim
+003.257  000.031  000.031: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+003.542  000.154  000.154: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+005.695  000.024  000.024: sourcing /usr/share/nvim/runtime/ftoff.vim
+006.212  001.031  001.007: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+006.231  002.919  001.734: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+013.450  000.087  000.087: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+013.617  000.015  000.015: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+013.836  007.545  007.442: sourcing /usr/share/nvim/runtime/filetype.vim
+014.081  000.045  000.045: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+014.119  000.014  000.014: sourcing /usr/share/nvim/runtime/ftplugin.vim
+014.339  000.034  000.034: sourcing /usr/share/nvim/runtime/indent.vim
+014.943  000.311  000.311: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+015.214  000.643  000.331: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+015.303  000.802  000.159: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+016.159  000.578  000.578: sourcing /usr/share/nvim/runtime/scripts.vim
+016.953  000.169  000.169: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+019.180  002.762  002.593: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8_soft.vim
+019.975  000.223  000.223: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+022.325  003.083  002.860: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8_soft.vim
+022.744  000.264  000.264: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+022.800  020.182  002.026: sourcing /home/marimo-kd/.config/nvim/init.vim
+022.808  000.187: sourcing vimrc file(s)
+024.045  000.884  000.884: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/parenmatch.vim
+024.570  000.475  000.475: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/suda.vim
+024.929  000.036  000.036: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+024.988  000.023  000.023: sourcing /usr/share/nvim/runtime/plugin/health.vim
+025.050  000.025  000.025: sourcing /usr/share/nvim/runtime/plugin/man.vim
+025.103  000.024  000.024: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+025.151  000.022  000.022: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+025.229  000.044  000.044: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+025.275  000.015  000.015: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+025.310  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+025.348  000.025  000.025: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+025.387  000.018  000.018: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+025.417  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+025.443  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+025.478  000.019  000.019: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+025.564  000.018  000.018: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+025.569  001.104: loading plugins
+025.679  000.110: loading packages
+025.781  000.101: loading after plugins
+025.794  000.014: inits 3
+026.179  000.074  000.074: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/autoload/parenmatch.vim
+026.260  000.391: opening buffers
+026.554  000.215  000.215: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/autoload/suda.vim
+026.582  000.108: BufEnter autocommands
+026.584  000.002: editing files in windows
+026.643  000.059: VimEnter autocommands
+026.646  000.003: UIEnter autocommands
+026.931  000.224  000.224: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+026.938  000.069: before starting main loop
+028.402  000.336  000.336: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/autoload.vim
+029.297  000.702  000.702: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/util.vim
+038.155  010.179: first screen update
+038.161  000.006: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.017  000.017: --- NVIM STARTING ---
+000.714  000.697: locale set
+001.378  000.664: inits 1
+001.409  000.031: window checked
+001.414  000.004: parsing arguments
+001.491  000.078: expanding arguments
+001.557  000.066: inits 2
+002.188  000.630: init highlight
+002.193  000.005: waiting for UI
+003.448  001.255: done waiting for UI
+003.515  000.068: initialized screen early for UI
+003.686  000.171: sourcing vimrc file(s)
+003.720  000.034: inits 3
+012.157  008.437: reading ShaDa
+012.430  000.272: opening buffers
+012.443  000.014: BufEnter autocommands
+012.446  000.003: editing files in windows
+012.451  000.004: VimEnter autocommands
+012.453  000.003: UIEnter autocommands
+012.455  000.002: before starting main loop
+013.592  001.137: first screen update
+013.596  000.004: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.012  000.012: --- NVIM STARTING ---
+000.393  000.381: locale set
+000.741  000.348: inits 1
+000.758  000.018: window checked
+000.761  000.003: parsing arguments
+000.806  000.045: expanding arguments
+000.851  000.045: inits 2
+001.284  000.433: init highlight
+001.285  000.001: waiting for UI
+002.496  001.211: done waiting for UI
+002.575  000.079: initialized screen early for UI
+002.763  000.018  000.018: sourcing /usr/share/nvim/archlinux.vim
+002.770  000.054  000.036: sourcing /etc/xdg//nvim/sysinit.vim
+002.901  000.047  000.047: sourcing /usr/share/nvim/runtime/ftoff.vim
+003.275  000.036  000.036: sourcing /home/marimo-kd/dotfiles/nvim/rc/init.rc.vim
+003.630  000.193  000.193: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein.vim
+006.246  000.028  000.028: sourcing /usr/share/nvim/runtime/ftoff.vim
+006.823  001.221  001.192: sourcing /home/marimo-kd/.cache/dein/state_nvim.vim
+006.845  003.505  002.091: sourcing /home/marimo-kd/dotfiles/nvim/rc/dein.rc.vim
+014.162  000.067  000.067: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftdetect/ftdetect.vim
+014.289  000.017  000.017: sourcing /usr/share/vim/vimfiles/ftdetect/PKGBUILD.vim
+014.585  007.676  007.592: sourcing /usr/share/nvim/runtime/filetype.vim
+014.968  000.078  000.078: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/ftplugin.vim
+015.007  000.014  000.014: sourcing /usr/share/nvim/runtime/ftplugin.vim
+015.226  000.035  000.035: sourcing /usr/share/nvim/runtime/indent.vim
+015.828  000.321  000.321: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+016.088  000.641  000.320: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+016.180  000.793  000.152: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+016.969  000.522  000.522: sourcing /usr/share/nvim/runtime/scripts.vim
+017.711  000.172  000.172: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+020.038  002.832  002.660: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8_soft.vim
+020.653  000.174  000.174: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+023.453  003.327  003.153: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/colors/gruvbox8_soft.vim
+023.717  000.167  000.167: sourcing /home/marimo-kd/dotfiles/nvim/rc/statusline.rc.vim
+023.743  020.944  001.912: sourcing /home/marimo-kd/.config/nvim/init.vim
+023.747  000.174: sourcing vimrc file(s)
+024.727  000.389  000.389: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/parenmatch.vim
+025.534  000.767  000.767: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/plugin/suda.vim
+025.866  000.020  000.020: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+025.898  000.013  000.013: sourcing /usr/share/nvim/runtime/plugin/health.vim
+025.937  000.022  000.022: sourcing /usr/share/nvim/runtime/plugin/man.vim
+025.968  000.013  000.013: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+025.996  000.013  000.013: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+026.059  000.044  000.044: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+026.100  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+026.138  000.015  000.015: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+026.223  000.062  000.062: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+026.311  000.044  000.044: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+026.370  000.023  000.023: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+026.417  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+026.489  000.042  000.042: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+026.663  000.033  000.033: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+026.675  001.393: loading plugins
+026.833  000.158: loading packages
+026.989  000.155: loading after plugins
+027.021  000.032: inits 3
+027.871  000.084  000.084: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/autoload/parenmatch.vim
+027.977  000.873: opening buffers
+028.713  000.578  000.578: sourcing /home/marimo-kd/.cache/dein/.cache/init.vim/.dein/autoload/suda.vim
+028.744  000.189: BufEnter autocommands
+028.746  000.002: editing files in windows
+028.809  000.063: VimEnter autocommands
+028.812  000.003: UIEnter autocommands
+029.327  000.450  000.450: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+029.361  000.099: before starting main loop
+031.399  000.210  000.210: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/autoload.vim
+031.978  000.439  000.439: sourcing /home/marimo-kd/.cache/dein/repos/github.com/Shougo/dein.vim/autoload/dein/util.vim
+039.017  009.007: first screen update
+039.022  000.005: --- NVIM STARTED ---

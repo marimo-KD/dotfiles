@@ -1,0 +1,21 @@
+partial modifier_keys
+xkb_symbols "henk_return" {
+    key <HENK> { [ Return, Return ] };
+};
+xkb_symbols "henk_shift_r" {
+    key <HENK> { [ Shift_R, Shift_R ] };
+    modifier_map Shift { Shift_R, Shift_L };
+};
+xkb_symbols "muhe_bs" {
+    key <MUHE> { [ BackSpace, BackSpace ] };
+};
+xkb_symbols "hktg_super_r" {
+    key <HKTG> { [ Super_R, Super_R] };
+};
+xkb_symbols "hktg_shift_r" {
+    key <HKTG> { [ Shift_R, Shift_R ] };
+    modifier_map Shift { <HKTG>, <RFSH>, <LFSH> };
+};
+xkb_symbols "hktg_return" {
+    key <HKTG> { [ Return, Return ] };
+};

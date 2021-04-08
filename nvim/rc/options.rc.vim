@@ -47,7 +47,6 @@ set shortmess=aTIcF
 set number
 set relativenumber
 set signcolumn=yes
-set noshowmode
 
 " TrueColor
 set t_Co=256

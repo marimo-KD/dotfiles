@@ -4,9 +4,14 @@ repo = 'Shougo/dein.vim'
 
 
 [[plugins]]
-repo = 'luochen1990/rainbow'
+repo = 'itchyny/vim-parenmatch'
+
+
+
+[[plugins]]
+repo = 'lambdalisue/suda.vim'
 hook_add = '''
-  let g:rainbow_active = 1
+  let g:suda_smart_edit = 1
 '''
 
 
@@ -16,7 +21,13 @@ repo = 'lifepillar/vim-gruvbox8'
 hook_add = '''
   let g:gruvbox_italicize_strings = 0
   let g:gruvbox_plugin_hi_groups = 0
+  let g:gruvbox_filetype_hi_groups = 0
 '''
+
+
+
+# [[plugins]]
+# repo = 'lifepillar/vim-solarized8'
 
 
 
@@ -24,28 +35,4 @@ hook_add = '''
 repo = 'vim-jp/vimdoc-ja'
 hook_add = '''
   set helplang=ja,en
-'''
-
-
-[[plugins]]
-repo = 'hoob3rt/lualine.nvim'
-hook_add = '''
-lua << EOF
-  require('lualine').status{
-    options = {
-      theme = 'gruvbox',
-      section_separators = {'', ''},
-      component_separators = {'', ''},
-      icons_enabled = true,
-    },
-    sections = {
-      lualine_a = { {'mode', upper = true} },
-      lualine_b = { {'branch', icon = ''} },
-      lualine_c = { {'filename', file_status = true} , {'diagnostics', sources = {'nvim_lsp'}}},
-      lualine_x = { 'encoding', 'fileformat', 'filetype' },
-      lualine_y = { 'progress' },
-      lualine_z = { 'location'  },
-    },
-  }
-EOF
 '''
