@@ -1,0 +1,26 @@
+sanitise tridactyllocal tridactylsync
+
+colorscheme base16-gruvbox-dark-soft
+
+unbind <C-f>
+unbind <F1>
+
+bind / fillcmdline find
+bind ? fillcmdline find -?
+bind n findnext 1
+bind N findnext -1
+
+set smoothscroll true
+set findcase smart
+set incsearch true
+
+bind j scrollline 5
+bind k scrollline -5
+
+bind J tabnext
+bind K tabprev
+bind x tabclose
+
+blacklistadd mail.google.com
+blacklistadd docs.google.com
+blacklistadd tweetdeck.twitter.com
