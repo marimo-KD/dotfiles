@@ -47,9 +47,7 @@ alias trans='~/Bin/Translation.py'
 #plugins
 source ~/.zplug/init.zsh
 #zplug "agnoster/agnoster-zsh-theme", as:theme
-#zplug "sindresorhus/pure", use:pure.zsh, as:theme
 #zplug "bhilburn/powerlevel9k", as:theme
-zplug "romkatv/powerlevel10k", as:theme, depth:1
 zplug "mafredri/zsh-async"
 zplug "b4b4r07/enhancd", use:init.sh
 zplug "zsh-users/zsh-autosuggestions"
@@ -64,10 +62,12 @@ case ${OSTYPE} in
     darwin*)
         # MAC
         export PATH=/opt/homebrew/bin:$PATH
+        zplug "sindresorhus/pure", use:pure.zsh, as:theme
         ;;
     linux*)
         # Linux
         zplug "plugins/archlinux", from:oh-my-zsh
+        zplug "romkatv/powerlevel10k", as:theme, depth:1
         ;;
 esac
 
