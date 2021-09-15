@@ -57,9 +57,19 @@ zplug "zsh-users/zsh-completions"
 zplug "zsh-users/zsh-syntax-highlighting"
 
 zplug "plugins/gnu-utils", from:oh-my-zsh
-zplug "plugins/archlinux", from:oh-my-zsh
 zplug "plugins/pip", from:oh-my-zsh
 zplug "plugins/colored-man-pages", from:oh-my-zsh
+
+case ${OSTYPE} in
+    darwin*)
+        # MAC
+        export PATH=/opt/homebrew/bin:$PATH
+        ;;
+    linux*)
+        # Linux
+        zplug "plugins/archlinux", from:oh-my-zsh
+        ;;
+esac
 
 #Install
 if ! zplug check --verbose; then
@@ -71,5 +81,3 @@ fi
 
 #load plugins
 zplug load --verbose
-
-source /home/marimo-kd/.config/broot/launcher/bash/br
