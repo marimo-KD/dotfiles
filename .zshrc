@@ -34,7 +34,6 @@ export EDITOR=nvim
 export PAGER=less
 
 # Alias
-alias ls='ls --color'
 alias exa='exa --icons --color=auto'
 alias grep='rg'
 alias start_sway='~/Bin/start_sway'
@@ -61,11 +60,13 @@ zplug "plugins/colored-man-pages", from:oh-my-zsh
 case ${OSTYPE} in
     darwin*)
         # MAC
+        alias ls='ls -G'
         export PATH=/opt/homebrew/bin:$PATH
         zplug "sindresorhus/pure", use:pure.zsh, as:theme
         ;;
     linux*)
         # Linux
+        alias ls='ls --color'
         zplug "plugins/archlinux", from:oh-my-zsh
         zplug "romkatv/powerlevel10k", as:theme, depth:1
         ;;
