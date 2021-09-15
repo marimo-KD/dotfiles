@@ -30,14 +30,18 @@ setopt notify
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir dir_writable vcs virtualenv)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(background_jobs status time)
+export EDITOR=nvim
+export PAGER=less
 
 # Alias
-alias ls='ls --color=auto'
+alias ls='ls --color'
+alias exa='exa --icons --color=auto'
+alias grep='rg'
 alias start_sway='~/Bin/start_sway'
 alias trans='~/Bin/Translation.py'
 
 # Thefuck
-eval $(thefuck --alias)
+# eval $(thefuck --alias)
 
 
 #plugins
@@ -67,3 +71,5 @@ fi
 
 #load plugins
 zplug load --verbose
+
+source /home/marimo-kd/.config/broot/launcher/bash/br

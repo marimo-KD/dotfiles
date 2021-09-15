@@ -47,7 +47,7 @@ set $mod Mod4
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec wezterm
+bindsym $mod+Return exec kitty
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -190,7 +190,9 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 bar {
-  status_command i3status
+  font pango: Symbols Nerd Font, Arimo 10
+  position bottom
+  status_command i3status-rs ~/.config/i3status-rust/config.toml
 }
 
 #### No Border
@@ -198,7 +200,11 @@ default_border none
 default_floating_border normal 1
 
 
+#### Mouse Setting
+exec --no-startup-id xinput set-prop "ELECOM ELECOM TrackBall Mouse" "libinput Accel Speed" -0.5
+
 #### Startup
 exec --no-startup-id fcitx5 -d
 exec --no-startup-id picom -b
-exec --no-startup-id ~/Bin/dwall -s exodus
+# exec --no-startup-id ~/Bin/dwall -s exodus
+exec --no-startup-id feh --bg-scale --no-fehbg ~/Pictures/wallpaper/beautiful-wallpaper-1920x1080.jpg

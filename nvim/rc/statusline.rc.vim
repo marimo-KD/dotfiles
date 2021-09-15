@@ -3,7 +3,7 @@ set noshowmode
 
 
 function! GenStatusline()
-  return StatuslineMode() . "\ %<%F\ %m%r%h\ %= %{strlen(&fenc)?&fenc:'none'}\ %y\ " . LspStatus() . "\ %l:%c"
+  return StatuslineMode() . "\ %<%F\ %m%r%h\ %= %{strlen(&fenc)?&fenc:'none'}\ %y\ " . LspStatus() . "\ %l/%L"
 endfunction
 
 function! StatuslineMode()

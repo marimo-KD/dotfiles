@@ -14,7 +14,7 @@ return {
     },
     {
       intensity = "Bold",
-      font = font_with_fallback("HackGenNerd Console", {bold = true}),
+      font = font_with_fallback("Sarasa Term J", {bold = true}),
     },
     {
       italic = true,
