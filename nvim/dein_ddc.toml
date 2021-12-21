@@ -24,8 +24,6 @@ hook_source = '''
   call ddc#enable()
 '''
 
-
-
 [[plugins]]
 repo = 'cohama/lexima.vim'
 on_source = 'ddc.vim'
@@ -118,7 +116,7 @@ hook_source = '''
 lua << EOF
   require'lspconfig'.rust_analyzer.setup{}
   require'lspconfig'.clangd.setup{}
-  require'lspconfig'.pyls.setup{}
+--  require'lspconfig'.pyls.setup{}
 EOF
   nnoremap <Space>gi <cmd>lua vim.lsp.buf.implemention()<CR>
   nnoremap <Space>f  <cmd>lua vim.lsp.buf.formatting()<CR>

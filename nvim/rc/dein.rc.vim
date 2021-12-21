@@ -24,7 +24,7 @@ call dein#load_toml(s:toml_ft)
 call dein#end()
 call dein#save_state()
 
-command!  DeinUpdate call dein#check_update(v:true)
+command! DeinUpdate call dein#check_update(v:true)
 
 if !has('vim_starting') && dein#check_install() 
   call dein#install()
