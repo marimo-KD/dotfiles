@@ -1,4 +1,43 @@
 [[plugins]]
+repo = 'cohama/lexima.vim'
+on_event='InsertEnter'
+
+
+[[plugins]]
+repo = "tyru/eskk.vim"
+on_map = { ic = '<Plug>' }
+hook_add = '''
+  imap <C-j>  <Plug>(eskk:toggle)
+  cmap <C-j>  <Plug>(eskk:toggle)
+'''
+hook_source = '''
+  let g:eskk#directory = g:config_home . "/nvim/eskk"
+  let g:eskk#dictionary = "~/SKK/skk-jisyo"
+  let g:eskk#large_dictionary = "/usr/share/skk/SKK-JISYO.L"
+  let g:egg_like_newline = 1
+'''
+
+# LSP
+[[plugins]]
+repo = 'neovim/nvim-lspconfig'
+on_ft = ['rust', 'cpp']
+depends = ['impatient.nvim']
+hook_source = '''
+"lua << EOF
+"  local nvim_lsp = require('lspconfig')
+"  vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, { virtual_text = false })
+"EOF
+lua << EOF
+  require'lspconfig'.rust_analyzer.setup{}
+  require'lspconfig'.clangd.setup{}
+--  require'lspconfig'.pyls.setup{}
+EOF
+  nnoremap <Space>gi <cmd>lua vim.lsp.buf.implemention()<CR>
+  nnoremap <Space>f  <cmd>lua vim.lsp.buf.formatting()<CR>
+'''
+
+
+[[plugins]]
 repo = 'lewis6991/impatient.nvim'
 hook_source = '''
   lua package.cpath=package.cpath..';/home/marimo-kd/.config/nvim/lua/?.so'

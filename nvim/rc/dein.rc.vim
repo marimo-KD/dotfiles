@@ -19,7 +19,6 @@ let s:toml_ft = s:base_path . '/dein_ft.toml'
 call dein#begin(s:dein_dir, [expand('<sfile>'), s:toml, s:toml_lazy, s:toml_ft])
 call dein#load_toml(s:toml, {'lazy': 0})
 call dein#load_toml(s:toml_lazy, {'lazy': 1})
-call dein#load_toml(s:toml_ddc, {'lazy': 1})
 call dein#load_toml(s:toml_ft)
 call dein#end()
 call dein#save_state()
