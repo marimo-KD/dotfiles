@@ -10,5 +10,6 @@ nnoremap <C-w>s :split<CR>
 inoremap <C-e> <ESC>A
 inoremap <C-a> <ESC>I
 " from Emacs Key Bind
+inoremap <C-Space> <C-x><C-o>
 
 tnoremap <silent><ESC> <C-\><C-n>

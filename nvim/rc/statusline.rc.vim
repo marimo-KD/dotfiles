@@ -46,7 +46,7 @@ endfunction
 
 function! LspStatus() abort
   let sl = ''
-  if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
+  if has('nvim') && luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
     let sl.='%#StatuslineLSPError# '
     let sl.='%{luaeval("vim.lsp.diagnostic.get_count(0, [[Error]])")}%*'
     let sl.=' '

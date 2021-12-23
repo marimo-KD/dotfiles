@@ -3,7 +3,9 @@ let g:dein#auto_recache = v:true
 let g:dein#lazy_rplugins = v:true
 let g:dein#inline_vimrcs = ['options.rc.vim', 'mappings.rc.vim']
 
-source ~/.secretvimrc
+if filereadable(expand('~/.secretvimrc'))
+  source ~/.secretvimrc
+endif
 
 call map(g:dein#inline_vimrcs, "resolve(g:config_home . '/nvim/rc/' . v:val)")
 if !dein#load_state(s:dein_dir) 

@@ -32,16 +32,11 @@ lua << EOF
   require'lspconfig'.clangd.setup{}
 --  require'lspconfig'.pyls.setup{}
 EOF
+  set omnifunc=v:lua.vim.lsp.omnifunc
   nnoremap <Space>gi <cmd>lua vim.lsp.buf.implemention()<CR>
   nnoremap <Space>f  <cmd>lua vim.lsp.buf.formatting()<CR>
-'''
-
-
-[[plugins]]
-repo = 'lewis6991/impatient.nvim'
-hook_source = '''
-  lua package.cpath=package.cpath..';/home/marimo-kd/.config/nvim/lua/?.so'
-  lua require('impatient')
+  nnoremap <Space>h  <cmd>lua vim.lsp.buf.hover()<CR>
+  nnoremap <Space>r  <cmd>lua vim.lsp.buf.rename()<CR>
 '''
 
 
@@ -84,22 +79,6 @@ lua << END_LUA
 END_LUA
 '''
 
-[[plugins]]
-repo = 'nvim-lua/popup.nvim'
-on_event = ['FocusLost','CursorHold']
-depends = ['impatient.nvim', 'plenary.nvim']
-
-[[plugins]]
-repo = 'nvim-lua/plenary.nvim'
-on_event = ['FocusLost','CursorHold']
-depends = ['impatient.nvim']
-
-
-
-[[plugins]]
-repo = 'kyazdani42/nvim-web-devicons'
-depends = ['impatient.nvim']
-
 
 
 [[plugins]]
@@ -118,6 +97,30 @@ require'nvim-treesitter.configs'.setup {
     },
 }
 EOF
+'''
+
+
+
+
+[[plugins]]
+repo = 'nvim-lua/popup.nvim'
+on_event = ['FocusLost','CursorHold']
+depends = ['impatient.nvim', 'plenary.nvim']
+
+[[plugins]]
+repo = 'nvim-lua/plenary.nvim'
+on_event = ['FocusLost','CursorHold']
+depends = ['impatient.nvim']
+
+[[plugins]]
+repo = 'kyazdani42/nvim-web-devicons'
+depends = ['impatient.nvim']
+
+[[plugins]]
+repo = 'lewis6991/impatient.nvim'
+hook_source = '''
+  lua package.cpath=package.cpath..';'..os.getenv("HOME")..'/.config/nvim/lua/?.so'
+  lua require('impatient')
 '''
 
 
@@ -175,20 +178,6 @@ hook_add = '''
 hook_source = '''
   let g:clever_f_smart_case=1
   let g:clever_f_use_migemo=1
-'''
-
-
-
-[[plugins]]
-repo = 'monaqa/dial.nvim'
-on_map = { nv = '<Plug>' }
-hook_add = '''
-  nmap <C-a> <Plug>(dial-increment)
-  nmap <C-x> <Plug>(dial-decrement)
-  vmap <C-a> <Plug>(dial-increment)
-  vmap <C-x> <Plug>(dial-decrement)
-  vmap g<C-a> <Plug>(dial-increment-additional)
-  vmap g<C-x> <Plug>(dial-decrement-additional)
 '''
 
 
