@@ -34,11 +34,7 @@ set softtabstop=2
 set shiftwidth=2
 set tabstop=2
 " Omni Completion
-if has('nvim')
-  set completeopt=menuone,longest
-else
-  set completeopt=menuone,longest,popup
-endif
+set completeopt=menuone,longest
 " backspace
 set backspace=indent,eol,start
 " clipboard

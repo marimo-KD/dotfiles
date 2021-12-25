@@ -5,6 +5,7 @@ filetype off
 let g:config_home = empty($XDG_CONFIG_HOME) ? expand('~/.config') : $XDG_CONFIG_HOME
 let g:cache_home = empty($XDG_CACHE_HOME) ? expand('~/.cache') : $XDG_CACHE_HOME
 let g:python3_host_prog = '/usr/bin/python3'
+let g:use_ddc = v:true
 
 function! s:source_rc(path) abort
   let abspath = resolve(expand(g:config_home . '/nvim/rc/' . a:path))

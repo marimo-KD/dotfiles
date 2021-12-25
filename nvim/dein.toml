@@ -38,12 +38,15 @@ hook_add = '''
 
 [[plugins]]
 repo = 'ncm2/float-preview.nvim'
-if = 'has("nvim")'
+if = 'has("nvim") && !(exists("g:use_ddc") && g:use_ddc)'
 hook_add = '''
   let g:float_preview#docked=1
 '''
 
 
+
+[[plugins]]
+repo = 'vim-denops/denops.vim'
 
 # [[plugins]]
 # repo = 'lifepillar/vim-solarized8'

@@ -17,10 +17,13 @@ hook_source = '''
   let g:egg_like_newline = 1
 '''
 
+
+
 # LSP
 [[plugins]]
 repo = 'neovim/nvim-lspconfig'
 on_ft = ['rust', 'cpp']
+if = 'has("nvim")'
 depends = ['impatient.nvim']
 hook_source = '''
 "lua << EOF
@@ -32,7 +35,9 @@ lua << EOF
   require'lspconfig'.clangd.setup{}
 --  require'lspconfig'.pyls.setup{}
 EOF
-  set omnifunc=v:lua.vim.lsp.omnifunc
+  if !(exists("g:use_ddc") && g:use_ddc)
+    set omnifunc=v:lua.vim.lsp.omnifunc
+  endif
   nnoremap <Space>gi <cmd>lua vim.lsp.buf.implemention()<CR>
   nnoremap <Space>f  <cmd>lua vim.lsp.buf.formatting()<CR>
   nnoremap <Space>h  <cmd>lua vim.lsp.buf.hover()<CR>
