@@ -1,9 +1,47 @@
 [[plugins]]
 repo = 'Shougo/ddc.vim'
-depends = ['denops.vim', 'context_filetype.vim']
-on_event = 'InsertEnter'
+depends = ['denops.vim', 'context_filetype.vim', 'pum.vim']
+on_event = ['InsertEnter']
+hook_add = '''
+  nnoremap : <cmd>call CommandlinePre()<CR>:
+  function! CommandlinePre() abort
+    call dein#source('ddc.vim')
+    call dein#source('neco-vim')
+    " Note: It disables default command line completion!
+    cnoremap <expr> <Tab>
+    \ pum#visible() ? '<Cmd>call pum#map#insert_relative(+1)<CR>' :
+    \ ddc#manual_complete()
+    cnoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
+    cnoremap <C-n>   <Cmd>call pum#map#insert_relative(+1)<CR>
+    cnoremap <C-p>   <Cmd>call pum#map#insert_relative(-1)<CR>
+    cnoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
+    cnoremap <C-e>   <Cmd>call pum#map#cancel()<CR>
+
+    " Overwrite sources
+    let s:prev_buffer_config = ddc#custom#get_buffer()
+    call ddc#custom#patch_buffer('sources',
+            \ ['cmdline', 'around', 'necovim', 'file'])
+
+    autocmd User DDCCmdlineLeave ++once call CommandlinePost()
+
+    " Enable command line completion
+    call ddc#enable_cmdline_completion()
+    call ddc#enable()
+  endfunction
+  function! CommandlinePost() abort
+    " Restore sources
+    call ddc#custom#set_buffer(s:prev_buffer_config)
+    silent! cunmap <Tab>
+  endfunction
+'''
 hook_source = '''
-  call ddc#custom#patch_global('sources', ['around', 'eskk'])
+  call ddc#custom#patch_global('autoCompleteEvents', [
+      \ 'InsertEnter', 'TextChangedI', 'TextChangedP',
+      \ 'CmdlineEnter', 'CmdlineChanged',
+      \ ])
+  call ddc#custom#patch_global('completionMenu', 'pum.vim')
+  " config sources
+  call ddc#custom#patch_global('sources', ['buffer', 'file'])
   call ddc#custom#patch_global('sourceOptions', {
     \ '_': {
     \   'matchers': ['matcher_head'],
@@ -11,18 +49,43 @@ hook_source = '''
     \   'converters': ['converter_remove_overlap']
     \ },
     \ 'around': {'mark': 'A' },
-    \ 'eskk': {'mark': 'eskk', 'matchers': [], 'sorters': [], 'minAutoCompleteLength': 1},
+    \ 'buffer': {'mark': 'B'},
+    \ 'file': {'mark': 'F', 'isVolatile': v:true, 'forceCompletionPattern': '\S/\S*',},
+    \ 'eskk': {'mark': 'eskk', 'matchers': [], 'sorters': [], 'minAutoCompleteLength': 1,},
+    \ 'necovim': {'mark': 'neco'},
     \ 'nvim-lsp': {'mark': 'lsp', 'forceCompletionPattern': '\\.|:|->'},
+    \ 'skkeleton': {'mark': 'skk', 'matchers': ['skkeleton'], 'sorters':[], 'minAutoCompleteLength': 1,},
+    \ 'zsh': {'mark': 'zsh', 'isVolatile': v:true, 'forceCompletionPattern': '\S/\S*',},
     \ })
   call ddc#custom#patch_global('sourceParams', {
+    \ 'buffer': {
+    \   'requireSameFiletype': v:true,
+    \   'limitBytes': 5000000,
+    \   'fromAltBuf': v:true,
+    \   'fourceCollect': v:true,
+    \ },
     \ 'nvim-lsp': {'useIcon': v:true},
     \ })
-  call ddc#custom#patch_filetype(
-    \ ['rust', 'c', 'cpp', 'python'], 'sources',
-    \ ['nvim-lsp', 'vsnip', 'around', 'eskk']
-    \ )
   call ddc#enable()
+
 '''
+
+
+[[plugins]]
+repo = 'Shougo/pum.vim'
+hook_source = '''
+  call pum#set_option('border', 'none')
+  inoremap <silent><expr> <TAB>
+    \ pum#visible() ? '<cmd>call pum#map#insert_relative(+1)<CR>' :
+    \ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
+    \ '<TAB>' : ddc#manual_complete()
+  inoremap <S-TAB> <cmd>call pum#map#insert_relative(-1)<CR>
+  inoremap <C-n> <cmd>call pum#map#insert_relative(+1)<CR>
+  inoremap <C-p> <cmd>call pum#map#insert_relative(-1)<CR>
+  inoremap <C-y> <cmd>call pum#map#confirm()<CR>
+  inoremap <C-e> <cmd>call pum#map#cancel()<CR>
+'''
+
 
 
 
@@ -32,7 +95,7 @@ repo = 'hrsh7th/vim-vsnip'
 [[plugins]]
 repo = 'hrsh7th/vim-vsnip-integ'
 depends = ['vim-vsnip']
-on_source = 'ddc.vim'
+on_source = 'ddc-nvim-lsp'
 
 
 
@@ -42,15 +105,59 @@ repo = 'Shougo/ddc-around'
 on_source = 'ddc.vim'
 
 [[plugins]]
+repo = 'matsui54/ddc-buffer'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-cmdline'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'LumaKernel/ddc-file'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-zsh'
+on_ft = ['zsh', 'deol']
+depends = 'ddc.vim'
+hook_source = '''
+  call ddc#custom#patch_filetype(
+        \ ['zsh', 'deol'], 'sources',
+        \ ['zsh', 'around', 'file']
+        \)
+'''
+
+[[plugins]]
 repo = 'Shougo/ddc-nvim-lsp'
 on_source = 'nvim-lspconfig'
 depends = 'ddc.vim'
+hook_source = '''
+  autocmd User PumCompleteDone call vsnip_integ#on_complete_done(g:pum#completed_item)
+  call ddc#custom#patch_filetype(
+    \ ['rust', 'c', 'cpp', 'python'], 'sources',
+    \ ['nvim-lsp', 'vsnip', 'buffer']
+    \ )
+'''
 
 [[plugins]]
-repo = 'matsui54/ddc-nvim-lsp-doc'
+repo = 'matsui54/denops-signature_help'
 on_source = 'ddc-nvim-lsp'
 hook_source = '''
-  call ddc_nvim_lsp_doc#enable()
+  let g:signature_help_config = {
+  \ 'style': 'virtual',
+  \ 'border': v:true,
+  \}
+  call signature_help#enable()
+'''
+
+[[plugins]]
+repo = 'matsui54/denops-popup-preview.vim'
+on_source = 'ddc-nvim-lsp'
+hook_source = '''
+  let g:popup_preview_config = {
+  \ 'border': v:true,
+  \}
+  call popup_preview#enable()
 '''
 
 [[plugins]]
@@ -60,7 +167,7 @@ depends = 'ddc.vim'
 hook_source = '''
     call ddc#custom#patch_filetype(
       \ ['vim', 'toml', 'help'], 'sources',
-      \ ['necovim', 'around', 'eskk']
+      \ ['necovim', 'around', 'file']
       \ )
 '''
 

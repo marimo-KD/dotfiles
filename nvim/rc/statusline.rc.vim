@@ -23,8 +23,8 @@ function! StatuslineMode()
     let c = "StatuslineVisual"
   elseif mode()==#"i"
     let c = "StatuslineInsert"
-    if eskk#is_enabled()
-      let mode_name = "INSERT(eskk)"
+    if skkeleton#is_enabled()
+      let mode_name = "INSERT(skk)"
     else
       let mode_name = "INSERT"
     endif
@@ -47,11 +47,11 @@ endfunction
 function! LspStatus() abort
   let sl = ''
   if has('nvim') && luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
-    let sl.='%#StatuslineLSPError# '
-    let sl.='%{luaeval("vim.lsp.diagnostic.get_count(0, [[Error]])")}%*'
+    let error_count = luaeval('#vim.diagnostic.get(nil, {severity = vim.diagnostic.severity.ERROR})')
+    let warn_count = luaeval('#vim.diagnostic.get(nil, {severity = vim.diagnostic.severity.WARN})')
+    let sl.='%#StatuslineLSPError# ' . error_count
     let sl.=' '
-    let sl.='%#StatuslineLSPWarning# '
-    let sl.='%{luaeval("vim.lsp.diagnostic.get_count(0, [[Warning]])")}%*'
+    let sl.='%#StatuslineLSPWarning# ' . warn_count . '%*'
   else
       let sl.='%#StatuslineLSP#OFF%*'
   endif
@@ -72,11 +72,8 @@ highlight! StatuslineReplace ctermbg=red        ctermfg=black      guibg=red    
 " Others
 highlight! StatuslineOther ctermbg=red        ctermfg=black      guibg=red        guifg=black   gui=bold
 
-
-highlight! StatuslineLSPError    cterm=bold ctermbg=238 ctermfg=red    gui=bold guibg=#14191F guifg=red
-highlight! StatuslineLSPWarning  cterm=bold ctermbg=238 ctermfg=yellow gui=bold guibg=#14191F guifg=yellow
+hi link StatuslineLSPError Error
+hi link StatuslineLSPWarning WarningMsg
 
 
 set statusline=%!GenStatusline()
-"autocmd User eskk-enable-pre set statusline=%!GenStatusline()
-"autocmd User eskk-disable-pre set statusline=%!GenStatusline()

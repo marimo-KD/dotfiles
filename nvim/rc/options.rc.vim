@@ -16,6 +16,12 @@ let g:loaded_zipPlugin         = 1
 " and disable fzf
 let g:loaded_fzf               = 1
 
+" if neovim, use filetype.lua
+if has("nvim")
+  let g:do_filetype_lua = 1
+  let g:did_load_filetypes = 0
+endif
+
 " Search
 set hlsearch
 set ignorecase
@@ -46,9 +52,6 @@ set hidden
 set list
 set listchars=tab:»\ ,trail:-,extends:»,precedes:«,nbsp:%
 set shortmess=aTIcF
-set number
-set relativenumber
-set signcolumn=yes
 
 " TrueColor
 set t_Co=256

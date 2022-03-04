@@ -16,6 +16,7 @@ let s:base_path = '~/.config/nvim'
 let s:toml = s:base_path . '/dein.toml'
 let s:toml_lazy = s:base_path . '/dein_lazy.toml'
 let s:toml_ddc = s:base_path . '/dein_ddc.toml'
+let s:toml_ddu = s:base_path . '/dein_ddu.toml'
 let s:toml_ft = s:base_path . '/dein_ft.toml'
 
 call dein#begin(s:dein_dir, [expand('<sfile>'), s:toml, s:toml_lazy, s:toml_ft])
@@ -24,6 +25,7 @@ call dein#load_toml(s:toml_lazy, {'lazy': 1})
 if exists("g:use_ddc") && g:use_ddc
   call dein#load_toml(s:toml_ddc, {'lazy': 1})
 endif
+call dein#load_toml(s:toml_ddu, {'lazy': 1})
 call dein#load_toml(s:toml_ft)
 call dein#end()
 call dein#save_state()

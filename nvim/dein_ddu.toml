@@ -1,0 +1,89 @@
+# Core
+[[plugins]]
+repo = 'Shougo/ddu.vim'
+on_func = 'ddu#start'
+hook_add = '''
+  " file
+  nnoremap <Space>f <cmd>call ddu#start({'sources': [{'name': 'file_rec'}]})<CR>
+  " buffer
+  nnoremap <Space>b <cmd>call ddu#start({'sources': [{'name': 'buffer'}]})<CR>
+  " line
+  nnoremap <Space>g <cmd>call ddu#start({'sources': [{'name': 'line'}]})<CR>
+'''
+hook_source = '''
+  "ui
+  call ddu#custom#patch_global({
+    \ 'ui': 'ff',
+    \ 'uiParams': {
+    \   'ff': {
+    \     'previewFloating': v:true,
+    \     'displaySourceName': 'long',
+    \     'split': 'floating',
+    \     }
+    \   }
+    \ })
+  "filter
+  call ddu#custom#patch_global({
+    \ 'sourceOptions': {
+    \   '_': {
+    \     'matchers': ['matcher_substring'],
+    \     },
+    \   },
+    \ })
+  "kind default action
+  call ddu#custom#patch_global({
+    \ 'kindOptions': {
+    \   'file': {
+    \     'defaultAction': 'open',
+    \     },
+    \   },
+    \ })
+'''
+
+# UI
+[[plugins]]
+repo = 'Shougo/ddu-ui-ff'
+on_source = 'ddu.vim'
+hook_source = '''
+'''
+[plugins.ftplugin]
+ddu-ff = '''
+setlocal cursorline
+nnoremap <buffer><silent> <CR>
+\ <Cmd>call ddu#ui#ff#do_action('itemAction')<CR>
+nnoremap <buffer><silent> <Space>
+\ <Cmd>call ddu#ui#ff#do_action('toggleSelectItem')<CR>
+nnoremap <buffer><silent> i
+\ <Cmd>call ddu#ui#ff#do_action('openFilterWindow')<CR>
+nnoremap <buffer><silent> q
+\ <Cmd>call ddu#ui#ff#do_action('quit')<CR>
+nnoremap <buffer><silent> <ESC>
+\ <Cmd>call ddu#ui#ff#do_action('quit')<CR>
+'''
+ddu-ff-filter = '''
+inoremap <buffer><silent> <CR> <ESC><cmd>close<CR>
+nnoremap <buffer><silent> <CR> <ESC>close<CR>
+'''
+
+# Filter
+[[plugins]]
+repo = 'Shougo/ddu-filter-matcher_substring'
+on_source = 'ddu.vim'
+
+# Source
+[[plugins]]
+repo = 'Shougo/ddu-source-file_rec'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'shun/ddu-source-buffer'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-source-line'
+on_source = 'ddu.vim'
+
+# Kind
+[[plugins]]
+repo = 'Shougo/ddu-kind-file'
+on_source = 'ddu.vim'

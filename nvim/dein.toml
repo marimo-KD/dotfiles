@@ -28,15 +28,6 @@ hook_add = '''
 
 
 [[plugins]]
-repo = 'lifepillar/vim-gruvbox8'
-hook_add = '''
-  let g:gruvbox_italicize_strings = 0
-  let g:gruvbox_plugin_hi_groups = 0
-  let g:gruvbox_filetype_hi_groups = 0
-'''
-
-
-[[plugins]]
 repo = 'ncm2/float-preview.nvim'
 if = 'has("nvim") && !(exists("g:use_ddc") && g:use_ddc)'
 hook_add = '''
@@ -46,10 +37,34 @@ hook_add = '''
 
 
 [[plugins]]
+repo = 'antoinemadec/FixCursorHold.nvim'
+if = 'has("nvim")'
+
+
+
+[[plugins]]
 repo = 'vim-denops/denops.vim'
 
+
+
+# {{{ ColorScheme
 # [[plugins]]
 # repo = 'lifepillar/vim-solarized8'
+[[plugins]]
+repo = 'lifepillar/vim-gruvbox8'
+hook_add = '''
+  let g:gruvbox_italicize_strings = 0
+  let g:gruvbox_plugin_hi_groups = 0
+  let g:gruvbox_filetype_hi_groups = 1
+'''
+
+[[plugins]]
+repo = 'EdenEast/nightfox.nvim'
+
+[[plugins]]
+repo = 'folke/tokyonight.nvim'
+# }}}
+
 
 
 
