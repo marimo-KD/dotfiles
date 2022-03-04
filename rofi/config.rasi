@@ -12,5 +12,5 @@ configuration {
   color-normal: "#455a64, #fafbfc, #455a64, #00bcd4, #fafbfc";
   color-active: "#455a64, #00bcd4, #455a64, #009688, #fdf6e3";
   color-urgent: "#455a64, #ff5252, #455a64, #ff5252, #fdf6e3";
-  theme: "~/.config/rofi/sidetab.rasi";
 }
+@theme "default"
