@@ -1,23 +1,41 @@
-# Created by newuser for 5.6.2
-
 autoload -Uz add-zsh-hook
 autoload -Uz colors
 autoload -Uz compinit
-autoload -Uz url-quote-magic
+
 colors
 compinit
 
-bindkey -e
-
+autoload -Uz url-quote-magic
 zle -N self-insert url-quote-magic
 
+#{{{ Keybinds
+
+# emacs keybind
+bindkey -e
+
+# history completion
+autoload history-search-end
+zle -N history-beginning-search-backward-end history-search-end
+zle -N history-beginning-search-forward-end history-search-end
+bindkey "^p" history-beginning-search-backward-end
+bindkey "^n" history-beginning-search-forward-end
+
+# kill line
+bindkey "^u" backward-kill-line
+
+# edit line with vim
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey "^x" edit-command-line
+
+#}}}
+
+#{{{ Options
+
 setopt auto_pushd
+setopt auto_cd
 setopt pushd_ignore_dups
 setopt extended_glob
-
-setopt hist_ignore_all_dups
-setopt hist_ignore_space
-setopt share_history
 
 setopt interactive_comments
 setopt magic_equal_subst
@@ -27,30 +45,69 @@ setopt no_hist_beep
 setopt no_list_beep
 setopt notify
 
+#}}}
+
+#{{{ History
+
+HISTFILE=$HOME/.zhistory
+HISTSIZE=100000
+SAVEHIST=100000
+HISTORY_IGNORE="(ls|pwd|cd|rm|rmdir|mv|cp|export|exit)"
+setopt extended_history
+setopt inc_append_history
+setopt share_history
+setopt hist_ignore_space
+setopt hist_reduce_blanks
+setopt hist_no_store
+setopt hist_verify
+zshaddhistory(){
+  local line cmd exist
+  line=${1%%$'\n'}
+  cmd=${line%% *}
+  type ${cmd} > /dev/null 2>&1
+  exist=$?
+  [[ $line != ${~HISTORY_IGNORE} && ${exist} == "0" ]]
+}
+
+#}}}
+
+#{{{ Environments
+
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir dir_writable vcs virtualenv)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(background_jobs status time)
-export EDITOR=nvim
-export PAGER=less
 
-# Alias
+#}}}
+
+#{{{ Aliases
+
+# Global aliases
+alias -g G='| grep'
+alias -g H='| head'
+alias -g L="| ${PAGER}"
+alias -g V='| vim -R -'
+
+# others
 alias exa='exa --icons --color=auto'
-alias grep='rg'
+alias grep=rg
+# enable to use aliases when using sudo
+alias sudo='sudo '
+
+# Commands
 alias start_sway='~/Bin/start_sway'
 alias trans='~/Bin/Translation.py'
 
-# Thefuck
-# eval $(thefuck --alias)
+alias vim=nvim
+#}}}
 
+#{{{ ZPlug
 
-#plugins
 source ~/.zplug/init.zsh
-#zplug "agnoster/agnoster-zsh-theme", as:theme
-#zplug "bhilburn/powerlevel9k", as:theme
-zplug "mafredri/zsh-async"
+
+# zplug "mafredri/zsh-async"
 zplug "b4b4r07/enhancd", use:init.sh
-zplug "zsh-users/zsh-autosuggestions"
-zplug "zsh-users/zsh-completions"
+zplug "arzzen/calc.plugin.zsh", use:calc.plugin.zsh
+zplug "zsh-users/zsh-completions", lazy:true
 zplug "zsh-users/zsh-syntax-highlighting"
 
 zplug "plugins/gnu-utils", from:oh-my-zsh
@@ -59,7 +116,7 @@ zplug "plugins/colored-man-pages", from:oh-my-zsh
 
 case ${OSTYPE} in
     darwin*)
-        # MAC
+        # Mac
         alias ls='ls -G'
         export PATH=/opt/homebrew/bin:$PATH
         zplug "sindresorhus/pure", use:pure.zsh, as:theme
@@ -82,3 +139,5 @@ fi
 
 #load plugins
 zplug load --verbose
+
+# }}}
