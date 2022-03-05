@@ -33,7 +33,7 @@ set smartcase
 set encoding=utf-8
 " indent
 set autoindent
-set smartindent
+set nosmartindent
 " tab
 set expandtab
 set softtabstop=2
@@ -52,6 +52,7 @@ set hidden
 set list
 set listchars=tab:»\ ,trail:-,extends:»,precedes:«,nbsp:%
 set shortmess=aTIcF
+set signcolumn=no
 
 " TrueColor
 set t_Co=256

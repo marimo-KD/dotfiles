@@ -13,56 +13,67 @@ hook_add = '''
 hook_source = '''
   "ui
   call ddu#custom#patch_global({
-    \ 'ui': 'ff',
-    \ 'uiParams': {
-    \   'ff': {
-    \     'previewFloating': v:true,
-    \     'displaySourceName': 'long',
-    \     'split': 'floating',
-    \     }
-    \   }
-    \ })
+  \ 'ui': 'ff',
+  \ 'uiParams': {
+  \   'ff': {
+  \     'previewFloating': v:true,
+  \     'displaySourceName': 'long',
+  \     'split': 'floating',
+  \     }
+  \   }
+  \ })
   "filter
   call ddu#custom#patch_global({
-    \ 'sourceOptions': {
-    \   '_': {
-    \     'matchers': ['matcher_substring'],
-    \     },
-    \   },
-    \ })
+  \ 'sourceOptions': {
+  \   '_': {
+  \     'matchers': ['matcher_substring'],
+  \     },
+  \   },
+  \ })
   "kind default action
   call ddu#custom#patch_global({
-    \ 'kindOptions': {
-    \   'file': {
-    \     'defaultAction': 'open',
-    \     },
-    \   },
-    \ })
+  \ 'kindOptions': {
+  \   'file': {
+  \     'defaultAction': 'open',
+  \     },
+  \   'action': {
+  \     'defaultAction': 'do',
+  \     },
+  \   },
+  \ })
 '''
 
 # UI
 [[plugins]]
 repo = 'Shougo/ddu-ui-ff'
 on_source = 'ddu.vim'
-hook_source = '''
-'''
 [plugins.ftplugin]
 ddu-ff = '''
-setlocal cursorline
-nnoremap <buffer><silent> <CR>
-\ <Cmd>call ddu#ui#ff#do_action('itemAction')<CR>
-nnoremap <buffer><silent> <Space>
-\ <Cmd>call ddu#ui#ff#do_action('toggleSelectItem')<CR>
-nnoremap <buffer><silent> i
-\ <Cmd>call ddu#ui#ff#do_action('openFilterWindow')<CR>
-nnoremap <buffer><silent> q
-\ <Cmd>call ddu#ui#ff#do_action('quit')<CR>
-nnoremap <buffer><silent> <ESC>
-\ <Cmd>call ddu#ui#ff#do_action('quit')<CR>
+  setlocal cursorline
+  nnoremap <buffer><silent> <CR>
+  \ <Cmd>call ddu#ui#ff#do_action('itemAction')<CR>
+  nnoremap <buffer><silent> <Space>
+  \ <Cmd>call ddu#ui#ff#do_action('toggleSelectItem')<CR>
+  nnoremap <buffer><silent> a
+  \ <Cmd>call ddu#ui#ff#do_action('chooseAction')
+  nnoremap <buffer><silent> p
+  \ <Cmd>call ddu#ui#ff#do_action('preview')
+  nnoremap <buffer><silent> i
+  \ <Cmd>call ddu#ui#ff#do_action('openFilterWindow')<CR>
+  nnoremap <buffer><silent> x
+  \ <Cmd>call ddu#ui#ff#do_action('toggleSelectItem')<CR>
+  nnoremap <buffer><silent> q
+  \ <Cmd>call ddu#ui#ff#do_action('quit')<CR>
+  nnoremap <buffer><silent> <ESC>
+  \ <Cmd>call ddu#ui#ff#do_action('quit')<CR>
+
+  nnoremap <buffer><silent> v
+  \ <Cmd>call ddu#ui#ff#do_action('itemAction',
+  \ {'name': 'open', 'params': {'command': 'vsplit'}})<CR>
 '''
 ddu-ff-filter = '''
-inoremap <buffer><silent> <CR> <ESC><cmd>close<CR>
-nnoremap <buffer><silent> <CR> <ESC>close<CR>
+  inoremap <buffer><silent> <CR> <ESC><cmd>close<CR>
+  nnoremap <buffer><silent> <CR> <ESC>close<CR>
 '''
 
 # Filter
@@ -82,6 +93,11 @@ on_source = 'ddu.vim'
 [[plugins]]
 repo = 'Shougo/ddu-source-line'
 on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-source-action'
+on_source = 'ddu.vim'
+# NOTE:including action kind
 
 # Kind
 [[plugins]]

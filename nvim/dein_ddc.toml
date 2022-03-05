@@ -8,10 +8,6 @@ hook_add = '''
     call dein#source('ddc.vim')
     call dein#source('neco-vim')
     " Note: It disables default command line completion!
-    cnoremap <expr> <Tab>
-    \ pum#visible() ? '<Cmd>call pum#map#insert_relative(+1)<CR>' :
-    \ ddc#manual_complete()
-    cnoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
     cnoremap <C-n>   <Cmd>call pum#map#insert_relative(+1)<CR>
     cnoremap <C-p>   <Cmd>call pum#map#insert_relative(-1)<CR>
     cnoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
@@ -75,11 +71,6 @@ hook_source = '''
 repo = 'Shougo/pum.vim'
 hook_source = '''
   call pum#set_option('border', 'none')
-  inoremap <silent><expr> <TAB>
-    \ pum#visible() ? '<cmd>call pum#map#insert_relative(+1)<CR>' :
-    \ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
-    \ '<TAB>' : ddc#manual_complete()
-  inoremap <S-TAB> <cmd>call pum#map#insert_relative(-1)<CR>
   inoremap <C-n> <cmd>call pum#map#insert_relative(+1)<CR>
   inoremap <C-p> <cmd>call pum#map#insert_relative(-1)<CR>
   inoremap <C-y> <cmd>call pum#map#confirm()<CR>

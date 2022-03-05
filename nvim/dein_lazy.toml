@@ -9,25 +9,6 @@ hook_source = '''
 '''
 
 
-#[[plugins]]
-#repo = "tyru/eskk.vim"
-#on_map = { ic = '<Plug>(eskk' }
-#hook_add = '''
-#  imap <C-j>  <Plug>(eskk:toggle)
-#  cmap <C-j>  <Plug>(eskk:toggle)
-#'''
-#hook_source = '''
-#  let g:eskk#directory = g:config_home . "/nvim/eskk"
-#  let g:eskk#dictionary = "~/SKK/skk-jisyo"
-#  let g:eskk#large_dictionary = "/usr/share/skk/SKK-JISYO.L"
-#  let g:egg_like_newline = 1
-#  augroup rc_skk
-#    autocmd!
-#    autocmd User eskk-enable-post lmap <buffer> l <Plug>(eskk:disable)
-#  augroup END
-#'''
-
-
 [[plugins]]
 repo = 'vim-skk/skkeleton'
 on_map = { ic = '<Plug>(skkeleton' }
@@ -211,9 +192,8 @@ EOF
 repo = 'lambdalisue/fern.vim'
 on_command = 'Fern'
 hook_add = '''
-  nnoremap <Space>e <cmd>Fern .<CR>
-  " not worked as expected
-  nnoremap <Space>n <cmd>Fern . -drawer -keep<CR>
+  nnoremap <Space>e <cmd>Fern . -opener=vsplit<CR>
+  let g:fern#disable_default_mappings = 1
   " open fern when edit a directory
   function! s:open_with_fern() abort
     let path = expand('%:p')
@@ -228,14 +208,27 @@ hook_add = '''
     autocmd BufEnter * ++nested call s:open_with_fern()
   augroup END
 '''
-hook_source = '''
-  function! s:init_fern() abort
-    unmap <buffer> D
-  endfunction
-  augroup fern-config
-    autocmd! *
-    autocmd FileType fern call s:init_fern()
-  augroup END
+[plugins.ftplugin]
+fern = '''
+  nmap <buffer> <Plug>(fern-action-open) <Plug>(fern-action-open:select)
+
+  nmap <buffer> a     <Plug>(fern-choice)
+  nmap <buffer> <CR>  <Plug>(fern-action-open-or-enter)
+  nmap <buffer> l     <Plug>(fern-action-open-or-enter)
+  nmap <buffer> v     <Plug>(fern-action-open:side)
+  nmap <buffer> x     <Plug>(fern-action-mark:toggle)j
+  nmap <buffer> h     <Plug>(fern-action-leave)
+  nmap <buffer> r     <Plug>(fern-action-rename)
+  nmap <buffer> !     <Plug>(fern-action-hidden:toggle)
+  nmap <buffer> m     <Plug>(fern-action-move)
+  nmap <buffer> c     <Plug>(fern-action-copy)
+  nmap <buffer> y     <Plug>(fern-action-yank)
+  nmap <buffer> ?     <Plug>(fern-action-help)
+  nmap <buffer> <C-c> <Plug>(fern-action-cancel)
+  nmap <buffer> .     <Plug>(fern-repeat)
+  nmap <buffer> R     <Plug>(fern-action-reload:all)
+  nmap <buffer> q     <cmd>quit<CR>
+  nmap <buffer> Q     <cmd>bwipe!<CR>
 '''
 
 
