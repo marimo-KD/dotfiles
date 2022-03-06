@@ -386,6 +386,15 @@ hook_add = '''
   xmap ga <Plug>(EasyAlign)
 '''
 
+[[plugins]]
+repo = 'phaazon/hop.nvim'
+if = 'has("nvim")'
+on_command = ['HopWord', 'HopPattern', 'HopChar1', 'HopChar2', 'HopLine', 'HopLineStart']
+hook_add = '''
+'''
+hook_source = '''
+'''
+
 
 
 [[plugins]]
