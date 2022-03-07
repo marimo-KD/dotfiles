@@ -100,6 +100,10 @@ alias trans='~/Bin/Translation.py'
 alias vim=nvim
 #}}}
 
+#{{{ Prompt
+
+#}}}
+
 #{{{ ZPlug
 
 source ~/.zplug/init.zsh
@@ -119,13 +123,13 @@ case ${OSTYPE} in
         # Mac
         alias ls='ls -G'
         export PATH=/opt/homebrew/bin:$PATH
-        zplug "sindresorhus/pure", use:pure.zsh, as:theme
+        # zplug "sindresorhus/pure", use:pure.zsh, as:theme
         ;;
     linux*)
         # Linux
         alias ls='ls --color'
         zplug "plugins/archlinux", from:oh-my-zsh
-        zplug "romkatv/powerlevel10k", as:theme, depth:1
+        # zplug "romkatv/powerlevel10k", as:theme, depth:1
         ;;
 esac
 
