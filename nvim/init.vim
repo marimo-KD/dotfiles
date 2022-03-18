@@ -19,7 +19,6 @@ call s:source_rc('dein.rc.vim')
 
 filetype plugin indent on
 syntax on
-filetype detect
 
 colorscheme melange
 set background=dark

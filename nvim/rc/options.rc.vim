@@ -17,7 +17,7 @@ let g:loaded_zipPlugin         = 1
 let g:loaded_fzf               = 1
 
 " if neovim, use filetype.lua
-if has("nvim")
+if has("nvim-0.7.0")
   let g:do_filetype_lua = 1
   let g:did_load_filetypes = 0
 endif
