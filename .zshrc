@@ -102,6 +102,40 @@ alias vim=nvim
 
 #{{{ Prompt
 
+function fg_color() {
+  echo "%{$fg[$1]%}"
+}
+function bg_color() {
+  echo "%{$bg[$1]%}"
+}
+function fg_bg_color() {
+  echo "%{$fg[$1]$bg[$2]%}"
+}
+
+function left-prompt {
+  reset="%{$reset_color%}"
+  fg_blue=`fg_color blue`
+  fg_green=`fg_color green`
+  bg_green=`bg_color green`
+  echo "${fg_green}[%n@%m]${reset} ${fg_blue}%~${reset}:%# "
+}
+
+function right-prompt {
+  echo "[%D %*]"
+}
+
+PROMPT=`left-prompt`
+RPROMPT=`right-prompt`
+SPROMPT="correct> %R -> %r [n,y,a,e]? "
+
+function precmd() {
+  if [ -z "$NEW_LINE_BEFORE_PROMPT" ]; then
+    NEW_LINE_BEFORE_PROMPT=1
+  elif [ "$NEW_LINE_BEFORE_PROMPT" -eq 1 ]; then
+    echo ""
+  fi
+}
+
 #}}}
 
 #{{{ ZPlug

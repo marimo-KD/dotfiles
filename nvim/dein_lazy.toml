@@ -391,8 +391,13 @@ repo = 'phaazon/hop.nvim'
 if = 'has("nvim")'
 on_command = ['HopWord', 'HopPattern', 'HopChar1', 'HopChar2', 'HopLine', 'HopLineStart']
 hook_add = '''
+  noremap <C-k> <cmd>HopLine<CR>
 '''
 hook_source = '''
+  lua << EOF
+  local hp = require'hop'
+  hp.setup{ keys = 'asdfghjklwertyuiopvbcn' }
+EOF
 '''
 
 

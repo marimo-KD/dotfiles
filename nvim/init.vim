@@ -21,7 +21,7 @@ filetype plugin indent on
 syntax on
 filetype detect
 
-colorscheme gruvbox8_soft
+colorscheme melange
 set background=dark
 
 call s:source_rc('statusline.rc.vim')

@@ -63,6 +63,9 @@ repo = 'EdenEast/nightfox.nvim'
 
 [[plugins]]
 repo = 'folke/tokyonight.nvim'
+
+[[plugins]]
+repo = 'savq/melange'
 # }}}
 
 

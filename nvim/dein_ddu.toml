@@ -8,7 +8,18 @@ hook_add = '''
   " buffer
   nnoremap <Space>b <cmd>call ddu#start({'sources': [{'name': 'buffer'}]})<CR>
   " line
-  nnoremap <Space>g <cmd>call ddu#start({'sources': [{'name': 'line'}]})<CR>
+  nnoremap <Space>l <cmd>call ddu#start({'sources': [{'name': 'line'}]})<CR>
+  " live grep
+  nnoremap <Space>g <cmd>call ddu#start({
+  \ 'volatile': v:true,
+  \ 'sources': [{'name': 'rg', 'options': {'matchers': []}}],
+  \ 'uiParams': {
+  \   'ff': {
+  \     'ignoreEmpty': v:false,
+  \     'autoResize': v:false,
+  \     }
+  \   },
+  \ })<CR>
 '''
 hook_source = '''
   "ui
@@ -19,6 +30,14 @@ hook_source = '''
   \     'previewFloating': v:true,
   \     'displaySourceName': 'long',
   \     'split': 'floating',
+  \     }
+  \   }
+  \ })
+  "sources
+  call ddu#custom#patch_global({
+  \ 'sourceParams': {
+  \   'rg': {
+  \     'args': ['--json'],
   \     }
   \   }
   \ })
@@ -92,6 +111,10 @@ on_source = 'ddu.vim'
 
 [[plugins]]
 repo = 'Shougo/ddu-source-line'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'shun/ddu-source-rg'
 on_source = 'ddu.vim'
 
 [[plugins]]

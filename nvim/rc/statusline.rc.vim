@@ -1,9 +1,8 @@
 set laststatus=2
 set noshowmode
 
-
 function! GenStatusline()
-  return StatuslineMode() . "\ %<%F\ %m%r%h\ %= %{strlen(&fenc)?&fenc:'none'}\ %y\ " . LspStatus() . "\ %l/%L"
+  return StatuslineMode() . "\ %<%F\ %m%r%h\ %= %{strlen(&fenc)?&fenc:'none'}\ %y\ " . LspStatus() . "\ %c:%l/%L"
 endfunction
 
 function! StatuslineMode()
