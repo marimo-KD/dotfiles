@@ -8,6 +8,12 @@ compinit
 autoload -Uz url-quote-magic
 zle -N self-insert url-quote-magic
 
+# {{{ Functions
+comppdf(){
+  gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$2 $1
+}
+# }}}
+
 #{{{ Keybinds
 
 # emacs keybind
@@ -179,3 +185,6 @@ fi
 zplug load --verbose
 
 # }}}
+
+# opam configuration
+[[ ! -r /home/marimo-kd/.opam/opam-init/init.zsh ]] || source /home/marimo-kd/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null

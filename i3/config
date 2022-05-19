@@ -207,4 +207,4 @@ exec --no-startup-id xinput set-prop "ELECOM ELECOM TrackBall Mouse" "libinput A
 exec --no-startup-id fcitx5 -d
 exec --no-startup-id picom -b
 # exec --no-startup-id ~/Bin/dwall -s exodus
-exec --no-startup-id feh --bg-scale --no-fehbg ~/Pictures/wallpaper/2821518207-darkmiku_kabekin-pglX-1920x1080-MM-100.jpg
+exec --no-startup-id feh --bg-scale --no-fehbg ~/Pictures/wallpaper/malenia.jpg
