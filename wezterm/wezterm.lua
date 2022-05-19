@@ -1,4 +1,4 @@
- local wezterm = require'wezterm';
+local wezterm = require'wezterm';
 
 function font_with_fallback(name, params)
   local names = {name, "Symbols Nerd Font", "Noto Color Emoji"}
@@ -6,24 +6,24 @@ function font_with_fallback(name, params)
 end
 
 return {
-  font = font_with_fallback("Sarasa Term J"),
+  font = font_with_fallback("PlemolJP Console NF Light"),
   font_rules = {
     {
       italic = true,
-      font = font_with_fallback("Sarasa Term J", {italic = true}),
+      font = font_with_fallback("PlemolJP Console NF Light", {italic = true}),
     },
     {
       intensity = "Bold",
-      font = font_with_fallback("Sarasa Term J", {bold = true}),
+      font = font_with_fallback("PlemolJP Console NF Light", {bold = true}),
     },
     {
       italic = true,
       intensity = "Bold",
-      font = font_with_fallback("Sarasa Term J", {bold = true, italic=true}),
+      font = font_with_fallback("PlemolJP Console NF Light", {bold = true, italic=true}),
     },
     {
       intensity = "Half",
-      font = font_with_fallback("Sarasa Term J Light"),
+      font = font_with_fallback("PlemolJP Console NF ExtraLight"),
     },
   },
   font_size = 9.5,
