@@ -26,7 +26,7 @@ return {
       font = font_with_fallback("PlemolJP Console NF ExtraLight"),
     },
   },
-  font_size = 9.5,
+  font_size = 10,
   font_antialias = "Greyscale",
   font_hinting = "Full",
   window_background_opacity = 0.95,
@@ -35,4 +35,7 @@ return {
   enable_scroll_bar = false,
   color_scheme = "Gruvbox Dark",
   default_cursor_style = "BlinkingBar",
+
+  use_ime = false,
+  scrollback_lines = 700,
 }
