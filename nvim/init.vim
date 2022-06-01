@@ -20,7 +20,7 @@ call s:source_rc('dein.rc.vim')
 filetype plugin indent on
 syntax on
 
-colorscheme melange
+colorscheme gruvbox8
 set background=dark
 
 call s:source_rc('statusline.rc.vim')

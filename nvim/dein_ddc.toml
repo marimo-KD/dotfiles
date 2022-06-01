@@ -14,11 +14,14 @@ hook_add = '''
     cnoremap <C-e>   <Cmd>call pum#map#cancel()<CR>
 
     " Overwrite sources
-    let s:prev_buffer_config = ddc#custom#get_buffer()
-    call ddc#custom#patch_buffer('sources',
+    if !exists('b:prev_buffer_config')
+      let b:prev_buffer_config = ddc#custom#get_buffer()
+    endif
+    call ddc#custom#patch_buffer('cmdlineSources',
             \ ['cmdline', 'around', 'necovim', 'file'])
 
     autocmd User DDCCmdlineLeave ++once call CommandlinePost()
+    autocmd InsertEnter <buffer> ++once call CommandlinePost()
 
     " Enable command line completion
     call ddc#enable_cmdline_completion()
@@ -26,8 +29,16 @@ hook_add = '''
   endfunction
   function! CommandlinePost() abort
     " Restore sources
-    call ddc#custom#set_buffer(s:prev_buffer_config)
-    silent! cunmap <Tab>
+    silent! cunmap <C-n>
+    silent! cunmap <C-p>
+    silent! cunmap <C-y>
+    silent! cunmap <C-e>
+    if exists('b:prev_buffer_config')
+      call ddc#custom#set_buffer(b:prev_buffer_config)
+      unlet b:prev_buffer_config
+    else
+      call ddc#custom#set_buffer({})
+    endif
   endfunction
 '''
 hook_source = '''
@@ -40,18 +51,19 @@ hook_source = '''
   call ddc#custom#patch_global('sources', ['buffer', 'file'])
   call ddc#custom#patch_global('sourceOptions', {
     \ '_': {
-    \   'matchers': ['matcher_head'],
-    \   'sorters' : ['sorter_rank'],
-    \   'converters': ['converter_remove_overlap']
+    \   'matchers': ['matcher_fuzzy'],
+    \   'sorters' : ['sorter_fuzzy'],
+    \   'converters': ['converter_remove_overlap', 'converter_fuzzy']
     \ },
-    \ 'around': {'mark': 'A' },
-    \ 'buffer': {'mark': 'B'},
-    \ 'file': {'mark': 'F', 'isVolatile': v:true, 'forceCompletionPattern': '\S/\S*',},
-    \ 'eskk': {'mark': 'eskk', 'matchers': [], 'sorters': [], 'minAutoCompleteLength': 1,},
-    \ 'necovim': {'mark': 'neco'},
-    \ 'nvim-lsp': {'mark': 'lsp', 'forceCompletionPattern': '\\.|:|->'},
-    \ 'skkeleton': {'mark': 'skk', 'matchers': ['skkeleton'], 'sorters':[], 'minAutoCompleteLength': 1,},
-    \ 'zsh': {'mark': 'zsh', 'isVolatile': v:true, 'forceCompletionPattern': '\S/\S*',},
+    \ 'around': {'mark': '[A]' },
+    \ 'buffer': {'mark': '[B]'},
+    \ 'cmdline': {'mark': '[cmd]'},
+    \ 'file': {'mark': '[f]', 'isVolatile': v:true, 'forceCompletionPattern': '\S/\S*',},
+    \ 'eskk': {'mark': '[eskk]', 'matchers': [], 'sorters': [], 'minAutoCompleteLength': 1,},
+    \ 'necovim': {'mark': '[neco]'},
+    \ 'nvim-lsp': {'mark': '[lsp]', 'forceCompletionPattern': '\\.|:|->'},
+    \ 'skkeleton': {'mark': '[skk]', 'matchers': ['skkeleton'], 'sorters':[], 'minAutoCompleteLength': 1,},
+    \ 'zsh': {'mark': '[zsh]', 'isVolatile': v:true, 'forceCompletionPattern': '\S/\S*',},
     \ })
   call ddc#custom#patch_global('sourceParams', {
     \ 'buffer': {
@@ -60,17 +72,16 @@ hook_source = '''
     \   'fromAltBuf': v:true,
     \   'fourceCollect': v:true,
     \ },
-    \ 'nvim-lsp': {'useIcon': v:true},
+    \ 'nvim-lsp': {'useIcon': v:true,},
     \ })
   call ddc#enable()
-
 '''
 
 
 [[plugins]]
 repo = 'Shougo/pum.vim'
 hook_source = '''
-  call pum#set_option('border', 'none')
+  call pum#set_option('border', 'rounded')
   inoremap <C-n> <cmd>call pum#map#insert_relative(+1)<CR>
   inoremap <C-p> <cmd>call pum#map#insert_relative(-1)<CR>
   inoremap <C-y> <cmd>call pum#map#confirm()<CR>
@@ -167,6 +178,10 @@ hook_source = '''
 # ddc matchers
 [[plugins]]
 repo = 'Shougo/ddc-matcher_head'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'tani/ddc-fuzzy'
 on_source = 'ddc.vim'
 
 
