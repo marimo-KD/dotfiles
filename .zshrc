@@ -179,3 +179,6 @@ fi
 zplug load --verbose
 
 # }}}
+
+# opam configuration
+[[ ! -r /Users/marimo-kd/.opam/opam-init/init.zsh ]] || source /Users/marimo-kd/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
