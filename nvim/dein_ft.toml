@@ -5,3 +5,11 @@ python = '''
   setlocal tabstop=4
   setlocal expandtab
 '''
+satysfi = '''
+  setlocal shiftwidth=2
+  setlocal suffixesadd+=.saty,.satyh,.satyg
+  setlocal matchpairs+=<:>
+  "setlocal foldmethod=indent
+  setlocal foldnestmax=4
+  setlocal foldminlines=5
+'''
