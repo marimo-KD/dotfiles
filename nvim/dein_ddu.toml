@@ -3,14 +3,17 @@
 repo = 'Shougo/ddu.vim'
 on_func = 'ddu#start'
 hook_add = '''
+  " launcher
+  nnoremap <Space>d <cmd>Ddu source<CR>
   " file
-  nnoremap <Space>f <cmd>call ddu#start({'sources': [{'name': 'file_rec'}]})<CR>
-  " buffer
-  nnoremap <Space>b <cmd>call ddu#start({'sources': [{'name': 'buffer'}]})<CR>
-  " line
-  nnoremap <Space>l <cmd>call ddu#start({'sources': [{'name': 'line'}]})<CR>
+  nnoremap <Space>f <cmd>Ddu file_rec<CR>
+  " buffer                                       
+  nnoremap <Space>b <cmd>Ddu buffer<CR>
+  " line                                         
+  nnoremap <Space>l <cmd>Ddu line<CR>
   " live grep
   nnoremap <Space>g <cmd>call ddu#start({
+  \ 'name': 'file',
   \ 'volatile': v:true,
   \ 'sources': [{'name': 'rg', 'options': {'matchers': []}}],
   \ 'uiParams': {
@@ -27,9 +30,15 @@ hook_source = '''
   \ 'ui': 'ff',
   \ 'uiParams': {
   \   'ff': {
+  \     'floatingBorder': 'rounded',
   \     'previewFloating': v:true,
   \     'displaySourceName': 'long',
   \     'split': 'floating',
+  \     'prompt': '>',
+  \     'winCol': &columns / 6,
+  \     'winHeight': &lines / 2,
+  \     'winRow': &lines / 4,
+  \     'winWidth': &columns / 3 * 2,
   \     }
   \   }
   \ })
@@ -45,7 +54,7 @@ hook_source = '''
   call ddu#custom#patch_global({
   \ 'sourceOptions': {
   \   '_': {
-  \     'matchers': ['matcher_substring'],
+  \     'matchers': ['matcher_fzf'],
   \     },
   \   },
   \ })
@@ -57,6 +66,12 @@ hook_source = '''
   \     },
   \   'action': {
   \     'defaultAction': 'do',
+  \     },
+  \   'help': {
+  \     'defaultAction': 'vsplit',
+  \     },
+  \   'source': {
+  \     'defaultAction': 'execute',
   \     },
   \   },
   \ })
@@ -86,18 +101,37 @@ ddu-ff = '''
   nnoremap <buffer><silent> <ESC>
   \ <Cmd>call ddu#ui#ff#do_action('quit')<CR>
 
-  nnoremap <buffer><silent> v
-  \ <Cmd>call ddu#ui#ff#do_action('itemAction',
-  \ {'name': 'open', 'params': {'command': 'vsplit'}})<CR>
+  if b:ddu_ui_name ==# 'help'
+    nnoremap <buffer><silent> v
+    \ <cmd>call ddu#ui#ff#do_action('itemAction',
+    \ {'name': 'vsplit'})<CR>
+  else
+    nnoremap <buffer><silent> v
+    \ <Cmd>call ddu#ui#ff#do_action('itemAction',
+    \ {'name': 'open', 'params': {'command': 'vsplit'}})<CR>
+  endif
 '''
 ddu-ff-filter = '''
   inoremap <buffer><silent> <CR> <ESC><cmd>close<CR>
   nnoremap <buffer><silent> <CR> <ESC>close<CR>
+  nnoremap <buffer><silent> q
+  \ <Cmd>call ddu#ui#ff#do_action('quit')<CR>
+  nnoremap <buffer><silent> <ESC>
+  \ <Cmd>call ddu#ui#ff#do_action('quit')<CR>
 '''
+
+[[plugins]]
+repo = 'Shougo/ddu-commands.vim'
+depends = ['ddu.vim']
+on_cmd = ['Ddu']
 
 # Filter
 [[plugins]]
 repo = 'Shougo/ddu-filter-matcher_substring'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'yuki-yano/ddu-filter-fzf'
 on_source = 'ddu.vim'
 
 # Source
@@ -120,9 +154,23 @@ on_source = 'ddu.vim'
 [[plugins]]
 repo = 'Shougo/ddu-source-action'
 on_source = 'ddu.vim'
-# NOTE:including action kind
+# NOTE: including action kind
+
+[[plugins]]
+repo = 'matsui54/ddu-source-help'
+on_source = 'ddu.vim'
+# NOTE: including help kind
+
+[[plugins]]
+repo = '4513ECHO/ddu-source-source'
+on_source = 'ddu.vim'
+# NOTE: including source kind
 
 # Kind
 [[plugins]]
 repo = 'Shougo/ddu-kind-file'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-kind-word'
 on_source = 'ddu.vim'

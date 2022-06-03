@@ -272,7 +272,6 @@ depends = ['impatient.nvim']
 [[plugins]]
 repo = 'lewis6991/impatient.nvim'
 hook_source = '''
-  lua package.cpath=package.cpath..';'..os.getenv("HOME")..'/.config/nvim/lua/?.so'
   lua require('impatient')
 '''
 # }}}
@@ -373,7 +372,8 @@ repo = 'phaazon/hop.nvim'
 if = 'has("nvim")'
 on_command = ['HopWord', 'HopPattern', 'HopChar1', 'HopChar2', 'HopLine', 'HopLineStart']
 hook_add = '''
-  noremap <C-k> <cmd>HopLine<CR>
+  vnoremap <silent><Space>w <cmd>HopWord<CR>
+  nnoremap <silent><Space>w <cmd>HopWord<CR>
 '''
 hook_source = '''
   lua << EOF
