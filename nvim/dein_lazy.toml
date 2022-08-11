@@ -9,6 +9,12 @@ hook_source = '''
   " satysfi
   call lexima#add_rule({'char': '$', 'input': '${', 'input_after': '}', 'filetype': ['satysfi']})
   call lexima#add_rule({'char': '$', 'at': '\\\%#', 'leave': 1, 'filetype': ['satysfi']})
+  " cancel ' -> '' rule
+  call lexima#add_rule({'char': "'", 'input': "'", 'filetype': ['satysfi']})
+  " in command argument, < is block-text literal
+  call lexima#add_rule({'char': "<", 'at': '\%(+\|\\\)\%(\a\|\.\|_\|-\)\+\(\n\)\?\%(\%(?:\|!\)\?(\(\_.\)*)\|{\(\_.\)*}\|<\(\_.\)*>\|\(\n\)*\)*\%#', 'input': "<", "input_after": ">", 'filetype': ['satysfi']})
+  " '<> is block-text literal
+  call lexima#add_rule({'char': '<', 'at': "'\\%#", 'input': '<', 'input_after': '>', 'filetype': ['satysfi']})
 '''
 
 

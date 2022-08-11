@@ -6,6 +6,11 @@ python = '''
   setlocal expandtab
 '''
 satysfi = '''
+  setlocal autoindent
+  setlocal indentexpr=
+  setlocal equalprg=
+  setlocal nosmartindent
+  setlocal nocindent
   setlocal shiftwidth=2
   setlocal suffixesadd+=.saty,.satyh,.satyg
   setlocal matchpairs+=<:>

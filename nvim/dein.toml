@@ -66,6 +66,14 @@ repo = 'folke/tokyonight.nvim'
 
 [[plugins]]
 repo = 'savq/melange'
+
+[[plugins]]
+repo = 'sainnhe/everforest'
+hook_add = '''
+  let g:everforest_background = 'medium'
+  let g:everforest_enable_italic = 1
+  let g:everforest_better_performance = 1
+'''
 # }}}
 
 
