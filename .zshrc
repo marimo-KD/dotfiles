@@ -213,7 +213,7 @@ case ${OSTYPE} in
         ;;
     linux*)
         # Linux
-        alias ls='ls --color'
+        alias ls='ls --color=auto'
         zplug "plugins/archlinux", from:oh-my-zsh
         # zplug "romkatv/powerlevel10k", as:theme, depth:1
         ;;

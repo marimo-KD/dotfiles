@@ -2,10 +2,8 @@
 repo = 'Shougo/dein.vim'
 
 
-
 [[plugins]]
 repo = 'itchyny/vim-parenmatch'
-
 
 
 [[plugins]]
@@ -13,10 +11,8 @@ repo = 'osyo-manga/vim-precious'
 depends = ['context_filetype.vim']
 
 
-
 [[plugins]]
 repo = 'Shougo/context_filetype.vim'
-
 
 
 [[plugins]]
@@ -26,20 +22,25 @@ hook_add = '''
 '''
 
 
-
 [[plugins]]
-repo = 'ncm2/float-preview.nvim'
-if = 'has("nvim") && !(exists("g:use_ddc") && g:use_ddc)'
+repo = 'lewis6991/impatient.nvim'
 hook_add = '''
-  let g:float_preview#docked=1
+lua require("impatient")
 '''
 
-
-
 [[plugins]]
-repo = 'antoinemadec/FixCursorHold.nvim'
-if = 'has("nvim")'
-
+repo = 'folke/noice.nvim'
+depends = ['nui.nvim']
+hook_add = '''
+lua << EOF
+  local noice = require("noice")
+  noice.setup({})
+EOF
+'''
+[[plugins]]
+repo = 'MunifTanjim/nui.nvim'
+[[plugins]]
+repo = 'rcarriga/nvim-notify'
 
 
 [[plugins]]
@@ -74,6 +75,9 @@ hook_add = '''
   let g:everforest_enable_italic = 1
   let g:everforest_better_performance = 1
 '''
+
+[[plugins]]
+repo = 'niuez/gekkou.vim'
 # }}}
 
 
