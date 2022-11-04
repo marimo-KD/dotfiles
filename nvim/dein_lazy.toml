@@ -93,7 +93,7 @@ EOF
 
 [[plugins]]
 repo = 'j-hui/fidget.nvim'
-on_source = 'nvim-lspconfig'
+#on_source = 'nvim-lspconfig'
 hook_source = '''
 lua << EOF
   require"fidget".setup{

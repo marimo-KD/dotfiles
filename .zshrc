@@ -99,10 +99,6 @@ alias grep=rg
 # enable to use aliases when using sudo
 alias sudo='sudo '
 
-# Commands
-alias start_sway='~/Bin/start_sway'
-alias trans='~/Bin/Translation.py'
-
 alias vim=nvim
 #}}}
 

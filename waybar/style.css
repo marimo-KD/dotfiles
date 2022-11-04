@@ -1,9 +1,8 @@
 * {
     border: none;
     border-radius: 0;
-    font-family: Noto Sans CJK JP;
-    font-weight:bold;
-    font-size: 13px;
+    font-family: PlemolJP Console NF;
+    font-size: 14px;
 }
 
 window#waybar {

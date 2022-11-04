@@ -1,7 +1,7 @@
 {
     "layer":"top",
     "position":"bottom",
-    "height":22,
+    "height": 14,
     "modules-left":[
         "sway/workspaces",
         "custom/right-arrow-dark",
@@ -32,9 +32,6 @@
         "custom/left-arrow-light",
         "custom/left-arrow-dark",
         "temperature",
-        "custom/left-arrow-light",
-        "custom/left-arrow-dark",
-        "battery",
         "custom/left-arrow-light",
         "custom/left-arrow-dark",
         "tray"
@@ -112,10 +109,10 @@
     },
     "network":{
         "interval":1,
-        "format-wifi":" {bandwidthUpBits}: {bandwidthDownBits} ",
-        "format-ethernet":"{ifname}: {ipaddr}/{cidr} ",
-        "format-linked":"{ifname} (No IP) ",
-        "format-disconnected":"Disconnected ⚠",
+        "format-wifi":" {bandwidthUpBits}: {bandwidthDownBits}  ",
+        "format-ethernet":"{ifname}: {ipaddr}/{cidr}  ",
+        "format-linked":"{ifname} (No IP)  ",
+        "format-disconnected":"Disconnected ⚠ ",
         "format-alt":"{ifname}: {ipaddr}/{cidr}"
     }
 }

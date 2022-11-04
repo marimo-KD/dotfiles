@@ -66,7 +66,7 @@ hook_source = '''
     \ 'eskk': {'mark': '[eskk]', 'matchers': [], 'sorters': [], 'minAutoCompleteLength': 1,},
     \ 'necovim': {'mark': '[neco]'},
     \ 'nvim-lsp': {'mark': '[lsp]', 'forceCompletionPattern': '\\.|:|->'},
-    \ 'skkeleton': {'mark': '[skk]', 'matchers': ['skkeleton'], 'sorters':[], 'minAutoCompleteLength': 0,},
+    \ 'skkeleton': {'mark': '[skk]', 'matchers': ['skkeleton'], 'sorters':[], 'minAutoCompleteLength': 2, "isVolatile": v:true,},
     \ 'zsh': {'mark': '[zsh]', 'isVolatile': v:true, 'forceCompletionPattern': '\S/\S*',},
     \ })
   call ddc#custom#patch_global('sourceParams', {

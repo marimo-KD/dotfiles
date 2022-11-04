@@ -160,7 +160,7 @@ hook_add = '''
   endfunction
   augroup open-ddu-dir
     autocmd!
-    autocmd BufEnter * ++nested call s:open_with_ddu()
+    "autocmd BufEnter * ++nested call s:open_with_ddu()
   augroup END
 '''
 [plugins.ftplugin]
