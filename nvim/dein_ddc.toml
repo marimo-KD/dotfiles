@@ -51,6 +51,7 @@ hook_source = '''
       \ 'CmdlineEnter', 'CmdlineChanged',
       \ ])
   call ddc#custom#patch_global('completionMenu', 'pum.vim')
+  call ddc#custom#patch_global('ui', 'pum')
   " config sources
   call ddc#custom#patch_global('sources', ['buffer', 'file'])
   call ddc#custom#patch_global('sourceOptions', {
@@ -97,8 +98,13 @@ hook_source = '''
   inoremap <C-e> <cmd>call pum#map#cancel()<CR>
 '''
 
+[[plugins]]
+repo = 'Shougo/ddc-ui-native'
+on_source = 'ddc.vim'
 
-
+[[plugins]]
+repo = 'Shougo/ddc-ui-pum'
+on_source = 'ddc.vim'
 
 [[plugins]]
 repo = 'hrsh7th/vim-vsnip'
