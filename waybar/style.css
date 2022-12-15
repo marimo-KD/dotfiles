@@ -1,79 +1,69 @@
 * {
-    border: none;
+    border:        none;
     border-radius: 0;
-    font-family: PlemolJP Console NF;
-    font-size: 14px;
+    font-family:   Noto Sans CJK JP Bold;
+    font-size:     12px;
+    box-shadow:    none;
+    text-shadow:   none;
+    transition-duration: 0s;
+    min-height: 0;
 }
 
-window#waybar {
-    background-color: #292b2e;
-    color: #fdf6e3;
+window {
+    color:      rgba(217, 216, 216, 1);
+    background: rgba(35, 31, 32, 1);
 }
 
-#custom-right-arrow-dark,
-#custom-left-arrow-dark {
-    color: #1a1a1a;
-}
-#custom-right-arrow-light,
-#custom-left-arrow-light {
-    color: #292b2e;
-    background: #1a1a1a;
+window#waybar.solo {
+    color:      rgba(217, 216, 216, 1);
+    background: rgba(35, 31, 32, 1);
 }
 
-
-#workspaces,
-#clock,
-#battery,
-#cpu,
-#memory,
-#temperature,
-#network,
-#custom-media,
-#tray,
-#mode,
-#idle_inhibitor {
-    background: #1a1a1a;
-}
-#clock,
-#memory,
-#cpu,
-#temperature,
-#battery {
-    padding: 0 10px;
+#workspaces {
+    margin: 0 3px;
 }
 
 #workspaces button {
-    padding: 0px 2px;
-    color: #fdf6e3;
+    padding:    0 3px;
+    color:      rgba(217, 216, 216, 0.6);
+}
+
+#workspaces button.visible {
+    color:      rgba(217, 216, 216, 1);
 }
 
 #workspaces button.focused {
-    color: #268bd2;
-}
-#workspaces button:hover {
-    background: #1a1a1a;
-    border: #1a1a1a;
-    padding: 0 3px;
-    box-shadow:inherit;
-    text-shadow: inherit;
+    border-top: 3px solid rgba(217, 216, 216, 1);
+    border-bottom: 3px solid rgba(217, 216, 216, 0);
 }
 
 #workspaces button.urgent {
-    background-color: #eb4d4b;
+    color:      rgba(238, 46, 36, 1);
 }
 
-#memory {
-    color: #2aa198;
+#mode, #battery, #cpu, #memory, #network, #pulseaudio, #idle_inhibitor, #backlight, #cpu, #memory, #temperature {
+    color:      rgba(217, 216, 216, 0.6);
+    margin:     0px 6px 0px 10px;
+    min-width:  25px;
+    font-family:   Noto Sans CJK JP Thin;
 }
 
-#temperature {
-    color: #b58900;
+#clock {
+    color:      rgba(217, 216, 216, 0.6);
+    margin:     0px 16px 0px 10px;
+    min-width:  140px;
+    font-family:   Noto Sans CJK JP Thin;
 }
 
-#cpu {
-    color: #6c71c4;
+#battery.warning {
+   color:       rgba(255, 210, 4, 1);
 }
 
-#battery {
-    color: #859900;
+#battery.critical {
+    color:      rgba(238, 46, 36, 1);
 }
+
+#battery.charging {
+    color:      rgba(217, 216, 216, 1);
+}
+

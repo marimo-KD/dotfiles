@@ -23,10 +23,10 @@ hook_add = '''
   \ })<CR>
 
   "filer
-  nnoremap <Space>e <cmd>call ddu#start({
-  \ 'name': 'filer',
-  \ 'uiParams': {'filer': {'search': expand('%:p')}},
-  \ })<CR>
+  "nnoremap <Space>e <cmd>call ddu#start({
+  "\ 'name': 'filer',
+  "\ 'uiParams': {'filer': {'search': expand('%:p')}},
+  "\ })<CR>
 '''
 hook_source = '''
   "ui
@@ -35,7 +35,10 @@ hook_source = '''
   \ 'uiParams': {
   \   'ff': {
   \     'floatingBorder': 'rounded',
+  \     'filterFloatingPosition': 'bottom',
+  \     'filterSplitDirection': 'floating',
   \     'previewFloating': v:true,
+  \     'previewFloatingBorder': 'rounded',
   \     'displaySourceName': 'long',
   \     'split': 'floating',
   \     'prompt': '>',
@@ -66,7 +69,7 @@ hook_source = '''
   call ddu#custom#patch_global({
   \ 'sourceParams': {
   \   'rg': {
-  \     'args': ['--json'],
+  \     'args': ['--column', '--no-heading', '--color', 'never'],
   \     }
   \   }
   \ })
@@ -112,9 +115,9 @@ ddu-ff = '''
   nnoremap <buffer><silent> <Space>
   \ <cmd>call ddu#ui#ff#do_action('toggleSelectItem')<CR>
   nnoremap <buffer><silent> a
-  \ <cmd>call ddu#ui#ff#do_action('chooseAction')
+  \ <cmd>call ddu#ui#ff#do_action('chooseAction')<CR>
   nnoremap <buffer><silent> p
-  \ <cmd>call ddu#ui#ff#do_action('preview')
+  \ <cmd>call ddu#ui#ff#do_action('preview')<CR>
   nnoremap <buffer><silent> i
   \ <cmd>call ddu#ui#ff#do_action('openFilterWindow')<CR>
   nnoremap <buffer><silent> x
@@ -144,59 +147,59 @@ ddu-ff-filter = '''
   \ <cmd>call ddu#ui#ff#do_action('quit')<CR>
 '''
 
-[[plugins]]
-repo = 'Shougo/ddu-ui-filer'
-on_source = 'ddu.vim'
-hook_add = '''
-  function! s:open_with_ddu() abort
-    let path = expand('%:p')
-    if !isdirectory(path)
-      return
-    endif
-    call ddu#start({
-    \ 'name': 'filer',
-    \ 'uiParams': {'filer': {'search': path}}
-    \})
-  endfunction
-  augroup open-ddu-dir
-    autocmd!
-    "autocmd BufEnter * ++nested call s:open_with_ddu()
-  augroup END
-'''
-[plugins.ftplugin]
-ddu-filer = '''
-  nnoremap <buffer><silent><expr> <CR>
-  \ ddu#ui#filer#is_directory() ?
-  \ "<cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow'})<CR>" :
-  \ "<cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'open', 'params': {'command': 'vsplit'}})<CR>"
-
-  nnoremap <buffer><silent> <ESC>
-  \ <cmd>call ddu#ui#filer#do_action('quit')<CR>
-
-  nnoremap <buffer><silent> q
-  \ <cmd>call ddu#ui#filer#do_action('quit')<CR>
-
-  nnoremap <buffer><silent> ..
-  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow', 'params': {'path': '..'}})<CR>
-
-  nnoremap <buffer><silent> d
-  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'delete'})<CR>
-
-  nnoremap <buffer><silent> r
-  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'rename'})<CR>
-
-  nnoremap <buffer><silent> mv
-  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'move'})<CR>
-
-  nnoremap <buffer><silent> t
-  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'newFile'})<CR>
-
-  nnoremap <buffer><silent> mk
-  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'newDirectory'})<CR>
-
-  nnoremap <buffer><silent> yy
-  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'yank'})<CR>
-'''
+#[[plugins]]
+#repo = 'Shougo/ddu-ui-filer'
+#on_source = 'ddu.vim'
+#hook_add = '''
+#  function! s:open_with_ddu() abort
+#    let path = expand('%:p')
+#    if !isdirectory(path)
+#      return
+#    endif
+#    call ddu#start({
+#    \ 'name': 'filer',
+#    \ 'uiParams': {'filer': {'search': path}}
+#    \})
+#  endfunction
+#  augroup open-ddu-dir
+#    autocmd!
+#    "autocmd BufEnter * ++nested call s:open_with_ddu()
+#  augroup END
+#'''
+#[plugins.ftplugin]
+#ddu-filer = '''
+#  nnoremap <buffer><silent><expr> <CR>
+#  \ ddu#ui#filer#is_directory() ?
+#  \ "<cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow'})<CR>" :
+#  \ "<cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'open', 'params': {'command': 'vsplit'}})<CR>"
+#
+#  nnoremap <buffer><silent> <ESC>
+#  \ <cmd>call ddu#ui#filer#do_action('quit')<CR>
+#
+#  nnoremap <buffer><silent> q
+#  \ <cmd>call ddu#ui#filer#do_action('quit')<CR>
+#
+#  nnoremap <buffer><silent> ..
+#  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow', 'params': {'path': '..'}})<CR>
+#
+#  nnoremap <buffer><silent> d
+#  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'delete'})<CR>
+#
+#  nnoremap <buffer><silent> r
+#  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'rename'})<CR>
+#
+#  nnoremap <buffer><silent> mv
+#  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'move'})<CR>
+#
+#  nnoremap <buffer><silent> t
+#  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'newFile'})<CR>
+#
+#  nnoremap <buffer><silent> mk
+#  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'newDirectory'})<CR>
+#
+#  nnoremap <buffer><silent> yy
+#  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'yank'})<CR>
+#'''
 
 
 #}}}

@@ -62,22 +62,7 @@ if = 'has("nvim")'
 hook_source = '''
 lua << EOF
   local nvim_lsp = require'lspconfig'
-  nvim_lsp.rust_analyzer.setup({
-    settings = {
-      ['rust_analyzer'] = {
-        assist = {
-          importGranularity = 'module',
-          importPrefix = 'by_self',
-        },
-        cargo = {
-          loadOutDirsFromCheck = true,
-        },
-        procMacro = {
-          enable = true,
-        },
-      }
-    }
-  })
+  nvim_lsp.rust_analyzer.setup{}
   nvim_lsp.clangd.setup{}
 --  require'lspconfig'.pyls.setup{}
 EOF
@@ -85,7 +70,7 @@ EOF
     set omnifunc=v:lua.vim.lsp.omnifunc
   endif
   nnoremap gi <cmd>lua vim.lsp.buf.implemention()<CR>
-  nnoremap <Space>lf  <cmd>lua vim.lsp.buf.formatting()<CR>
+  nnoremap <Space>lf  <cmd>lua vim.lsp.buf.format{async = true}<CR>
   nnoremap <Space>lh  <cmd>lua vim.lsp.buf.hover()<CR>
   nnoremap <Space>lr  <cmd>lua vim.lsp.buf.rename()<CR>
 '''
@@ -96,41 +81,7 @@ repo = 'j-hui/fidget.nvim'
 #on_source = 'nvim-lspconfig'
 hook_source = '''
 lua << EOF
-  require"fidget".setup{
-    {
-      text = {
-        spinner   = "pipe",         -- animation shown when tasks are ongoing
-        done      = "✔",               -- character shown when all tasks are complete
-        commenced = "Started",    -- message shown when task starts
-        completed = "Completed",  -- message shown when task completes
-      },
-      align = {
-        bottom = true,            -- align fidgets along bottom edge of buffer
-        right  = true,             -- align fidgets along right edge of buffer
-      },
-      timer = {
-        spinner_rate = 125,       -- frame rate of spinner animation, in ms
-        fidget_decay = 2000,      -- how long to keep around empty fidget, in ms
-        task_decay = 1000,        -- how long to keep around completed task, in ms
-      },
-      fmt = {
-        leftpad = true,           -- right-justify text in fidget box
-        fidget =                  -- function to format fidget title
-          function(fidget_name, spinner)
-            return string.format("%s %s", spinner, fidget_name)
-          end,
-        task =                    -- function to format each task line
-          function(task_name, message, percentage)
-            return string.format(
-              "%s%s [%s]",
-              message,
-              percentage and string.format(" (%s%%)", percentage) or "",
-              task_name
-            )
-          end,
-      },
-    }
-  }
+  require"fidget".setup{}
 EOF
 '''
 
@@ -151,7 +102,7 @@ require'nvim-treesitter.configs'.setup {
     disable = {'c', 'help'},
   },
   indent = {
-    enable = false,
+    enable = {'satysfi'},
   },
 }
 
@@ -172,50 +123,67 @@ EOF
 
 
 
-## Filer
-#[[plugins]]
-#repo = 'lambdalisue/fern.vim'
-##on_command = 'Fern'
-#hook_add = '''
-#  nnoremap <Space>e <cmd>Fern . -opener=vsplit<CR>
-#  let g:fern#disable_default_mappings = 1
-#  " open fern when edit a directory
-#  function! s:open_with_fern() abort
-#    let path = expand('%:p')
-#    if !isdirectory(path)
-#      return
-#    endif
-#    let bufnr = bufnr()
-#    execute printf('keepjumps keepalt Fern %s', fnameescape(path))
-#  endfunction
-#  augroup open-fern-dir
-#    autocmd!
-#    "autocmd BufEnter * ++nested call s:open_with_fern()
-#  augroup END
-#'''
-#[plugins.ftplugin]
-#fern = '''
-#  nmap <buffer> <Plug>(fern-action-open) <Plug>(fern-action-open:select)
-#
-#  nmap <buffer> a     <Plug>(fern-choice)
-#  nmap <buffer> <CR>  <Plug>(fern-action-open-or-enter)
-#  nmap <buffer> l     <Plug>(fern-action-open-or-enter)
-#  nmap <buffer> v     <Plug>(fern-action-open:side)
-#  nmap <buffer> x     <Plug>(fern-action-mark:toggle)j
-#  nmap <buffer> h     <Plug>(fern-action-leave)
-#  nmap <buffer> r     <Plug>(fern-action-rename)
-#  nmap <buffer> !     <Plug>(fern-action-hidden:toggle)
-#  nmap <buffer> m     <Plug>(fern-action-move)
-#  nmap <buffer> c     <Plug>(fern-action-copy)
-#  nmap <buffer> y     <Plug>(fern-action-yank)
-#  nmap <buffer> ?     <Plug>(fern-action-help)
-#  nmap <buffer> <C-c> <Plug>(fern-action-cancel)
-#  nmap <buffer> .     <Plug>(fern-repeat)
-#  nmap <buffer> R     <Plug>(fern-action-reload:all)
-#  nmap <buffer> q     <cmd>quit<CR>
-#  nmap <buffer> Q     <cmd>bwipe!<CR>
-#'''
+# Filer
+[[plugins]]
+repo = 'lambdalisue/fern.vim'
+on_command = 'Fern'
+rev = 'main'
+depends = ['fern-renderer-nerdfont.vim', 'fern-git-status.vim', 'glyph-palette.vim']
+hook_add = '''
+  nnoremap <Space>e <cmd>Fern . -opener=vsplit<CR>
+  nnoremap <Space>n <cmd>Fern . -reveal=% -drawer -toggle -width=40<CR>
+  let g:fern#disable_default_mappings = 1
+  let g:fern#renderer = "nerdfont"
+  " open fern when edit a directory
+  function! s:open_with_fern() abort
+    let path = expand('%:p')
+    if !isdirectory(path)
+      return
+    endif
+    let bufnr = bufnr()
+    execute printf('keepjumps keepalt Fern %s', fnameescape(path))
+  endfunction
+  augroup open-fern-dir
+    autocmd!
+    autocmd BufEnter * ++nested call s:open_with_fern()
+  augroup END
+'''
+[plugins.ftplugin]
+fern = '''
+  call glyph_palette#apply()
+  nmap <buffer> <Plug>(fern-action-open) <Plug>(fern-action-open:select)
 
+  nmap <buffer> a     <Plug>(fern-choice)
+  nmap <buffer> <CR>  <Plug>(fern-action-open-or-enter)
+  nmap <buffer> l     <Plug>(fern-action-open-or-enter)
+  nmap <buffer> v     <Plug>(fern-action-open:side)
+  nmap <buffer> x     <Plug>(fern-action-mark:toggle)j
+  nmap <buffer> h     <Plug>(fern-action-leave)
+  nmap <buffer> r     <Plug>(fern-action-rename)
+  nmap <buffer> !     <Plug>(fern-action-hidden:toggle)
+  nmap <buffer> m     <Plug>(fern-action-move)
+  nmap <buffer> c     <Plug>(fern-action-copy)
+  nmap <buffer> y     <Plug>(fern-action-yank)
+  nmap <buffer> ?     <Plug>(fern-action-help)
+  nmap <buffer> <C-c> <Plug>(fern-action-cancel)
+  nmap <buffer> .     <Plug>(fern-repeat)
+  nmap <buffer> R     <Plug>(fern-action-reload:all)
+  nmap <buffer> q     <cmd>quit<CR>
+  nmap <buffer> Q     <cmd>bwipe!<CR>
+'''
+
+[[plugins]]
+repo = 'lambdalisue/fern-renderer-nerdfont.vim'
+depends = 'nerdfont.vim'
+
+[[plugins]]
+repo = 'lambdalisue/nerdfont.vim'
+
+[[plugins]]
+repo = 'lambdalisue/glyph-palette.vim'
+
+[[plugins]]
+repo = 'lambdalisue/fern-git-status.vim'
 
 
 # Zen Mode
@@ -252,10 +220,12 @@ if = 'has("nvim")'
 depends = 'ddc.vim'
 on_command = 'Deol'
 hook_add = '''
-  nnoremap <Space>t <cmd>Deol zsh -split=floating -no-start-insert -toggle -winheight=30 -winwidth=100<CR>
+  nnoremap <Space>t <cmd>Deol zsh -split=floating -no-start-insert -toggle -winheight=30 -winwidth=150<CR>
+  tnoremap <ESC> <C-\><C-n>
 '''
 hook_source = '''
   let g:deol#enable_ddc_completion = v:true
+  let g:deol#floating_border = "rounded"
 '''
 
 

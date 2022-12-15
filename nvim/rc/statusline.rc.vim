@@ -58,18 +58,18 @@ function! LspStatus() abort
 endfunction
 
 
-" Normal
-highlight! StatuslineNormal ctermbg=darkgray   ctermfg=black      guibg=darkgray   guifg=black   gui=bold
-" Visual
-highlight! StatuslineVisual ctermbg=lightgreen ctermfg=black      guibg=lightgreen guifg=black   gui=bold
-" Insert
-highlight! StatuslineInsert ctermbg=cyan       ctermfg=black      guibg=cyan       guifg=black   gui=bold
-" Command
-highlight! StatuslineCommand ctermbg=darkgray   ctermfg=black      guibg=darkgray   guifg=black   gui=bold
-" Replace
-highlight! StatuslineReplace ctermbg=red        ctermfg=black      guibg=red        guifg=black   gui=bold
-" Others
-highlight! StatuslineOther ctermbg=red        ctermfg=black      guibg=red        guifg=black   gui=bold
+"          Normal
+highlight! StatuslineNormal  ctermbg=darkgray   ctermfg=black guibg=darkgray   guifg=black gui=bold
+"          Visual
+highlight! StatuslineVisual  ctermbg=lightgreen ctermfg=black guibg=lightgreen guifg=black gui=bold
+"          Insert
+highlight! StatuslineInsert  ctermbg=cyan       ctermfg=black guibg=cyan       guifg=black gui=bold
+"          Command
+highlight! StatuslineCommand ctermbg=darkgray   ctermfg=black guibg=darkgray   guifg=black gui=bold
+"          Replace
+highlight! StatuslineReplace ctermbg=red        ctermfg=black guibg=red        guifg=black gui=bold
+"          Others
+highlight! StatuslineOther   ctermbg=red        ctermfg=black guibg=red        guifg=black gui=bold
 
 hi link StatuslineLSPError Error
 hi link StatuslineLSPWarning WarningMsg

@@ -1,3 +1,7 @@
+if type zellij > /dev/null; then
+  eval "$(zellij setup --generate-auto-start zsh)"
+fi
+
 autoload -Uz add-zsh-hook
 autoload -Uz colors
 autoload -Uz compinit
@@ -11,6 +15,13 @@ zle -N self-insert url-quote-magic
 # {{{ Functions
 comppdf(){
   gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$2 $1
+}
+__nvim(){
+  if [ -z "$NVIM" ]; then
+    nvim ${@}
+  else
+    nvr -c "cd $(pwd)" -l $1
+  fi
 }
 # }}}
 
@@ -100,6 +111,7 @@ alias grep=rg
 alias sudo='sudo '
 
 alias vim=nvim
+alias nvim=__nvim
 #}}}
 
 #{{{ Prompt
