@@ -1,7 +1,3 @@
-if type zellij > /dev/null; then
-  eval "$(zellij setup --generate-auto-start zsh)"
-fi
-
 autoload -Uz add-zsh-hook
 autoload -Uz colors
 autoload -Uz compinit
@@ -12,16 +8,39 @@ compinit
 autoload -Uz url-quote-magic
 zle -N self-insert url-quote-magic
 
+#{{{ Options
+
+setopt auto_pushd
+setopt auto_cd
+setopt pushd_ignore_dups
+setopt extended_glob
+
+setopt interactive_comments
+setopt magic_equal_subst
+
+setopt no_beep
+setopt no_hist_beep
+setopt no_list_beep
+setopt notify
+
+#}}}
+
 # {{{ Functions
 comppdf(){
   gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$2 $1
 }
-__nvim(){
-  if [ -z "$NVIM" ]; then
-    nvim ${@}
+_nvim_or_nvr(){
+  if [ -z "$NVIM" ] || type nvr > /dev/null 2>&1; then
+    \nvim ${@}
   else
     nvr -c "cd $(pwd)" -l $1
   fi
+}
+_nvimcmp(){
+  _arguments \
+    '-h[help]' \
+    '*: :_files'
+  return 1;
 }
 # }}}
 
@@ -44,23 +63,6 @@ bindkey "^u" backward-kill-line
 autoload -Uz edit-command-line
 zle -N edit-command-line
 bindkey "^x" edit-command-line
-
-#}}}
-
-#{{{ Options
-
-setopt auto_pushd
-setopt auto_cd
-setopt pushd_ignore_dups
-setopt extended_glob
-
-setopt interactive_comments
-setopt magic_equal_subst
-
-setopt no_beep
-setopt no_hist_beep
-setopt no_list_beep
-setopt notify
 
 #}}}
 
@@ -111,7 +113,7 @@ alias grep=rg
 alias sudo='sudo '
 
 alias vim=nvim
-alias nvim=__nvim
+alias nvim=_nvim_or_nvr
 #}}}
 
 #{{{ Prompt
@@ -250,3 +252,5 @@ case ${OSTYPE} in
         [[ ! -r /home/marimo-kd/.opam/opam-init/init.zsh ]] || source /home/marimo-kd/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
         ;;
 esac
+
+compdef _nvimcmp _nvim_or_nvr
