@@ -1,29 +1,26 @@
 if &compatible
   set nocompatible
 endif
+syntax off
 filetype off
-let g:config_home = empty($XDG_CONFIG_HOME) ? expand('~/.config') : $XDG_CONFIG_HOME
-let g:cache_home = empty($XDG_CACHE_HOME) ? expand('~/.cache') : $XDG_CACHE_HOME
+let g:base_dir = fnamemodify(expand('<sfile>'), ':h') .. '/'
 let g:python3_host_prog = '/usr/bin/python3'
-let g:use_ddc = v:true
 
-function! s:source_rc(path) abort
-  let abspath = resolve(expand(g:config_home . '/nvim/rc/' . a:path))
-  execute 'source' fnameescape(abspath)
-endfunction
-
-if has('vim_starting')
-  call s:source_rc('init.rc.vim')
+if filereadable(expand('~/.secretvimrc'))
+  source ~/.secretvimrc
 endif
-call s:source_rc('dein.rc.vim')
+
+if has('nvim')
+  lua if vim.loader then vim.loader.enable() end
+endif
+
+source `=g:base_dir .. 'rc/dein.rc.vim'`
 
 filetype plugin indent on
 syntax on
 
-set background=dark
-colorscheme gruvbox8
+source `=g:base_dir .. 'rc/statusline.rc.vim'`
 
-call s:source_rc('statusline.rc.vim')
+colorscheme material
 
-autocmd VimLeave * set guicursor=a:ver2-blinkon0
 set secure

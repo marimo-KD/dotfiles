@@ -6,13 +6,9 @@ repo = 'Shougo/dein.vim'
 repo = 'itchyny/vim-parenmatch'
 
 
-[[plugins]]
-repo = 'osyo-manga/vim-precious'
-depends = ['context_filetype.vim']
-
-
-[[plugins]]
-repo = 'Shougo/context_filetype.vim'
+#[[plugins]]
+#repo = 'osyo-manga/vim-precious'
+#depends = ['context_filetype.vim']
 
 
 [[plugins]]
@@ -21,21 +17,26 @@ hook_add = '''
   let g:suda_smart_edit = 1
 '''
 
-
-[[plugins]]
-repo = 'lewis6991/impatient.nvim'
-hook_add = '''
-lua require("impatient")
-'''
-
 [[plugins]]
 repo = 'folke/noice.nvim'
 depends = ['nui.nvim']
-hook_add = '''
-lua << EOF
+lua_add = '''
   local noice = require("noice")
-  noice.setup({})
-EOF
+  noice.setup({
+    lsp = {
+      -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+      override = {
+        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+        ["vim.lsp.util.stylize_markdown"] = true,
+        ["cmp.entry.get_documentation"] = true,
+      },
+    },
+    -- you can enable a preset for easier configuration
+    presets = {
+      long_message_to_split = true, -- long messages will be sent to a split
+      lsp_doc_border = false, -- add a border to hover docs and signature help
+    },
+  })
 '''
 [[plugins]]
 repo = 'MunifTanjim/nui.nvim'
@@ -51,35 +52,50 @@ repo = 'vim-denops/denops.vim'
 # {{{ ColorScheme
 # [[plugins]]
 # repo = 'lifepillar/vim-solarized8'
+#[[plugins]]
+#repo = 'lifepillar/vim-gruvbox8'
+#hook_add = '''
+#  let g:gruvbox_italicize_strings = 0
+#  let g:gruvbox_plugin_hi_groups = 0
+#  let g:gruvbox_filetype_hi_groups = 1
+#'''
+#
+#[[plugins]]
+#repo = 'EdenEast/nightfox.nvim'
+#
+#[[plugins]]
+#repo = 'folke/tokyonight.nvim'
+#
+#[[plugins]]
+#repo = 'savq/melange'
+#
+#[[plugins]]
+#repo = 'sainnhe/everforest'
+#hook_add = '''
+#  let g:everforest_background = 'medium'
+#  let g:everforest_enable_italic = 1
+#  let g:everforest_better_performance = 1
+#'''
+#
+#[[plugins]]
+#repo = 'niuez/gekkou.vim'
+
 [[plugins]]
-repo = 'lifepillar/vim-gruvbox8'
-hook_add = '''
-  let g:gruvbox_italicize_strings = 0
-  let g:gruvbox_plugin_hi_groups = 0
-  let g:gruvbox_filetype_hi_groups = 1
+repo = 'marko-cerovac/material.nvim'
+lua_add = '''
+  vim.g.material_style = 'darker'
+  require('material').setup{
+    contrast = {
+      terminal = true,
+      floating_windows = true,
+    },
+    plugins = {
+      "hop",
+      "nvim-web-devicons",
+    },
+  }
 '''
-
-[[plugins]]
-repo = 'EdenEast/nightfox.nvim'
-
-[[plugins]]
-repo = 'folke/tokyonight.nvim'
-
-[[plugins]]
-repo = 'savq/melange'
-
-[[plugins]]
-repo = 'sainnhe/everforest'
-hook_add = '''
-  let g:everforest_background = 'medium'
-  let g:everforest_enable_italic = 1
-  let g:everforest_better_performance = 1
-'''
-
-[[plugins]]
-repo = 'niuez/gekkou.vim'
 # }}}
-
 
 
 
@@ -88,3 +104,5 @@ repo = 'vim-jp/vimdoc-ja'
 hook_add = '''
   set helplang=ja,en
 '''
+
+

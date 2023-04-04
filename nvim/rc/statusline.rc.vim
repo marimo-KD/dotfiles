@@ -57,7 +57,6 @@ function! LspStatus() abort
   return sl
 endfunction
 
-
 "          Normal
 highlight! StatuslineNormal  ctermbg=darkgray   ctermfg=black guibg=darkgray   guifg=black gui=bold
 "          Visual
@@ -73,6 +72,5 @@ highlight! StatuslineOther   ctermbg=red        ctermfg=black guibg=red        g
 
 hi link StatuslineLSPError Error
 hi link StatuslineLSPWarning WarningMsg
-
 
 set statusline=%!GenStatusline()

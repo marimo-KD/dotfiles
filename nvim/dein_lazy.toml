@@ -53,22 +53,21 @@ hook_source = '''
 '''
 
 
-
 # LSP
 [[plugins]]
 repo = 'neovim/nvim-lspconfig'
-on_ft = ['rust', 'cpp']
+on_ft = ['rust', 'c', 'cpp', 'satysfi']
 if = 'has("nvim")'
 hook_source = '''
 lua << EOF
   local nvim_lsp = require'lspconfig'
   nvim_lsp.rust_analyzer.setup{}
   nvim_lsp.clangd.setup{}
+  nvim_lsp['satysfi-ls'].setup{
+    autostart = true,
+  }
 --  require'lspconfig'.pyls.setup{}
 EOF
-  if !(exists("g:use_ddc") && g:use_ddc)
-    set omnifunc=v:lua.vim.lsp.omnifunc
-  endif
   nnoremap gi <cmd>lua vim.lsp.buf.implemention()<CR>
   nnoremap <Space>lf  <cmd>lua vim.lsp.buf.format{async = true}<CR>
   nnoremap <Space>lh  <cmd>lua vim.lsp.buf.hover()<CR>
@@ -76,13 +75,13 @@ EOF
 '''
 
 
+
+
 [[plugins]]
 repo = 'j-hui/fidget.nvim'
 #on_source = 'nvim-lspconfig'
-hook_source = '''
-lua << EOF
+lua_source = '''
   require"fidget".setup{}
-EOF
 '''
 
 
@@ -92,8 +91,7 @@ EOF
 repo = 'nvim-treesitter/nvim-treesitter'
 if = 'has("nvim")'
 on_event = 'BufRead'
-hook_source = '''
-lua <<EOF
+lua_source = '''
 require'nvim-treesitter.configs'.setup {
   ensure_installed = 'all',
   additional_vim_regex_highlighting = false,
@@ -118,9 +116,11 @@ parser_config.satysfi = {
   },
   filetype = "satysfi",
 }
-EOF
 '''
 
+
+[[plugins]]
+repo = 'Shougo/context_filetype.vim'
 
 
 # Filer
@@ -194,8 +194,7 @@ on_command = 'ZenMode'
 hook_add = '''
   nnoremap <Space>z <cmd>ZenMode<CR>
 '''
-hook_source = '''
-lua << EOF
+lua_source = '''
   require('zen-mode').setup{
     window = {
       backdrop = 1,
@@ -208,7 +207,6 @@ lua << EOF
       }
     },
   }
-EOF
 '''
 
 
@@ -341,11 +339,9 @@ hook_add = '''
   vnoremap <silent><Space>w <cmd>HopWord<CR>
   nnoremap <silent><Space>w <cmd>HopWord<CR>
 '''
-hook_source = '''
-  lua << EOF
+lua_source = '''
   local hp = require'hop'
   hp.setup{ keys = 'asdfghjklwertyuiopvbcn' }
-EOF
 '''
 
 
