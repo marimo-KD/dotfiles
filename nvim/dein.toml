@@ -38,11 +38,12 @@ lua_add = '''
     },
   })
 '''
+
 [[plugins]]
 repo = 'MunifTanjim/nui.nvim'
+
 [[plugins]]
 repo = 'rcarriga/nvim-notify'
-
 
 [[plugins]]
 repo = 'vim-denops/denops.vim'
@@ -50,8 +51,8 @@ repo = 'vim-denops/denops.vim'
 
 
 # {{{ ColorScheme
-# [[plugins]]
-# repo = 'lifepillar/vim-solarized8'
+#[[plugins]]
+#repo = 'lifepillar/vim-solarized8'
 #[[plugins]]
 #repo = 'lifepillar/vim-gruvbox8'
 #hook_add = '''
@@ -79,19 +80,35 @@ repo = 'vim-denops/denops.vim'
 #
 #[[plugins]]
 #repo = 'niuez/gekkou.vim'
-
+#
+#[[plugins]]
+#repo = 'marko-cerovac/material.nvim'
+#lua_add = '''
+#  vim.g.material_style = 'darker'
+#  require('material').setup{
+#    contrast = {
+#      terminal = true,
+#      floating_windows = true,
+#    },
+#    plugins = {
+#      "hop",
+#      "nvim-web-devicons",
+#    },
+#  }
+#'''
 [[plugins]]
-repo = 'marko-cerovac/material.nvim'
+repo = 'catppuccin/nvim'
+name = 'catppuccin'
 lua_add = '''
-  vim.g.material_style = 'darker'
-  require('material').setup{
-    contrast = {
-      terminal = true,
-      floating_windows = true,
-    },
-    plugins = {
-      "hop",
-      "nvim-web-devicons",
+  require('catppuccin').setup{
+    flavour = 'macchiato',
+    integrations = {
+      hop = true,
+      notify = true,
+      native_lsp = {
+        enabled = true,
+      },
+      treesitter = true,
     },
   }
 '''

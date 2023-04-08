@@ -215,7 +215,6 @@ lua_source = '''
 [[plugins]]
 repo = 'Shougo/deol.nvim'
 if = 'has("nvim")'
-depends = 'ddc.vim'
 on_command = 'Deol'
 hook_add = '''
   nnoremap <Space>t <cmd>Deol zsh -split=floating -no-start-insert -toggle -winheight=30 -winwidth=150<CR>

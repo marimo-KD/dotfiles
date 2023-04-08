@@ -22,7 +22,7 @@ function! StatuslineMode()
     let c = "StatuslineVisual"
   elseif mode()==#"i"
     let c = "StatuslineInsert"
-    if skkeleton#is_enabled()
+    if exists('*skkeleton#is_enabled') && skkeleton#is_enabled()
       let mode_name = "INSERT(skk)"
     else
       let mode_name = "INSERT"

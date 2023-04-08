@@ -21,6 +21,6 @@ syntax on
 
 source `=g:base_dir .. 'rc/statusline.rc.vim'`
 
-colorscheme material
+colorscheme catppuccin
 
 set secure

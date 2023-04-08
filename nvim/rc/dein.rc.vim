@@ -3,7 +3,7 @@ let s:cache_home = empty($XDG_CACHE_HOME) ? expand('~/.cache') : $XDG_CACHE_HOME
 if &runtimepath !~# '/dein.vim'
   let s:dein_repo_dir = s:cache_home .. '/dein/repos/github.com/Shougo/dein.vim'
   if !isdirectory(s:dein_repo_dir)
-    execute '!git clone https://github.com/Shougo/dein.vim' s:dein_repo_dir
+    execute '!git clone https://github.com/Shougo/dein.vim' .. s:dein_repo_dir
   endif
   execute 'set runtimepath^=' .. s:dein_repo_dir
 endif
@@ -14,6 +14,7 @@ let g:dein#lazy_rplugins = v:true
 let g:dein#inline_vimrcs = ['options.rc.vim', 'mappings.rc.vim']
 let g:dein#enable_notification = v:true
 let g:dein#install_check_diff = v:true
+let g:dein#merge_ftdetect = v:true
 
 call map(g:dein#inline_vimrcs, "resolve(g:base_dir .. 'rc/' ..  v:val)")
 
