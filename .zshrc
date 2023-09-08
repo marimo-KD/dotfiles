@@ -100,16 +100,11 @@ zshaddhistory(){
 #{{{ Environments
 
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+export BAT_THEME="Catppuccin-macchiato"
 
 #}}}
 
 #{{{ Aliases
-
-# Global aliases
-alias -g G='| grep'
-alias -g H='| head'
-alias -g L="| ${PAGER}"
-alias -g V='| vim -R -'
 
 # others
 alias exa='exa --icons --color=auto'

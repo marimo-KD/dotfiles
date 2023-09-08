@@ -1,2 +1,6 @@
 term=foot
-allow-image=true
+allow_images=true
+allow_markup=true
+image_size=24
+insensitive=true
+

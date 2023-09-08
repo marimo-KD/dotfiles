@@ -1,69 +1,163 @@
+@import "macchiato.css";
+
 * {
     border:        none;
-    border-radius: 0;
-    font-family:   Noto Sans CJK JP Bold;
-    font-size:     12px;
-    box-shadow:    none;
-    text-shadow:   none;
-    transition-duration: 0s;
+    border-radius: 0px;
+    font-family:   Iosevka, FontAwesome, Noto Sans CJK;
+    font-size:     14px;
+    font-style:    normal;
     min-height: 0;
 }
 
-window {
-    color:      rgba(217, 216, 216, 1);
-    background: rgba(35, 31, 32, 1);
-}
-
-window#waybar.solo {
-    color:      rgba(217, 216, 216, 1);
-    background: rgba(35, 31, 32, 1);
+window#waybar {
+    background: alpha(@base, 0.65);
+    border-bottom: 1px solid @surface0;
+    color: @text
 }
 
 #workspaces {
-    margin: 0 3px;
+	background: @surface0;
+	margin: 5px 5px 5px 5px;
+  padding: 0px 5px 0px 5px;
+	border-radius: 16px;
+  border: solid 0px @overlay0;
+  font-weight: normal;
+  font-style: normal;
 }
-
 #workspaces button {
-    padding:    0 3px;
-    color:      rgba(217, 216, 216, 0.6);
+    padding: 0px 5px;
+    border-radius: 16px;
+    color: @subtext0;
 }
 
-#workspaces button.visible {
-    color:      rgba(217, 216, 216, 1);
+#workspaces button.active {
+    color: @yellow;
+    background-color: transparent;
+    border-radius: 16px;
 }
 
-#workspaces button.focused {
-    border-top: 3px solid rgba(217, 216, 216, 1);
-    border-bottom: 3px solid rgba(217, 216, 216, 0);
+#workspaces button:hover {
+	background-color: @surface0;
+	color: @rosewater;
+	border-radius: 16px;
 }
 
-#workspaces button.urgent {
-    color:      rgba(238, 46, 36, 1);
+#clock, #battery, #pulseaudio, #network {
+	background: @surface0;
+	padding: 5px 5px 5px 5px;
+	margin: 5px 5px 5px 5px;
+  border-radius: 8px;
+  border: solid 0px @surface1;
 }
 
-#mode, #battery, #cpu, #memory, #network, #pulseaudio, #idle_inhibitor, #backlight, #cpu, #memory, #temperature {
-    color:      rgba(217, 216, 216, 0.6);
-    margin:     0px 6px 0px 10px;
-    min-width:  25px;
-    font-family:   Noto Sans CJK JP Thin;
+#tray {
+    background: @surface0;
+    margin: 5px 5px 5px 5px;
+    border-radius: 16px;
+    padding: 0px 5px;
+    /*border-right: solid 1px #282738;*/
 }
 
 #clock {
-    color:      rgba(217, 216, 216, 0.6);
-    margin:     0px 16px 0px 10px;
-    min-width:  140px;
-    font-family:   Noto Sans CJK JP Thin;
+    color: @rosewater;
+    background-color: @surface0;
+    border-radius: 0px 0px 0px 24px;
+    padding-left: 13px;
+    padding-right: 15px;
+    margin-right: 0px;
+    margin-left: 10px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-weight: bold;
+    /*border-left: solid 1px #282738;*/
 }
 
-#battery.warning {
-   color:       rgba(255, 210, 4, 1);
-}
 
-#battery.critical {
-    color:      rgba(238, 46, 36, 1);
+#battery {
+    color: @green;
 }
 
 #battery.charging {
-    color:      rgba(217, 216, 216, 1);
+    color: @green;
 }
 
+#battery.warning:not(.charging) {
+    color: @red;
+    border-radius: 5px 5px 5px 5px;
+}
+
+#backlight {
+    background-color: @surface0;
+    color: @yellow;
+    border-radius: 0px 0px 0px 0px;
+    margin: 5px;
+    margin-left: 0px;
+    margin-right: 0px;
+    padding: 0px 0px;
+}
+
+#network {
+    color: @flamingo;
+    border-radius: 8px;
+    margin-right: 5px;
+}
+
+#pulseaudio {
+    color: @pink;
+    border-radius: 8px;
+    margin-left: 0px;
+}
+
+#pulseaudio.muted {
+    background: transparent;
+    color: @red;
+    border-radius: 8px;
+    margin-left: 0px;
+}
+
+
+#window {
+    background: @surface0;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 16px;
+    /*border-left: solid 1px #282738;*/
+    /*border-right: solid 1px #282738;*/
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-weight: normal;
+    font-style: normal;
+}
+
+#cpu {
+    background-color: @surface0;
+    /*color: #FABD2D;*/
+    border-radius: 16px;
+    margin: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding: 0px 10px 0px 10px;
+    font-weight: bold;
+}
+
+#memory {
+    background-color: @surface0;
+    /*color: #83A598;*/
+    border-radius: 16px;
+    margin: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding: 0px 10px 0px 10px;
+    font-weight: bold;
+}
+
+#disk {
+    background-color: @surface0;
+    /*color: #8EC07C;*/
+    border-radius: 16px;
+    margin: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding: 0px 10px 0px 10px;
+    font-weight: bold;
+}
