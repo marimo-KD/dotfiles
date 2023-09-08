@@ -1,3 +1,5 @@
+let mapleader = "\<Space>"
+
 noremap <S-h> ^
 noremap <S-l> $
 
@@ -14,3 +16,4 @@ inoremap <silent> <C-l> <ESC>
 inoremap <C-Space> <C-x><C-o>
 
 tnoremap <silent><ESC> <C-\><C-n>
+

@@ -3,8 +3,7 @@ if &compatible
 endif
 syntax off
 filetype off
-let g:base_dir = fnamemodify(expand('<sfile>'), ':h') .. '/'
-let g:python3_host_prog = '/usr/bin/python3'
+let g:base_dir = fnamemodify(expand('<sfile>'), ':h') .. '/rc/'
 
 if filereadable(expand('~/.secretvimrc'))
   source ~/.secretvimrc
@@ -14,13 +13,17 @@ if has('nvim')
   lua if vim.loader then vim.loader.enable() end
 endif
 
-source `=g:base_dir .. 'rc/dein.rc.vim'`
+source `=g:base_dir .. 'dein.rc.vim'`
 
 filetype plugin indent on
 syntax on
 
-source `=g:base_dir .. 'rc/statusline.rc.vim'`
+"source `=g:base_dir .. 'statusline.rc.vim'`
 
-colorscheme catppuccin
+if has('nvim')
+  colorscheme catppuccin
+else
+  colorscheme gruvbox8
+endif
 
 set secure

@@ -1,0 +1,111 @@
+[[plugins]]
+repo = 'Shougo/ddc.vim'
+depends = ['denops.vim', 'context_filetype.vim', 'pum.vim']
+on_event = ['InsertEnter']
+hooks_file = '~/.config/nvim/rc/ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/pum.vim'
+hook_source = '''
+  call pum#set_option(#{
+  \  border: 'rounded',
+  \  auto_select: v:false,
+  \  max_width: 80,
+  \  use_complete: v:true,
+  \ })
+'''
+
+[[plugins]]
+repo = 'Shougo/ddc-ui-native'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-ui-pum'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'hrsh7th/vim-vsnip'
+depends = ['friendly-snippets']
+hook_source = '''
+  autocmd User PumCompleteDone call vsnip_integ#on_complete_done(g:pum#completed_item)
+  " Expand
+  imap <expr> <C-l> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-l>'
+  smap <expr> <C-l> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-l>'
+
+  " Jump forward or backward
+  imap <expr> <C-f> vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<C-f>'
+  smap <expr> <C-f> vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<C-f>'
+  imap <expr> <C-b> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-b>'
+  smap <expr> <C-b> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-b>'
+'''
+
+[[plugins]]
+repo = 'rafamadriz/friendly-snippets'
+
+# ddc sources
+[[plugins]]
+repo = 'Shougo/ddc-around'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'uga-rosa/ddc-source-vsnip'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'matsui54/ddc-buffer'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-cmdline'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'LumaKernel/ddc-source-file'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-nvim-lsp'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-zsh'
+on_source = 'ddc.vim'
+hook_source = '''
+  call ddc#custom#patch_filetype(
+        \ ['zsh', 'deol'], 'sources',
+        \ ['zsh', 'around', 'file']
+        \)
+'''
+
+[[plugins]]
+repo = 'Shougo/ddc-source-nvim-lua'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/neco-vim'
+on_source = 'ddc.vim'
+hook_source = '''
+  call ddc#custom#patch_filetype(
+    \ ['vim'], 'sources',
+    \ ['necovim', 'around', 'file']
+    \ )
+'''
+
+# ddc matchers
+[[plugins]]
+repo = 'Shougo/ddc-filter-matcher_head'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'tani/ddc-fuzzy'
+on_source = 'ddc.vim'
+
+# ddc sorters
+[[plugins]]
+repo = 'Shougo/ddc-filter-sorter_rank'
+on_source = 'ddc.vim'
+
+# ddc converters
+[[plugins]]
+repo = 'Shougo/ddc-filter-converter_remove_overlap'
+on_source = 'ddc.vim'

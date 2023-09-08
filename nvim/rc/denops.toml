@@ -1,0 +1,59 @@
+[[plugins]]
+repo = 'vim-denops/denops.vim'
+hook_add = '''
+  "let g:denops_server_addr = '127.0.0.1:32123'
+'''
+
+[[plugins]]
+repo = 'vim-skk/skkeleton'
+depends = ['ddc.vim', 'denops.vim']
+on_map = { ic = '<Plug>(skkeleton-toggle)' }
+hook_add = '''
+  imap <C-j> <Plug>(skkeleton-toggle)
+  cmap <C-j> <Plug>(skkeleton-toggle)
+'''
+hook_source = '''
+  call skkeleton#config(#{
+    \ globalDictionaries : ['/usr/share/skk/SKK-JISYO.L'],
+    \ eggLikeNewline: v:true,
+    \ registerConvertResult: v:true,
+    \ userJisyo: '~/SKK/skk-jisyo',
+    \ })
+  call skkeleton#register_kanatable('rom', {
+    \ ',': ['，'],
+    \ '.': ['。'],
+    \ })
+  augroup rc_skk
+    autocmd!
+    autocmd User skkeleton-enable-pre call s:skkeleton_pre()
+    autocmd User skkeleton-enable-post lmap <buffer> l <Plug>(skkeleton-disable)
+    autocmd User skkeleton-disable-pre call s:skkeleton_post()
+  augroup END
+  function! s:skkeleton_pre() abort
+    let s:prev_buffer_config = ddc#custom#get_buffer()
+    call ddc#custom#patch_buffer('sources', ['skkeleton'])
+  endfunction
+  function! s:skkeleton_post() abort
+    call ddc#custom#set_buffer(s:prev_buffer_config)
+  endfunction
+'''
+
+[[plugins]]
+repo = 'lambdalisue/gin.vim'
+depends = ['denops.vim']
+on_cmd = ['Gin']
+on_func = ['gin#component#branch#unicode', 'gin#component#traffic#unicode']
+
+[[plugins]]
+repo = 'lambdalisue/kensaku.vim'
+depends = ['denops.vim']
+
+[[plugins]]
+repo = 'kat0h/bufpreview.vim'
+depends = ['denops.vim']
+build = 'deno task prepare'
+on_cmd = ['PreviewMarkdown', 'PreviewMarkdownStop', 'PreviewMarkdownToggle']
+
+[[plugins]]
+repo = 'vim-denops/denops-shared-server.vim'
+on_func = ['denops_shared_server#install', 'denops_shared_server#uninstall']

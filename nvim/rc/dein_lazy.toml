@@ -1,0 +1,213 @@
+[[plugins]]
+repo = 'cohama/lexima.vim'
+on_event = 'InsertEnter'
+hook_source = '''
+  " latex math
+  call lexima#add_rule({'char':'$', 'input_after':'$', 'filetype': ['latex', 'markdown']})
+  call lexima#add_rule({'char':'$', 'at':'\%#\$', 'leave':1, 'filetype': ['latex', 'markdown']})
+  call lexima#add_rule({'char':'<BS>', 'at':'\$\%#\$', 'delete':1, 'filetype': ['latex', 'markdown']})
+  " satysfi
+  call lexima#add_rule({'char': '$', 'input': '${', 'input_after': '}', 'filetype': ['satysfi']})
+  call lexima#add_rule({'char': '$', 'at': '\\\%#', 'leave': 1, 'filetype': ['satysfi']})
+  " cancel ' -> '' rule
+  call lexima#add_rule({'char': "'", 'input': "'", 'filetype': ['satysfi']})
+  " in command argument, < is block-text literal
+  call lexima#add_rule({'char': "<", 'at': '\%(+\|\\\)\%(\a\|\.\|_\|-\)\+\(\n\)\?\%(\%(?:\|!\)\?(\(\_.\)*)\|{\(\_.\)*}\|<\(\_.\)*>\|\(\n\)*\)*\%#', 'input': "<", "input_after": ">", 'filetype': ['satysfi']})
+  " '<> is block-text literal
+  call lexima#add_rule({'char': '<', 'at': "'\\%#", 'input': '<', 'input_after': '>', 'filetype': ['satysfi']})
+'''
+
+# LSP
+[[plugins]]
+repo = 'neovim/nvim-lspconfig'
+on_event = 'BufRead'
+if = 'has("nvim")'
+lua_source = '''
+  require('vim.lsp._watchfiles')._watchfunc = require('vim._watch').watch
+  local nvim_lsp = require'lspconfig'
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities.textDocument.completion.completionItem.snippetSupport = true
+  nvim_lsp.rust_analyzer.setup{
+    cmd = {'rustup', 'run', 'stable', 'rust-analyzer'},
+    capabilities = capabilities,
+  }
+  nvim_lsp.clangd.setup{}
+  nvim_lsp.tsserver.setup{}
+  nvim_lsp['satysfi-ls'].setup{
+    autostart = true,
+  }
+--  require'lspconfig'.pyls.setup{}
+'''
+hook_add = '''
+  nnoremap gi <cmd>lua vim.lsp.buf.implementation()<CR>
+  nnoremap <Leader>lf  <cmd>lua vim.lsp.buf.format{async = true}<CR>
+  nnoremap <Leader>lh  <cmd>lua vim.lsp.buf.hover()<CR>
+  nnoremap <Leader>lr  <cmd>lua vim.lsp.buf.rename()<CR>
+'''
+
+# Highlight
+[[plugins]]
+repo = 'nvim-treesitter/nvim-treesitter'
+if = 'has("nvim")'
+on_event = ['BufRead', 'CursorHold']
+hook_post_update = 'TSUpdate'
+lua_source = '''
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = 'all',
+  additional_vim_regex_highlighting = false,
+  highlight = {
+    enable = true,
+    disable = {'c', 'help'},
+  },
+  indent = {
+    enable = true,
+  },
+}
+
+-- add satysfi parser
+local parser_config = require"nvim-treesitter.parsers".get_parser_configs()
+parser_config.satysfi = {
+  install_info = {
+    url = "https://github.com/monaqa/tree-sitter-satysfi",
+    files = {"src/parser.c", "src/scanner.c"},
+    branch = "master",
+  },
+  filetype = "satysfi",
+}
+'''
+
+[[plugins]]
+repo = 'Shougo/context_filetype.vim'
+
+# Terminal
+[[plugins]]
+repo = 'Shougo/deol.nvim'
+if = 'has("nvim")'
+on_command = 'Deol'
+hook_add = '''
+  nnoremap <Space>t <cmd>Deol zsh -split=floating -no-start-insert -toggle -winheight=30 -winwidth=150<CR>
+  tnoremap <ESC> <C-\><C-n>
+'''
+hook_source = '''
+  let g:deol#enable_ddc_completion = v:true
+  let g:deol#floating_border = "rounded"
+'''
+
+# {{{ Lua Library
+[[plugins]]
+repo = 'nvim-lua/popup.nvim'
+depends = ['plenary.nvim']
+
+[[plugins]]
+repo = 'nvim-lua/plenary.nvim'
+
+[[plugins]]
+repo = 'kyazdani42/nvim-web-devicons'
+on_lua = 'nvim-web-devicons'
+# }}}
+
+[[plugins]]
+repo = 'junegunn/vim-easy-align'
+on_command = 'EasyAlign'
+on_map = { nx = '<Plug>(EasyAlign)' }
+hook_add = '''
+  nmap ga <Plug>(EasyAlign)
+  xmap ga <Plug>(EasyAlign)
+'''
+
+[[plugins]]
+repo = 'monaqa/dial.nvim'
+on_map = { nv = '<Plug>(dial-' }
+hook_add = '''
+  nmap  <C-a>  <Plug>(dial-increment)
+  nmap  <C-x>  <Plug>(dial-decrement)
+  nmap g<C-a> g<Plug>(dial-increment)
+  nmap g<C-x> g<Plug>(dial-decrement)
+  vmap  <C-a>  <Plug>(dial-increment)
+  vmap  <C-x>  <Plug>(dial-decrement)
+  vmap g<C-a> g<Plug>(dial-increment)
+  vmap g<C-x> g<Plug>(dial-decrement)
+'''
+
+[[plugins]]
+repo = 'osyo-manga/vim-jplus'
+on_map = { nv = '<Plug>(jplus' }
+hook_add = '''
+  nmap J <Plug>(jplus)
+  vmap J <plug>(jplus
+  nmap <Leader>J <Plug>(jplus-input)
+  vmap <Leader>J <Plug>(jplus-input)
+'''
+
+# {{{ Operator
+[[plugins]]
+repo = 'kana/vim-operator-user'
+
+[[plugins]]
+repo = 'rhysd/vim-operator-surround'
+on_map = {n = '<Plug>(operator-surround'}
+depends = 'vim-operator-user'
+hook_add = '''
+  nmap <silent>sa <Plug>(operator-surround-append)
+  nmap <silent>sd <Plug>(operator-surround-delete)a
+  nmap <silent>sr <Plug>(operator-surround-replace)a
+'''
+
+[[plugins]]
+repo = 'kana/vim-operator-replace'
+on_map = {n = '<Plug>(operator-replace'}
+depends = 'vim-operator-user'
+hook_add = '''
+  map R <Plug>(operator-replace)
+'''
+# }}}
+
+# {{{ Text Object
+[[plugins]]
+repo = 'kana/vim-textobj-user'
+
+[[plugins]]
+repo = 'Julian/vim-textobj-variable-segment'
+on_map = {xo = '<Plug>(textobj-variable'}
+depends = 'vim-textobj-user'
+hook_add = '''
+  omap <silent>iv <Plug>(textobj-variable-i)
+  xmap <silent>iv <Plug>(textobj-variable-i)
+  omap <silent>av <Plug>(textobj-variable-a)
+  xmap <silent>av <Plug>(textobj-variable-a)
+'''
+
+[[plugins]]
+repo = 'thinca/vim-textobj-between'
+on_map = { xo = '<Plug>(textobj-between' }
+depends = 'vim-textobj-user'
+hook_add = '''
+  omap <silent>if <Plug>(textobj-between-i)
+  xmap <silent>if <Plug>(textobj-between-i)
+  omap <silent>af <Plug>(textobj-between-a)
+  xmap <silent>af <Plug>(textobj-between-a)
+'''
+
+[[plugins]]
+repo = 'somini/vim-textobj-fold'
+on_map = { xo = '<Plug>(textobj-fold' }
+depends = 'vim-textobj-user'
+hook_add = '''
+  omap <silent>iz <Plug>(textobj-fold-i)
+  xmap <silent>iz <Plug>(textobj-fold-i)
+  omap <silent>az <Plug>(textobj-fold-a)
+  xmap <silent>az <Plug>(textobj-fold-a)
+'''
+
+[[plugins]]
+repo = 'sgur/vim-textobj-parameter'
+on_map = {xo = '<Plug>(textobj-parameter'}
+depends = 'vim-textobj-user'
+hook_add = '''
+  omap <silent>i, <Plug>(textobj-parameter-i)
+  xmap <silent>i, <Plug>(textobj-parameter-i)
+  omap <silent>a, <Plug>(textobj-parameter-a)
+  xmap <silent>a, <Plug>(textobj-parameter-a)
+'''
+# }}}
+

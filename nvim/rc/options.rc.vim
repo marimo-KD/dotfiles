@@ -65,3 +65,10 @@ set mouse=a
 
 " Set foldmethod
 set foldmethod=marker
+
+" Statusline
+if has("nvim")
+  set laststatus=3
+else
+  set laststatus=2
+endif

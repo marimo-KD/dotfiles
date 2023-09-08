@@ -1,15 +1,12 @@
 [[plugins]]
 repo = 'Shougo/dein.vim'
 
-
 [[plugins]]
 repo = 'itchyny/vim-parenmatch'
 
-
-#[[plugins]]
-#repo = 'osyo-manga/vim-precious'
-#depends = ['context_filetype.vim']
-
+[[plugins]]
+repo = 'osyo-manga/vim-precious'
+depends = ['context_filetype.vim']
 
 [[plugins]]
 repo = 'lambdalisue/suda.vim'
@@ -19,7 +16,8 @@ hook_add = '''
 
 [[plugins]]
 repo = 'folke/noice.nvim'
-depends = ['nui.nvim']
+if = 'has("nvim")'
+depends = ['nui.nvim', 'nvim-notify']
 lua_add = '''
   local noice = require("noice")
   noice.setup({
@@ -28,7 +26,6 @@ lua_add = '''
       override = {
         ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
         ["vim.lsp.util.stylize_markdown"] = true,
-        ["cmp.entry.get_documentation"] = true,
       },
     },
     -- you can enable a preset for easier configuration
@@ -46,21 +43,48 @@ repo = 'MunifTanjim/nui.nvim'
 repo = 'rcarriga/nvim-notify'
 
 [[plugins]]
-repo = 'vim-denops/denops.vim'
+repo = 'rebelot/heirline.nvim'
+if = 'has("nvim")'
+lua_add = '''
+  require('plugins.heirline')
+'''
 
-
+[[plugins]]
+repo = 'folke/flash.nvim'
+#on_lua = 'flash'
+if = 'has("nvim")'
+hook_add = '''
+  lua require('flash').setup()
+  xnoremap <silent><Leader>w <cmd>lua require('flash').jump()<CR>
+  nnoremap <silent><Leader>w <cmd>lua require('flash').jump()<CR>
+  onoremap <silent><Leader>w <cmd>lua require('flash').jump()<CR>
+  xnoremap <silent><Leader>W <cmd>lua require('flash').treesitter()<CR>
+  nnoremap <silent><Leader>W <cmd>lua require('flash').treesitter()<CR>
+  onoremap <silent><Leader>W <cmd>lua require('flash').treesitter()<CR>
+  cnoremap <silent><C-s> <cmd>lua require('flash').toggle()<CR>
+  function! s:init_flash_highlight() abort
+    highlight link FlashCurrent Cursor
+    highlight link FlashBackdrop HopUnmatched
+    highlight link FlashMatch HopNextKey
+    highlight link FlashLabel HopNextKey1
+  endfunction
+  augroup FlashHighlight
+    autocmd!
+    autocmd ColorScheme * call s:init_flash_highlight()
+  augroup END
+'''
 
 # {{{ ColorScheme
 #[[plugins]]
 #repo = 'lifepillar/vim-solarized8'
-#[[plugins]]
-#repo = 'lifepillar/vim-gruvbox8'
-#hook_add = '''
-#  let g:gruvbox_italicize_strings = 0
-#  let g:gruvbox_plugin_hi_groups = 0
-#  let g:gruvbox_filetype_hi_groups = 1
-#'''
-#
+[[plugins]]
+repo = 'lifepillar/vim-gruvbox8'
+hook_add = '''
+  let g:gruvbox_italicize_strings = 0
+  let g:gruvbox_plugin_hi_groups = 0
+  let g:gruvbox_filetype_hi_groups = 1
+'''
+
 #[[plugins]]
 #repo = 'EdenEast/nightfox.nvim'
 #
@@ -103,18 +127,19 @@ lua_add = '''
   require('catppuccin').setup{
     flavour = 'macchiato',
     integrations = {
+      alpha = false,
+      dashboard = false,
       hop = true,
       notify = true,
       native_lsp = {
         enabled = true,
       },
       treesitter = true,
+      telescope = false,
     },
   }
 '''
 # }}}
-
-
 
 [[plugins]]
 repo = 'vim-jp/vimdoc-ja'
