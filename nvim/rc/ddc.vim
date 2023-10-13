@@ -9,8 +9,6 @@ function! CommandlinePre() abort
   if !exists('b:prev_buffer_config')
     let b:prev_buffer_config = ddc#custom#get_buffer()
   endif
-  call ddc#custom#patch_buffer('cmdlineSources',
-          \ ['cmdline', 'around', 'necovim', 'file'])
 
   autocmd User DDCCmdlineLeave ++once call CommandlinePost()
   autocmd InsertEnter <buffer> ++once call CommandlinePost()
@@ -33,12 +31,14 @@ endfunction
 inoremap <silent><expr> <Tab>
       \ pum#visible() ? '<cmd>call pum#map#insert_relative(+1)<CR>' :
       \ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
-      \ '<Tab>' : ddc#manual_complete()
-inoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
+      \ '<Tab>' : ddc#map#manual_complete()
+inoremap <S-Tab> <cmd>call pum#map#insert_relative(-1)<CR>
 inoremap <C-n> <cmd>call pum#map#insert_relative(+1)<CR>
 inoremap <C-p> <cmd>call pum#map#insert_relative(-1)<CR>
 inoremap <C-y> <cmd>call pum#map#confirm()<CR>
-inoremap <C-e> <cmd>call pum#map#cancel()<CR>
+inoremap <expr> <C-e> ddc#visible() ?
+      \ ? '<cmd>call ddc#hide()<CR>'
+      \ : '<End>'
 
 cnoremap <silent><expr> <Tab>
       \ pum#visible() ? '<Cmd>call pum#map#insert_relative(+1)<CR>' :
@@ -47,25 +47,39 @@ cnoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
 cnoremap <C-n>   <Cmd>call pum#map#insert_relative(+1)<CR>
 cnoremap <C-p>   <Cmd>call pum#map#insert_relative(-1)<CR>
 cnoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
-cnoremap <C-e>   <Cmd>call pum#map#cancel()<CR>
+cnoremap <expr> <C-e> ddc#visible() ?
+      \ ? '<cmd>call ddc#hide()<CR>'
+      \ : '<End>'
 
 call ddc#custom#patch_global(#{
   \ autoCompleteEvents: [
-  \   'InsertEnter', 'TextChangedI', 'TextChangedP', 'CmdlineEnter', 'CmdlineChanged',
+  \   'InsertEnter', 'TextChangedI', 'TextChangedP', 'TextChangedT', 'CmdlineEnter', 'CmdlineChanged',
   \ ],
   \ ui: 'pum',
   \ sources: ['buffer', 'file', 'nvim-lsp', 'vsnip'],
+  \ cmdlineSources: {
+  \   ':': ['cmdline', 'around'],
+  \   '@': ['cmdline', 'around', 'file'],
+  \   '>': ['cmdline', 'around', 'file'],
+  \   '/': ['around',],
+  \   '?': ['around',],
+  \   '-': ['around',],
+  \   '=': ['input',],
+  \ },
   \ sourceOptions: #{
   \   _: #{
+  \     ignoreCase: v:true,
   \     matchers: ['matcher_fuzzy'],
   \     sorters : ['sorter_fuzzy'],
   \     converters: ['converter_remove_overlap', 'converter_fuzzy'],
+  \     timeout: 1000,
   \   },
   \   around: #{mark: '[A]' },
   \   buffer: #{mark: '[B]'},
-  \   cmdline: #{mark: '[cmd]'},
+  \   cmdline: #{mark: '[cmd]', forceCompletionPattern: "\\S/\\S*|\\.\\w*",},
   \   eskk: #{mark: '[eskk]', matchers: [], sorters: [], minAutoCompleteLength: 1,},
   \   file: #{mark: '[f]', isVolatile: v:true, forceCompletionPattern: '\S/\S*',},
+  \   input: #{mark: '[input]'},
   \   necovim: #{mark: '[neco]'},
   \   nvim-lua: #{mark: '[lua]', forceCompletionPattern: '\.\w*'},
   \   nvim-lsp: #{mark: '[lsp]', forceCompletionPattern: '\.\w*|::\w*|->\w*', dup: 'force'},
@@ -75,12 +89,19 @@ call ddc#custom#patch_global(#{
   \ },
   \ sourceParams: #{
   \   buffer: #{
-  \     requireSameFiletype: v:true,
-  \     limitBytes: 5000000,
+  \     requireSameFiletype: v:false,
+  \     limitBytes: 500000,
   \     fromAltBuf: v:true,
   \     fourceCollect: v:true,
   \   },
-  \   nvim-lsp: #{useIcon: v:true,},
+  \   nvim-lsp: #{
+  \     useIcon: v:true,
+  \     snippetEngine: denops#callback#register({
+  \           body -> vsnip#anonymous(body)
+  \     }),
+  \     enableResolveItem: v:true,
+  \     enableAdditionalTextEdit: v:true,
+  \   },
   \ },
   \ })
 call ddc#enable_terminal_completion()

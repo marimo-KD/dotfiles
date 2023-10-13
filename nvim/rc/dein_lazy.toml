@@ -22,22 +22,6 @@ hook_source = '''
 repo = 'neovim/nvim-lspconfig'
 on_event = 'BufRead'
 if = 'has("nvim")'
-lua_source = '''
-  require('vim.lsp._watchfiles')._watchfunc = require('vim._watch').watch
-  local nvim_lsp = require'lspconfig'
-  local capabilities = vim.lsp.protocol.make_client_capabilities()
-  capabilities.textDocument.completion.completionItem.snippetSupport = true
-  nvim_lsp.rust_analyzer.setup{
-    cmd = {'rustup', 'run', 'stable', 'rust-analyzer'},
-    capabilities = capabilities,
-  }
-  nvim_lsp.clangd.setup{}
-  nvim_lsp.tsserver.setup{}
-  nvim_lsp['satysfi-ls'].setup{
-    autostart = true,
-  }
---  require'lspconfig'.pyls.setup{}
-'''
 hook_add = '''
   nnoremap gi <cmd>lua vim.lsp.buf.implementation()<CR>
   nnoremap <Leader>lf  <cmd>lua vim.lsp.buf.format{async = true}<CR>
@@ -78,6 +62,10 @@ parser_config.satysfi = {
 
 [[plugins]]
 repo = 'Shougo/context_filetype.vim'
+
+[[plugins]]
+repo = 'kaarmu/typst.vim'
+on_ft = 'typst'
 
 # Terminal
 [[plugins]]
@@ -140,6 +128,14 @@ hook_add = '''
 '''
 
 # {{{ Operator
+[[plugins]]
+repo = 'kana/vim-niceblock'
+on_map = {x = '<Plug>(niceblock'}
+hook_add = '''
+  xnoremap I <Plug>(niceblock-I)
+  xnoremap A <Plug>(niceblock-A)
+'''
+
 [[plugins]]
 repo = 'kana/vim-operator-user'
 

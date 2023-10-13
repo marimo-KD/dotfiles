@@ -8,7 +8,7 @@
     "margin-right": 0,
 
     "modules-left":[
-        "wlr/workspaces", "hyprland/window"
+        "hyprland/workspaces", "hyprland/window"
     ],
     "modules-center":[
         "cpu",
@@ -24,7 +24,7 @@
     "sway/mode": {
         "format": "<span style=\"italic\">{}</span>"
     },
-    "wlr/workspaces": {
+    "hyprland/workspaces": {
         "active-only": false,
         "all-outputs": true,
         "disable-scroll": false,

@@ -1,16 +1,18 @@
 [[plugins]]
 repo = 'Shougo/ddc.vim'
 depends = ['denops.vim', 'context_filetype.vim', 'pum.vim']
-on_event = ['InsertEnter']
+on_event = ['InsertEnter', 'CursorHold']
 hooks_file = '~/.config/nvim/rc/ddc.vim'
 
 [[plugins]]
 repo = 'Shougo/pum.vim'
 hook_source = '''
   call pum#set_option(#{
-  \  border: 'rounded',
   \  auto_select: v:false,
+  \  border: 'rounded',
   \  max_width: 80,
+  \  preview: v:true,
+  \  preview_width: 80,
   \  use_complete: v:true,
   \ })
 '''
@@ -21,13 +23,13 @@ on_source = 'ddc.vim'
 
 [[plugins]]
 repo = 'Shougo/ddc-ui-pum'
+depends = 'pum.vim'
 on_source = 'ddc.vim'
 
 [[plugins]]
 repo = 'hrsh7th/vim-vsnip'
-depends = ['friendly-snippets']
+#depends = ['friendly-snippets']
 hook_source = '''
-  autocmd User PumCompleteDone call vsnip_integ#on_complete_done(g:pum#completed_item)
   " Expand
   imap <expr> <C-l> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-l>'
   smap <expr> <C-l> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-l>'
@@ -40,11 +42,15 @@ hook_source = '''
 '''
 
 [[plugins]]
+repo = 'uga-rosa/ddc-nvim-lsp-setup'
+if = 'has("nvim")'
+
+[[plugins]]
 repo = 'rafamadriz/friendly-snippets'
 
 # ddc sources
 [[plugins]]
-repo = 'Shougo/ddc-around'
+repo = 'Shougo/ddc-source-around'
 on_source = 'ddc.vim'
 
 [[plugins]]
@@ -53,6 +59,10 @@ on_source = 'ddc.vim'
 
 [[plugins]]
 repo = 'matsui54/ddc-buffer'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-source-input'
 on_source = 'ddc.vim'
 
 [[plugins]]
@@ -65,7 +75,31 @@ on_source = 'ddc.vim'
 
 [[plugins]]
 repo = 'Shougo/ddc-nvim-lsp'
+if = 'has("nvim")'
 on_source = 'ddc.vim'
+depends = ['ddc-nvim-lsp-setup', 'nvim-lspconfig']
+lua_source = '''
+  require('vim.lsp._watchfiles')._watchfunc = require('vim._watch').watch
+  local nvim_lsp = require'lspconfig'
+  -- local capabilities = vim.lsp.protocol.make_client_capabilities()
+  -- capabilities.textDocument.completion.completionItem.snippetSupport = true
+  require("ddc_nvim_lsp_setup").setup()
+  nvim_lsp.rust_analyzer.setup{
+    cmd = {'rustup', 'run', 'stable', 'rust-analyzer'},
+  }
+  nvim_lsp.clangd.setup{}
+  nvim_lsp.tsserver.setup{}
+  nvim_lsp.ocamllsp.setup{}
+  nvim_lsp.typst_lsp.setup{
+    settings = {
+      exportPdf = "onSave"
+    }
+  }
+  nvim_lsp['satysfi-ls'].setup{
+    autostart = true,
+  }
+--  require'lspconfig'.pyls.setup{}
+'''
 
 [[plugins]]
 repo = 'Shougo/ddc-zsh'

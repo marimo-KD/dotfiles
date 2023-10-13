@@ -52,7 +52,7 @@ lua_add = '''
 [[plugins]]
 repo = 'folke/flash.nvim'
 #on_lua = 'flash'
-if = 'has("nvim")'
+if = 'v:false'
 hook_add = '''
   lua require('flash').setup()
   xnoremap <silent><Leader>w <cmd>lua require('flash').jump()<CR>
@@ -129,7 +129,7 @@ lua_add = '''
     integrations = {
       alpha = false,
       dashboard = false,
-      hop = true,
+      hop = false,
       notify = true,
       native_lsp = {
         enabled = true,
