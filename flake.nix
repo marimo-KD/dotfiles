@@ -5,7 +5,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprland.url = "github:hyprwm/Hyprland";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   };
   
@@ -13,12 +12,12 @@
     nixosConfigurations = {
       myNixOS = inputs.nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        modules = [
-          ./configuration.nix
-        ];
         extraSpecialArgs = {
           inherit inputs;
         };
+        modules = [
+          ./configuration.nix
+        ];
       };
     };
     homeConfigurations = {
@@ -31,7 +30,6 @@
           inherit inputs;
         };
         modules = [
-          inputs.hyprland.homeManagerModules.default
           ./home.nix
         ];
       };
