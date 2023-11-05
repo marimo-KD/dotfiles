@@ -5,6 +5,8 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    hyprland.url = "github:hyprwm/Hyprland";
   };
   
   outputs = inputs : {
@@ -26,6 +28,7 @@
           inherit inputs;
         };
         modules = [
+          inputs.hyprland.homeManagerModules.default
           ./home.nix
         ];
       };
