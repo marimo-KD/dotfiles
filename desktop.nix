@@ -12,6 +12,5 @@
     swaybg
     foot
     wofi
-    xdg-desktop-portal-hyprland
   ];
 }
