@@ -1,4 +1,4 @@
-{pkgs, ...} : {
+{config, pkgs, ...} : {
   wayland.windowManager.hyprland = {
     enable = true;
     package = pkgs.hyprland;
@@ -12,6 +12,7 @@
     recursive = true;
   };
   home.packages = with pkgs; [
+    pavucontrol
     mako
     swaybg
     foot

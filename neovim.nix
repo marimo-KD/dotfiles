@@ -4,7 +4,6 @@
     viAlias = true;
     vimAlias = true;
     extraPackages = with pkgs; [
-      deno
       rust-analyzer
     ];
   };

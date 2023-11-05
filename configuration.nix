@@ -10,7 +10,7 @@
       ./hardware-configuration.nix
     ] ++ (with inputs.nixos-hardware.nixosModules; [
       common-cpu-amd
-      common-cpu-amd
+      common-gpu-amd
       common-pc-ssd
     ]);
 
@@ -66,13 +66,10 @@
     shell = pkgs.zsh;
   };
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
-     sheldon
-     neovim-remote
+    curl
+    sheldon
+    neovim-remote
   ];
 
   programs = {
@@ -88,6 +85,9 @@
     zsh = {
       enable = true;
     };
+    hyprland = {
+      enable = true;
+    };
   };
 
   fonts = {
@@ -96,6 +96,7 @@
       noto-fonts-cjk-sans
       noto-fonts-emoji
       nerdfonts
+      iosevka
     ];
     fontDir.enable = true;
     fontconfig = {
@@ -131,9 +132,12 @@
   };
 
   services.dbus.enable = true;
-  xdg.portal = {
+  xdg = {
     enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-hyprland ];
+    portal = {
+      enable = true;
+      extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-hyprland ];
+    };
   };
   security.polkit.enable = true;
 

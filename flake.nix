@@ -7,12 +7,12 @@
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   };
-  
+
   outputs = inputs : {
     nixosConfigurations = {
       myNixOS = inputs.nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        extraSpecialArgs = {
+        specialArgs = {
           inherit inputs;
         };
         modules = [
