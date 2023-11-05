@@ -40,9 +40,13 @@ _nvim_or_nvr(){
   if [ -z "$NVIM" ] || type nvr > /dev/null 2>&1; then
     \nvim ${@}
   else
-    nvr -c "cd $(pwd)" -l $1
+    nvr --remote $1
   fi
 }
+nvcd(){
+  [ "$NVIM" ] && nvr -c "cd $(pwd)"
+}
+chpwd_functions+=( nvcd )
 _nvimcmp(){
   _arguments \
     '-h[help]' \
@@ -113,7 +117,7 @@ alias grep=rg
 alias sudo='sudo '
 
 alias vim=nvim
-alias nvim=_nvim_or_nvr
+alias nvim='nvr --remote-silent'
 #}}}
 
 #{{{ OS-wise config
@@ -138,3 +142,5 @@ compdef _nvimcmp _nvim_or_nvr
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+[ -f "/home/marimo-kd/.ghcup/env" ] && source "/home/marimo-kd/.ghcup/env" # ghcup-env

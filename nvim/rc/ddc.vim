@@ -85,7 +85,7 @@ call ddc#custom#patch_global(#{
   \   nvim-lsp: #{mark: '[lsp]', forceCompletionPattern: '\.\w*|::\w*|->\w*', dup: 'force'},
   \   skkeleton: #{mark: '[skk]', matchers: ['skkeleton'], sorters:[], minAutoCompleteLength: 2, isVolatile: v:true,},
   \   vsnip: #{mark: '[vsnip]'},
-  \   zsh: #{mark: '[zsh]', isVolatile: v:true, forceCompletionPattern: '\S/\S*',},
+  \   shell-native: #{mark: '[zsh]', isVolatile: v:true, forceCompletionPattern: '\S/\S*',},
   \ },
   \ sourceParams: #{
   \   buffer: #{

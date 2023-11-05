@@ -26,4 +26,17 @@ else
   colorscheme gruvbox8
 endif
 
+if executable('nvr')
+  let $EDITOR = 'nvr -cc split -c "set bufhidden=delete" --remote-wait'
+  unlet $MANPAGER
+endif
+
+if exists('g:neovide')
+  set guifont=PlemolJP\ Console\ NF:h11
+  let g:neovide_input_ime = v:false
+  let g:neovide_floating_blur_amount_x = 2.0
+  let g:neovide_floating_blur_amount_y = 2.0
+  let g:neovide_cursor_antialiasing = v:true
+endif
+
 set secure

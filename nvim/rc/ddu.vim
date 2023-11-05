@@ -6,24 +6,24 @@ nnoremap <Space>d <cmd>Ddu
 
 " filer
 nnoremap <Space>f <cmd>Ddu
-      \ file -name=filer
+      \ file -name=current-filer
       \ -ui=filer
-      \ -resume
-      \ -source-option-file-path=`t:->get('ddu_ui_filer_path', getcwd())`
+      \ -source-option-file-path='`expand('%:p:h')`'
       \ <CR>
 
 nnoremap ss <cmd>Ddu
       \ -name=file
-      \ file_old file_point
-      \ file_ff -source-option-file-volatile
-      \ file_ff -source-option-file-new -source-option-file-volatile
+      \ buffer file_old file_point
+      \ file_ff -source-option-file_ff-volatile
+      \ file_ff -source-option-file_ff-new -source-option-file_ff-volatile
       \ -unique -sync -expandInput
       \ -ui-param-ff-displaySourceName=short
       \ <CR>
 
 " buffer
 nnoremap <Space>b <cmd>Ddu
-      \ buffer
+      \ buffer 
+      \ file_rec -source-option-file_rec-path='`expand('%:p:h')`'
       \ <CR>
 
 " search
@@ -59,92 +59,5 @@ nnoremap <Space>o <cmd>Ddu
 
 " }}}
 " hook_source {{{
-call ddu#custom#alias('column', 'icon_filename_ff', 'icon_filename')
-call ddu#custom#alias('source', 'file_ff', 'file')
-call ddu#custom#patch_global(#{
-\ ui: 'ff',
-\ uiParams: #{
-\   ff: #{
-\     displaySourceName: 'long',
-\     floatingBorder: 'rounded',
-\     floatingTitlePos: 'center',
-\     filterFloatingPosition: 'bottom',
-\     filterSplitDirection: 'floating',
-\     previewFloating: v:true,
-\     previewFloatingBorder: 'rounded',
-\     previewFloatingTitle: [ ["Preview", "String"] ],
-\     previewFloatingTitlePos: 'center',
-\     previewSplit: 'horizontal',
-\     split: 'floating',
-\     prompt: '>',
-\     winWidth: 100,
-\   },
-\   filer: #{
-\     floatingBorder: 'rounded',
-\     previewFloating: v:true,
-\     previewFloatingBorder: 'rounded',
-\     split: 'no',
-\     splitDirection: 'topleft',
-\     toggle: v:true,
-\   },
-\ },
-\ sourceParams: #{
-\   rg: #{
-\     args: ['--column', '--no-heading', '--color', 'never'],
-\   }
-\ },
-\ sourceOptions: #{
-\   _: #{
-\     ignoreCase: v:true,
-\     smartCase: v:true,
-\     matchers: ['matcher_fzf'],
-\   },
-\   file: #{
-\     converters: ['converter_hl_dir'],
-\     columns: ['icon_filename'],
-\   },
-\   file_ff: #{
-\     converters: ['converter_hl_dir'],
-\     columns: ['icon_filename_ff'],
-\   },
-\   file_old: #{
-\     matchers: ['matcher_relative', 'matcher_fzf'],
-\     converters: ['converter_hl_dir'],
-\     columns: ['icon_filename_ff'],
-\   },
-\   file_rec: #{
-\     converters: ['converter_hl_dir'],
-\     columns: ['icon_filename_ff'],
-\   },
-\   line: #{
-\     matchers: ['matcher_substring'],
-\   },
-\ },
-\ kindOptions: #{
-\   action: #{
-\     defaultAction: 'do',
-\   },
-\   file: #{
-\     defaultAction: 'open',
-\   },
-\   help: #{
-\     defaultAction: 'vsplit',
-\   },
-\   lsp: #{
-\     defaultAction: 'open',
-\   },
-\   lsp_codeAction: #{
-\     defaultAction: 'apply',
-\   },
-\   source: #{
-\     defaultAction: 'execute',
-\   },
-\   url: #{
-\     defaultAction: 'browse',
-\   },
-\ },
-\ columnParams: #{
-\   icon_filename_ff: #{pathDisplayOption : 'relative'}
-\ }
-\ })
+call ddu#custom#load_config(g:base_dir .. 'ddu.ts')
 " }}}

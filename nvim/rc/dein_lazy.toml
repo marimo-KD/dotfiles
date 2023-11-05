@@ -73,13 +73,59 @@ repo = 'Shougo/deol.nvim'
 if = 'has("nvim")'
 on_command = 'Deol'
 hook_add = '''
-  nnoremap <Space>t <cmd>Deol zsh -split=floating -no-start-insert -toggle -winheight=30 -winwidth=150<CR>
-  tnoremap <ESC> <C-\><C-n>
+  nnoremap <Space>t <cmd>Deol zsh -no-start-insert<CR>
+  autocmd VimEnter * if @% == '' && s:GetBufByte() == 0 | Deol zsh -no-start-insert
+function! s:GetBufByte()
+  let byte = line2byte(line('$') + 1)
+  if byte == -1
+    return 0
+  else
+    return byte - 1
+  endif
+endfunction
 '''
 hook_source = '''
+  if has("nvim")
+    "let g:terminal_color_0 = '#282c34'   
+    "let g:terminal_color_1 = '#e06c75'   
+    "let g:terminal_color_2 = '#98c379'   
+    "let g:terminal_color_3 = '#e5c07b'   
+    "let g:terminal_color_4 = '#61afef'   
+    "let g:terminal_color_5 = '#be5046'   
+    "let g:terminal_color_6 = '#56b6c2'   
+    "let g:terminal_color_7 = '#979eab'   
+    "let g:terminal_color_8 = '#393e48'   
+    "let g:terminal_color_9 = '#d19a66'   
+    "let g:terminal_color_10 = '#56b6c2'  
+    "let g:terminal_color_11 = '#e5c07b'  
+    "let g:terminal_color_12 = '#61afef'  
+    "let g:terminal_color_13 = '#be5046'  
+    "let g:terminal_color_14 = '#56b6c2'  
+    "let g:terminal_color_15 = '#abb2bf'  
+    "let g:terminal_color_background = '#282c34'
+    "let g:terminal_color_foreground = '#979eab'
+  endif
   let g:deol#enable_ddc_completion = v:true
   let g:deol#floating_border = "rounded"
+  let g:deol#prompt_pattern = "❯ \?"
+  tnoremap <ESC> <C-\><C-n>
+  tnoremap <expr> <Tab> pum#visible() ?
+        \ '<Cmd>call pum#map#select_relative(+1)<CR>' :
+        \ '<Tab>'
+  tnoremap <expr> <S-Tab> pum#visible() ?
+        \ '<Cmd>call pum#map#select_relative(-1)<CR>' :
+        \ '<S-Tab>'
+  tnoremap <Down>   <Cmd>call pum#map#insert_relative(+1)<CR>
+  tnoremap <Up>     <Cmd>call pum#map#insert_relative(-1)<CR>
+  tnoremap <C-y>    <Cmd>call pum#map#confirm()<CR>
+  tnoremap <C-o>    <Cmd>call pum#map#confirm()<CR>
 '''
+[plugins.ftplugin]
+deol = '''
+  nnoremap <buffer> e <Plug>(deol_edit)
+  setlocal winhighlight=Normal:NormalFloat
+'''
+
 
 # {{{ Lua Library
 [[plugins]]

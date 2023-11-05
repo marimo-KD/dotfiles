@@ -12,17 +12,20 @@ on_source = 'ddu.vim'
 [plugins.ftplugin]
 ddu-ff = '''
   setlocal cursorline
-  set winblend=50
   nnoremap <buffer><silent> <CR>
   \ <cmd>call ddu#ui#ff#do_action('itemAction')<CR>
   nnoremap <buffer><silent> <Space>
   \ <cmd>call ddu#ui#ff#do_action('toggleSelectItem')<CR>
   nnoremap <buffer><silent> a
   \ <cmd>call ddu#ui#ff#do_action('chooseAction')<CR>
-  nnoremap <buffer><silent> p
-  \ <cmd>call ddu#ui#ff#do_action('preview')<CR>
+  nnoremap <buffer><silent> P
+  \ <cmd>call ddu#ui#ff#do_action('togglePreview')<CR>
   nnoremap <buffer><silent> i
   \ <cmd>call ddu#ui#ff#do_action('openFilterWindow')<CR>
+  nnoremap <buffer><silent> e
+  \ <cmd>call ddu#ui#ff#do_action('expandItem', #{mode: 'toggle'})<CR>
+  nnoremap <buffer><silent> l
+  \ <cmd>call ddu#ui#ff#do_action('itemAction', #{name: 'narrow'})<CR>
   nnoremap <buffer><silent> x
   \ <cmd>call ddu#ui#ff#do_action('toggleSelectItem')<CR>
   nnoremap <buffer><silent> q
@@ -55,9 +58,10 @@ repo = 'Shougo/ddu-ui-filer'
 on_source = 'ddu.vim'
 [plugins.ftplugin]
 ddu-filer = '''
+  setlocal cursorline
   nnoremap <buffer><silent><expr> <CR>
   \ ddu#ui#get_item()->get('isTree', v:false) ?
-  \ "<cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow'})<CR>" :
+  \ "<cmd>call ddu#ui#filer#do_action('expandItem', {'mode': 'toggle'})<CR>" :
   \ "<cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'open', 'params': {'command': 'vsplit'}})<CR>"
 
   nnoremap <buffer><silent> <ESC>
@@ -69,8 +73,23 @@ ddu-filer = '''
   nnoremap <buffer><silent> ..
   \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow', 'params': {'path': '..'}})<CR>
 
+  nnoremap <buffer><silent> h
+  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow', 'params': {'path': '..'}})<CR>
+
+  nnoremap <buffer><silent> l
+  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow'})<CR>
+
+  nnoremap <buffer><silent> ~
+  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow', 'params': {'path': expand('~')}})<CR>
+
+  nnoremap <buffer><silent> =
+  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'narrow', 'params': {'path': getcwd()})<CR>
+
   nnoremap <buffer><silent> d
   \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'delete'})<CR>
+
+  nnoremap <buffer><silent> c
+  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'copy'})<CR>
 
   nnoremap <buffer><silent> r
   \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'rename'})<CR>
@@ -88,16 +107,36 @@ ddu-filer = '''
   \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'yank'})<CR>
 
   nnoremap <buffer><silent> p
-  \ <cmd>call dein#ui#filer#do_action('preview')<CR>
+  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'paste'})<CR>
+
+  nnoremap <buffer><silent> P
+  \ <cmd>call ddu#ui#filer#do_action('togglePreview')<CR>
+
+  nnoremap <buffer><silent> u
+  \ <cmd>call ddu#ui#filer#do_action('itemAction', {'name': 'undo'})<CR>
 
   nnoremap <buffer><silent> a
-  \ <cmd>call dein#ui#filer#do_action('chooseAction')<CR>
-
-  nnoremap <buffer><silent> e
-  \ <cmd>call dein#ui#filer#do_action('expandItem', {'mode': 'toggle'})<CR>
+  \ <cmd>call ddu#ui#filer#do_action('chooseAction')<CR>
 
   nnoremap <buffer><silent> <Space>
-  \ <cmd>call dein#ui#filer#do_action('toggleSelectItem')<CR>
+  \ <cmd>call ddu#ui#filer#do_action('toggleSelectItem')<CR>
+
+  nnoremap <buffer> !
+  \ <cmd>call ddu#ui#do_action('updateOptions', #{
+  \   sourceOptions: #{
+  \     file: #{
+  \       matchers: ToggleHidden('file'),
+  \     },
+  \   },
+  \ })<CR>
+
+function! ToggleHidden(name)
+  return ddu#custom#get_current(b:ddu_ui_name)
+        \ ->get('sourceOptions', {})
+        \ ->get(a:name, {})
+        \ ->get('matchers', [])
+        \ ->empty() ? ['matcher_hidden'] : []
+endfunction
 '''
 
 
@@ -123,6 +162,10 @@ on_source = 'ddu.vim'
 
 [[plugins]]
 repo = 'kyoh86/ddu-filter-converter_hl_dir'
+on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-filter-matcher_hidden'
 on_source = 'ddu.vim'
 #}}}
 

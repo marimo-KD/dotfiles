@@ -88,8 +88,11 @@ lua_source = '''
     cmd = {'rustup', 'run', 'stable', 'rust-analyzer'},
   }
   nvim_lsp.clangd.setup{}
-  nvim_lsp.tsserver.setup{}
+  nvim_lsp.denols.setup{}
   nvim_lsp.ocamllsp.setup{}
+  nvim_lsp.hls.setup{
+    filetypes = {'haskell', 'lhaskell', 'cabal'},
+  }
   nvim_lsp.typst_lsp.setup{
     settings = {
       exportPdf = "onSave"
@@ -102,12 +105,12 @@ lua_source = '''
 '''
 
 [[plugins]]
-repo = 'Shougo/ddc-zsh'
+repo = 'Shougo/ddc-source-shell-native'
 on_source = 'ddc.vim'
 hook_source = '''
   call ddc#custom#patch_filetype(
         \ ['zsh', 'deol'], 'sources',
-        \ ['zsh', 'around', 'file']
+        \ ['shell-native', 'file']
         \)
 '''
 
