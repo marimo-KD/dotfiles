@@ -67,6 +67,8 @@
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
+     sheldon
+     neovim-remote
   ];
 
   programs = {
@@ -78,12 +80,6 @@
       defaultEditor = true;
       viAlias = true;
       vimAlias = true;
-    };
-    hyprland = {
-      enable = true;
-    }; 
-    sheldon = {
-      enable = true;
     };
     zsh = {
       enable = true;
@@ -101,7 +97,7 @@
     fontconfig = {
       defaultFonts = {
         serif = ["Noto Serif CJK JP" "Noto Color Emoji"];
-        sanSerif = ["Noto Sans CJK JP" "Noto Color Emoji"];
+        sansSerif = ["Noto Sans CJK JP" "Noto Color Emoji"];
         monospace = ["JetBrainsMono Nerd Font" "Noto Color Emoji"];
         emoji = ["Noto Color Emoji"];
       };
@@ -121,7 +117,7 @@
 
   sound.enable = true;
   hardware.pulseaudio.enable = false;
-  secuirty.rtkit.enable = true;
+  security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -153,6 +149,7 @@
       automatic = true;
       dates = "weekly";
       options = "--delete-older-than 7d";
+    };
   };
 
   nixpkgs.config.allowUnfree = true;
