@@ -88,7 +88,7 @@
     zsh = {
       enable = true;
     };
-  }
+  };
 
   fonts = {
     fonts = with pkgs; [
@@ -128,7 +128,7 @@
     alsa.support32Bit = true;
     jack.enable = true;
     pulse.enable = true;
-  }
+  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
