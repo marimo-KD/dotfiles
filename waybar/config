@@ -46,6 +46,7 @@
     },
     "clock": {
         "timezone": "Asia/Tokyo",
+        "locale": "C",
         "format": " {:%H:%M}",
         "tooltip": "true",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",

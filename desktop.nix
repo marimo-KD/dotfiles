@@ -1,12 +1,12 @@
 {config, pkgs, ...} : {
   wayland.windowManager.hyprland = {
     enable = true;
-    package = pkgs.hyprland;
     xwayland.enable = true;
   };
   programs.waybar = {
     enable = true;
   };
+  xdg.enable = true;
   home.file.".config/hypr" = {
     source = ./hypr;
     recursive = true;

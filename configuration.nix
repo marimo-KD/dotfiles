@@ -48,8 +48,11 @@
 
   i18n.inputMethod = {
     enabled = "fcitx5";
-    fcitx5.addons = [pkgs.fcitx5-skk];
+    fcitx5.addons = [pkgs.fcitx5-skk-qt pkgs.fcitx5-gtk pkgs.libsForQt5.fcitx5-qt];
   };
+  services.dbus.packages = [config.i18n.inputMethod.package];
+
+  hardware.opengl.enable = true;
 
   # Configure keymap in X11
   services.xserver = {
@@ -70,6 +73,8 @@
     curl
     sheldon
     neovim-remote
+    skk-dicts
+    skktools
   ];
 
   programs = {
@@ -85,13 +90,10 @@
     zsh = {
       enable = true;
     };
-    hyprland = {
-      enable = true;
-    };
   };
 
   fonts = {
-    fonts = with pkgs; [
+    packages = with pkgs; [
       noto-fonts-cjk-serif
       noto-fonts-cjk-sans
       noto-fonts-emoji
@@ -133,7 +135,6 @@
 
   services.dbus.enable = true;
   xdg = {
-    enable = true;
     portal = {
       enable = true;
       extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-hyprland ];
