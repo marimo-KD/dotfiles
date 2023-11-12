@@ -6,6 +6,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    xremap.url = "github:xremap/nix-flake";
+    rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
   outputs = inputs : {
@@ -25,6 +27,7 @@
         pkgs = import inputs.nixpkgs {
           system = "x86_64-linux";
           config.allowUnfree = true;
+          overlays = [(import inputs.rust-overlay)];
         };
         extraSpecialArgs = {
           inherit inputs;

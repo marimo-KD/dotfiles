@@ -12,14 +12,18 @@
       common-cpu-amd
       common-gpu-amd
       common-pc-ssd
-    ]);
+    ]) ++ [
+      inputs.xremap.nixosModules.default
+    ];
+
+  hardware.opengl.enable = true;
+  hardware.opentabletdriver.enable = true;
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "monix"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -52,8 +56,6 @@
   };
   services.dbus.packages = [config.i18n.inputMethod.package];
 
-  hardware.opengl.enable = true;
-
   # Configure keymap in X11
   services.xserver = {
     layout = "us";
@@ -73,11 +75,12 @@
     curl
     sheldon
     neovim-remote
-    skk-dicts
-    skktools
   ];
 
   programs = {
+    steam = {
+      enable = true;
+    };
     git = {
       enable = true;
     };
@@ -99,6 +102,8 @@
       noto-fonts-emoji
       nerdfonts
       iosevka
+      migu
+      liberation_ttf
     ];
     fontDir.enable = true;
     fontconfig = {
@@ -108,18 +113,60 @@
         monospace = ["JetBrainsMono Nerd Font" "Noto Color Emoji"];
         emoji = ["Noto Color Emoji"];
       };
+      localConf = ''
+        <?xml version="1.0"?>
+        <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+        <fontconfig>
+          <description>Change default fonts for Steam client</description>
+          <match>
+            <test name="prgname">
+              <string>steamwebhelper</string>
+            </test>
+            <test name="family" qual="any">
+              <string>sans-serif</string>
+            </test>
+            <edit mode="prepend" name="family">
+              <string>Migu 1P</string>
+            </edit>
+          </match>
+        </fontconfig>
+      '';
     };
   };
 
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = false;
+      PermitRootLogin = "no";
+    };
+  };
   services.tailscale.enable = true;
   networking.firewall = {
     enable = true;
     trustedInterfaces = ["tailscale0"];
     allowedUDPPorts = [config.services.tailscale.port];
+  };
+
+  services.xremap = {
+    userName = "marimo";
+    serviceMode = "system";
+    config = {
+      modmap = [
+        {
+          name = "SandS";
+          remap = {
+            Space = {
+              alone = "Space";
+              held = "Shift_L";
+            };
+          };
+        }
+      ];
+    };
   };
 
   sound.enable = true;
@@ -132,6 +179,9 @@
     jack.enable = true;
     pulse.enable = true;
   };
+  programs.noisetorch.enable = true;
+
+  services.flatpak.enable = true;
 
   services.dbus.enable = true;
   xdg = {
@@ -142,11 +192,15 @@
   };
   security.polkit.enable = true;
 
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  virtualisation = {
+    docker = {
+      enable = true;
+      rootless = {
+        enable = true;
+        setSocketVariable = true;
+      };
+    };
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

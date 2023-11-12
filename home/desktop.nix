@@ -12,10 +12,13 @@
     recursive = true;
   };
   home.packages = with pkgs; [
-    pavucontrol
-    mako
-    swaybg
     foot
+    mako
+    pavucontrol
+    swaybg
+    wl-clipboard
     wofi
+    xdg-utils
+    zathura
   ];
 }

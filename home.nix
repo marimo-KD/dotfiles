@@ -6,10 +6,11 @@
   };
   programs.home-manager.enable = true;
   imports = [
-    ./apps.nix
-    ./browser.nix
-    ./desktop.nix
-    ./dev.nix
-    ./neovim.nix
+    ./home/apps.nix
+    ./home/browser.nix
+    ./home/cli.nix
+    ./home/desktop.nix
+    ./home/dev.nix
+    ./home/neovim.nix
   ];
 }
