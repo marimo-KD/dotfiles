@@ -12,5 +12,6 @@
     ./home/desktop.nix
     ./home/dev.nix
     ./home/neovim.nix
+    ./home/typeset.nix
   ];
 }

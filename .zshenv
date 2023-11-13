@@ -1,4 +1,3 @@
-export LC_CTYPE=ja_JP.UTF-8
 export PAGER=less
 
 if [[ -n ${EDITOR} && ${EDITOR[(w)0]} = 'nvr' ]]; then

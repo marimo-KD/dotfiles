@@ -1,4 +1,5 @@
-{config, pkgs, ...} : {
+{config, pkgs, ...} : 
+{
   programs = {
     password-store.enable = true;
     gpg = {
@@ -9,6 +10,4 @@
     enable = true;
     pinentryFlavor = "curses";
   };
-  home.packages = with pkgs; [
-  ];
 }

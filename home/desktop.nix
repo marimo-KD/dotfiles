@@ -14,6 +14,7 @@
   home.packages = with pkgs; [
     foot
     mako
+    neovide
     pavucontrol
     swaybg
     wl-clipboard

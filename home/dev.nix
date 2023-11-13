@@ -1,7 +1,8 @@
 {pkgs, ...}: {
   home.packages = with pkgs; [
-    gcc
+    clang
     deno
+    # gcc
     nodejs-slim
     rust-bin.stable.latest.default
   ];
