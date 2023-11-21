@@ -117,7 +117,6 @@ alias grep=rg
 alias sudo='sudo '
 
 alias vim=nvim
-alias nvim='nvr --remote-silent'
 #}}}
 
 #{{{ OS-wise config

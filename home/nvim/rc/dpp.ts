@@ -40,7 +40,7 @@ export class Config extends BaseConfig {
         installer: {
           checkDiff: true,
           logFilePath: dppDir + "/installer-log.txt",
-          githubAPIToken: Deno.env.get("GITHUB_API_TOKEN"),
+          // githubAPIToken: Deno.env.get("GITHUB_API_TOKEN"),
         },
       },
       protocols: ["git"],
@@ -54,6 +54,7 @@ export class Config extends BaseConfig {
       const tomlFile of [
         // "/merge.toml",
         "/dpp.toml",
+        "/eager.toml",
       ]
     ) {
       const toml = await args.dpp.extAction(

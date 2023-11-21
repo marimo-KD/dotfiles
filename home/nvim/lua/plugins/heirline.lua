@@ -112,7 +112,7 @@ local ViMode = {
 
 local SkkMode = {
   init = function(self)
-    if vim.fn["dein#is_sourced"]('skkeleton') == 1 then
+    if vim.fn.exists('*skkeleton#mode') then
       self.mode = vim.fn["skkeleton#mode"]()
     else
       self.mode = ''

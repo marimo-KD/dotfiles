@@ -42,8 +42,11 @@ if dpp#min#load_state(s:dpp_dir)
           \ | call dpp#make_state(s:dpp_dir, g:base_dir .. '/dpp.ts')
   augroup END
 else
-  autocmd MyAutoCmd BufWritePost *.lua,*.vim,*.toml,*.ts,vimrc,.vimrc
-        \ call dpp#check_files()
+  augroup MyAutoCmd4InstallPlugin
+    autocmd!
+    autocmd BufWritePost *.lua,*.vim,*.toml,*.ts,vimrc,.vimrc
+          \ call dpp#check_files()
+  augroup END
 endif
 
 augroup MyAutoCmd4makeState

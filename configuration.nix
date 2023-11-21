@@ -75,7 +75,7 @@
   environment.systemPackages = with pkgs; [
     curl
     sheldon
-    neovim-remote
+    #neovim-remote
     lm_sensors
   ];
 
