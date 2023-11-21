@@ -3,7 +3,7 @@ if &compatible
 endif
 syntax off
 filetype off
-let g:base_dir = fnamemodify(expand('<sfile>'), ':h') .. '/rc/'
+const g:base_dir = fnamemodify(expand('<sfile>'), ':h') .. '/rc/'
 
 if filereadable(expand('~/.secretvimrc'))
   source ~/.secretvimrc
@@ -13,7 +13,7 @@ if has('nvim')
   lua if vim.loader then vim.loader.enable() end
 endif
 
-source `=g:base_dir .. 'dein.rc.vim'`
+source `=g:base_dir .. 'dpp.vim'`
 
 filetype plugin indent on
 syntax on

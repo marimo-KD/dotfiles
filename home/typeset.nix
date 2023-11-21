@@ -2,9 +2,14 @@
 let
   tex = (pkgs.texlive.combine {
     inherit (pkgs.texlive) scheme-basic
+    collection-fontsrecommended
     collection-langjapanese
     collection-mathscience
-    collection-luatex;
+    collection-latex
+    collection-latexrecommended
+    collection-luatex
+    collection-pictures
+    mleftright;
   });
 in
 {

@@ -8,6 +8,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     xremap.url = "github:xremap/nix-flake";
     rust-overlay.url = "github:oxalica/rust-overlay";
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
   outputs = inputs : {
@@ -27,7 +28,7 @@
         pkgs = import inputs.nixpkgs {
           system = "x86_64-linux";
           config.allowUnfree = true;
-          overlays = [(import inputs.rust-overlay)];
+          overlays = [(import inputs.rust-overlay) inputs.neovim-nightly-overlay.overlay];
         };
         extraSpecialArgs = {
           inherit inputs;

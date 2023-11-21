@@ -132,7 +132,8 @@ local SkkMode = {
   end,
   hl = { fg = "blue", bold = true },
   update = {
-    "User skkeleton-mode-changed",
+    "User",
+    pattern = "skkeleton-mode-changed",
   }
 }
 

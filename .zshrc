@@ -40,7 +40,7 @@ _nvim_or_nvr(){
   if [ -z "$NVIM" ] || type nvr > /dev/null 2>&1; then
     \nvim ${@}
   else
-    nvr --remote $1
+    nvr --remote-silent $1
   fi
 }
 nvcd(){

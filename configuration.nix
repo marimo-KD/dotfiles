@@ -22,6 +22,7 @@
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelPackages = pkgs.linuxKernel.packages.linux_xanmod;
 
   networking.hostName = "monix"; # Define your hostname.
 
@@ -75,11 +76,23 @@
     curl
     sheldon
     neovim-remote
+    lm_sensors
   ];
 
   programs = {
     steam = {
       enable = true;
+    };
+    gamemode = {
+      enable = true;
+      settings = {
+        gpu = {
+          apply_gpu_optimisations = 0;
+          #apply_gpu_optimisations = "accept-responsibility";
+          gpu_device = 0;
+          amd_performance_level = "high";
+        };
+      };
     };
     git = {
       enable = true;
@@ -113,6 +126,7 @@
         monospace = ["JetBrainsMono Nerd Font" "Noto Color Emoji"];
         emoji = ["Noto Color Emoji"];
       };
+      allowBitmaps = false;
       localConf = ''
         <?xml version="1.0"?>
         <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">

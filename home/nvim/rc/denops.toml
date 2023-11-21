@@ -14,7 +14,7 @@ hook_add = '''
 '''
 hook_source = '''
   call skkeleton#config(#{
-    \ globalDictionaries : ['/usr/share/skk/SKK-JISYO.L'],
+    \ globalDictionaries : ['/nix/store/bi7qiz4h005vv01dgi8m0k9jj5jjl07y-skk-dicts-unstable-2020-03-24/share/SKK-JISYO.combined',''],
     \ eggLikeNewline: v:true,
     \ registerConvertResult: v:true,
     \ userJisyo: '~/SKK/skk-jisyo',
