@@ -26,11 +26,12 @@ export class Config extends BaseConfig {
     dpp: Dpp;
   }): Promise<ConfigReturn> {
     const baseDir = await vars.globals.get(args.denops, "base_dir");
+    const dppDir = await vars.globals.get(args.denops, "dpp_dir");
 
     const inlineVimrcs = [
-      baseDir + "options.rc.vim",
-      baseDir + "mappings.rc.vim",
-      // baseDir + "statusline.rc.vim",
+      baseDir + "/options.rc.vim",
+      baseDir + "/mappings.rc.vim",
+      // baseDir + "/statusline.rc.vim",
     ];
 
     args.contextBuilder.setGlobal({
@@ -38,7 +39,7 @@ export class Config extends BaseConfig {
       extParams: {
         installer: {
           checkDiff: true,
-          logFilePath: "~/.cache/dpp/installer-log.txt",
+          logFilePath: dppDir + "/installer-log.txt",
           githubAPIToken: Deno.env.get("GITHUB_API_TOKEN"),
         },
       },
@@ -51,8 +52,8 @@ export class Config extends BaseConfig {
     const tomls: Toml[] = [];
     for (
       const tomlFile of [
-        "merge.toml",
-        "dpp.toml",
+        // "/merge.toml",
+        "/dpp.toml",
       ]
     ) {
       const toml = await args.dpp.extAction(
@@ -75,10 +76,10 @@ export class Config extends BaseConfig {
     }
     for (
       const tomlFile of [
-        "lazy.toml",
-        "denops.toml",
-        "ddc.toml",
-        "ddu.toml",
+        "/lazy.toml",
+        "/denops.toml",
+        "/ddc.toml",
+        "/ddu.toml",
       ]
     ) {
       const toml = await args.dpp.extAction(

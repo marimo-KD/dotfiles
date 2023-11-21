@@ -2,7 +2,7 @@ let s:cache_home = empty($XDG_CACHE_HOME) ? expand('~/.cache') : $XDG_CACHE_HOME
 
 function InitPlugin(plugin)
   let dir = s:cache_home .. '/dpp/repos/github.com/' .. a:plugin
-  if !(dir -> isdirectory())
+  if !(dir->isdirectory())
     execute '!git clone https://github.com/' .. a:plugin dir
   endif
   
@@ -16,7 +16,7 @@ call InitPlugin('Shougo/dpp-ext-lazy')
 
 let s:dpp_dir = s:cache_home .. '/dpp'
 
-if dpp#min#load_state(s:dpp_base)
+if dpp#min#load_state(s:dpp_dir)
   for s:plugin in [
         \   'Shougo/dpp-ext-installer',
         \   'Shougo/dpp-ext-local',
@@ -30,19 +30,25 @@ if dpp#min#load_state(s:dpp_base)
 
   if has('nvim')
     runtime! plugin/denops.vim
+    echomsg 'denops is loaded'
   endif
 
-  autocmd MyAutoCmd User DenopsReady
-        \ : echohl WarningMsg
-        \ | echomsg 'dpp load_state() is failed'
-        \ | echohl NONE
-        \ | call dpp#make_state(s:dpp_base, g:base_dir .. '/dpp.ts')
+  augroup MyAutoCmd4DenopsReady
+    autocmd!
+    autocmd User DenopsReady
+          \ : echohl WarningMsg
+          \ | echomsg 'dpp load_state() is failed'
+          \ | echohl NONE
+          \ | call dpp#make_state(s:dpp_dir, g:base_dir .. '/dpp.ts')
+  augroup END
 else
   autocmd MyAutoCmd BufWritePost *.lua,*.vim,*.toml,*.ts,vimrc,.vimrc
         \ call dpp#check_files()
 endif
 
-autocmd MyAutoCmd User Dpp:makeStatePost
-      \ : echohl WarningMsg
-      \ | echomsg 'dpp make_state() is done'
-      \ | echohl NONE
+augroup MyAutoCmd4makeState
+  autocmd User Dpp:makeStatePost
+        \ : echohl WarningMsg
+        \ | echomsg 'dpp make_state() is done'
+        \ | echohl NONE
+augroup END
