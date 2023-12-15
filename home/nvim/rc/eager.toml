@@ -46,31 +46,6 @@ lua_add = '''
   require('plugins.heirline')
 '''
 
-[[plugins]]
-repo = 'folke/flash.nvim'
-#on_lua = 'flash'
-if = 'v:false'
-hook_add = '''
-  lua require('flash').setup()
-  xnoremap <silent><Leader>w <cmd>lua require('flash').jump()<CR>
-  nnoremap <silent><Leader>w <cmd>lua require('flash').jump()<CR>
-  onoremap <silent><Leader>w <cmd>lua require('flash').jump()<CR>
-  xnoremap <silent><Leader>W <cmd>lua require('flash').treesitter()<CR>
-  nnoremap <silent><Leader>W <cmd>lua require('flash').treesitter()<CR>
-  onoremap <silent><Leader>W <cmd>lua require('flash').treesitter()<CR>
-  cnoremap <silent><C-s> <cmd>lua require('flash').toggle()<CR>
-  function! s:init_flash_highlight() abort
-    highlight link FlashCurrent Cursor
-    highlight link FlashBackdrop HopUnmatched
-    highlight link FlashMatch HopNextKey
-    highlight link FlashLabel HopNextKey1
-  endfunction
-  augroup FlashHighlight
-    autocmd!
-    autocmd ColorScheme * call s:init_flash_highlight()
-  augroup END
-'''
-
 # {{{ ColorScheme
 #[[plugins]]
 #repo = 'lifepillar/vim-solarized8'

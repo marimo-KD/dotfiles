@@ -13,9 +13,11 @@
   };
   home.packages = with pkgs; [
     foot
+    grim
     mako
     neovide
     pavucontrol
+    slurp
     swaybg
     wl-clipboard
     wofi

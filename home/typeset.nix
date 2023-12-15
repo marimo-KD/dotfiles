@@ -6,6 +6,7 @@ let
     collection-langjapanese
     collection-mathscience
     collection-latex
+    collection-latexextra
     collection-latexrecommended
     collection-luatex
     collection-pictures

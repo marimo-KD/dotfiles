@@ -1,29 +1,22 @@
-" hook_add {{{
+"hook_add {{{
 nnoremap : <cmd>call CommandlinePre()<CR>:
 function! CommandlinePre() abort
-  call dein#source('ddc.vim')
-  call dein#source('neco-vim')
   " Note: This disables default command line completion!
+  call dpp#source(['ddc.vim'])
 
-  " Overwrite sources
-  if !exists('b:prev_buffer_config')
-    let b:prev_buffer_config = ddc#custom#get_buffer()
-  endif
+  let b:prev_buffer_config = ddc#custom#get_buffer()
 
   autocmd User DDCCmdlineLeave ++once call CommandlinePost()
-  autocmd InsertEnter <buffer> ++once call CommandlinePost()
+  " autocmd InsertEnter <buffer> ++once call CommandlinePost()
 
   " Enable command line completion
   call ddc#enable_cmdline_completion()
-  call ddc#enable()
 endfunction
 function! CommandlinePost() abort
   " Restore sources
   if exists('b:prev_buffer_config')
     call ddc#custom#set_buffer(b:prev_buffer_config)
     unlet b:prev_buffer_config
-  else
-    call ddc#custom#set_buffer({})
   endif
 endfunction
 " }}}
@@ -42,7 +35,7 @@ inoremap <expr> <C-e> ddc#visible() ?
 
 cnoremap <silent><expr> <Tab>
       \ pum#visible() ? '<Cmd>call pum#map#insert_relative(+1)<CR>' :
-      \ 'ddc#manual_complete()
+      \ ddc#map#manual_complete()
 cnoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
 cnoremap <C-n>   <Cmd>call pum#map#insert_relative(+1)<CR>
 cnoremap <C-p>   <Cmd>call pum#map#insert_relative(-1)<CR>
@@ -56,7 +49,7 @@ call ddc#custom#patch_global(#{
   \   'InsertEnter', 'TextChangedI', 'TextChangedP', 'TextChangedT', 'CmdlineEnter', 'CmdlineChanged',
   \ ],
   \ ui: 'pum',
-  \ sources: ['buffer', 'file', 'nvim-lsp', 'vsnip'],
+  \ sources: ['buffer', 'file', 'lsp', 'vsnip'],
   \ cmdlineSources: {
   \   ':': ['cmdline', 'around'],
   \   '@': ['cmdline', 'around', 'file'],
@@ -82,7 +75,7 @@ call ddc#custom#patch_global(#{
   \   input: #{mark: '[input]'},
   \   necovim: #{mark: '[neco]'},
   \   nvim-lua: #{mark: '[lua]', forceCompletionPattern: '\.\w*'},
-  \   nvim-lsp: #{mark: '[lsp]', forceCompletionPattern: '\.\w*|::\w*|->\w*', dup: 'force'},
+  \   lsp: #{mark: '[lsp]', forceCompletionPattern: '\.\w*|::\w*|->\w*', dup: 'force'},
   \   skkeleton: #{mark: '[skk]', matchers: ['skkeleton'], sorters:[], minAutoCompleteLength: 2, isVolatile: v:true,},
   \   vsnip: #{mark: '[vsnip]'},
   \   shell-native: #{mark: '[zsh]', isVolatile: v:true, forceCompletionPattern: '\S/\S*',},
@@ -94,7 +87,7 @@ call ddc#custom#patch_global(#{
   \     fromAltBuf: v:true,
   \     fourceCollect: v:true,
   \   },
-  \   nvim-lsp: #{
+  \   lsp: #{
   \     useIcon: v:true,
   \     snippetEngine: denops#callback#register({
   \           body -> vsnip#anonymous(body)

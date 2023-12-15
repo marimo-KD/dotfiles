@@ -1,6 +1,6 @@
 [[plugins]]
 repo = 'Shougo/ddc.vim'
-depends = ['denops.vim', 'context_filetype.vim', 'pum.vim']
+depends = 'denops.vim'
 on_event = ['InsertEnter', 'CursorHold']
 hooks_file = '~/.config/nvim/rc/ddc.vim'
 
@@ -42,7 +42,7 @@ hook_source = '''
 '''
 
 [[plugins]]
-repo = 'uga-rosa/ddc-nvim-lsp-setup'
+repo = 'uga-rosa/ddc-source-lsp-setup'
 if = 'has("nvim")'
 
 [[plugins]]
@@ -75,16 +75,16 @@ repo = 'LumaKernel/ddc-source-file'
 on_source = 'ddc.vim'
 
 [[plugins]]
-repo = 'Shougo/ddc-nvim-lsp'
+repo = 'Shougo/ddc-source-lsp'
 if = 'has("nvim")'
 on_source = 'ddc.vim'
-depends = ['ddc-nvim-lsp-setup', 'nvim-lspconfig']
+depends = ['ddc-source-lsp-setup', 'nvim-lspconfig']
 lua_source = '''
   require('vim.lsp._watchfiles')._watchfunc = require('vim._watch').watch
   local nvim_lsp = require'lspconfig'
   -- local capabilities = vim.lsp.protocol.make_client_capabilities()
   -- capabilities.textDocument.completion.completionItem.snippetSupport = true
-  require("ddc_nvim_lsp_setup").setup()
+  require("ddc_source_lsp_setup").setup()
   nvim_lsp.rust_analyzer.setup{
     cmd = {'rustup', 'run', 'stable', 'rust-analyzer'},
   }

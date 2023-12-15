@@ -10,4 +10,9 @@
     enable = true;
     pinentryFlavor = "curses";
   };
+  home.packages = with pkgs; [
+    cmigemo
+    kakoune
+    helix
+  ];
 }

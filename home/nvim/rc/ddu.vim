@@ -59,5 +59,5 @@ nnoremap <Space>o <cmd>Ddu
 
 " }}}
 " hook_source {{{
-call ddu#custom#load_config(g:base_dir .. 'ddu.ts')
+call ddu#custom#load_config(g:base_dir .. '/ddu.ts')
 " }}}
