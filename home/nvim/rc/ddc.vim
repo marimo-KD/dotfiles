@@ -75,7 +75,7 @@ call ddc#custom#patch_global(#{
   \   input: #{mark: '[input]'},
   \   necovim: #{mark: '[neco]'},
   \   nvim-lua: #{mark: '[lua]', forceCompletionPattern: '\.\w*'},
-  \   lsp: #{mark: '[lsp]', forceCompletionPattern: '\.\w*|::\w*|->\w*', dup: 'force'},
+  \   lsp: #{mark: '[lsp]', forceCompletionPattern: '\.\w*|::\w*|->\w*', dup: 'keep', sorters: ['sorter_lsp-kind'], converters: ['converter_kind_labels']},
   \   skkeleton: #{mark: '[skk]', matchers: ['skkeleton'], sorters:[], minAutoCompleteLength: 2, isVolatile: v:true,},
   \   vsnip: #{mark: '[vsnip]'},
   \   shell-native: #{mark: '[zsh]', isVolatile: v:true, forceCompletionPattern: '\S/\S*',},
@@ -88,7 +88,6 @@ call ddc#custom#patch_global(#{
   \     fourceCollect: v:true,
   \   },
   \   lsp: #{
-  \     useIcon: v:true,
   \     snippetEngine: denops#callback#register({
   \           body -> vsnip#anonymous(body)
   \     }),
@@ -96,6 +95,46 @@ call ddc#custom#patch_global(#{
   \     enableAdditionalTextEdit: v:true,
   \   },
   \ },
+  \ filterParams: #{
+  \   converter_kind_labels: #{
+  \     kindLabels: #{
+  \       Text: "",
+  \       Method: "",
+  \       Function: "",
+  \       Constructor: "",
+  \       Field: "",
+  \       Variable: "",
+  \       Class: "",
+  \       Interface: "",
+  \       Module: "",
+  \       Property: "",
+  \       Unit: "",
+  \       Value: "",
+  \       Enum: "",
+  \       Keyword: "",
+  \       Snippet: "",
+  \       Color: "",
+  \       File: "",
+  \       Reference: "",
+  \       Folder: "",
+  \       EnumMember: "",
+  \       Constant: "",
+  \       Struct: "",
+  \       Event: "",
+  \       Operator: "",
+  \       TypeParameter: ""
+  \     },
+  \     kindHlGroups: #{
+  \       Method: "Function",
+  \       Function: "Function",
+  \       Constructor: "Function",
+  \       Field: "Identifier",
+  \       Variable: "Identifier",
+  \       Class: "Structure",
+  \       Interface: "Structure"
+  \     }
+  \   }
+  \ }
   \ })
 call ddc#enable_terminal_completion()
 call ddc#enable(#{

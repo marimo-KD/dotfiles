@@ -7,6 +7,7 @@
 {
   imports =
     [ # Include the results of the hardware scan.
+      # <nixpkgs/nixos/modules/services/hardware/sane_extrabackends/brscan4.nix>
       ./hardware-configuration.nix
     ] ++ (with inputs.nixos-hardware.nixosModules; [
       common-cpu-amd
@@ -18,6 +19,13 @@
 
   hardware.opengl.enable = true;
   hardware.opentabletdriver.enable = true;
+  hardware.sane = {
+    enable = true;
+    brscan4 = {
+      enable = true;
+      netDevices = {};
+    };
+  };
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -67,7 +75,7 @@
   users.users.marimo = {
     isNormalUser = true;
     description = "marimo";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "scanner" "lp"];
     packages = with pkgs; [];
     shell = pkgs.zsh;
   };
@@ -82,6 +90,7 @@
   programs = {
     steam = {
       enable = true;
+      remotePlay.openFirewall = true;
     };
     gamemode = {
       enable = true;
@@ -164,6 +173,21 @@
     trustedInterfaces = ["tailscale0"];
     allowedUDPPorts = [config.services.tailscale.port];
   };
+
+  # networking.wireguard.interfaces = {
+  #   wg0 = {
+  #     ips = [ "10.0.101.102/32" "fd34::101::102/128"];
+  #     listenPort = 51820;
+  #     peers = [
+  #       {
+  #         publicKey = "BxaOPypP4bSCdYBw+TfhEXPbg6DiIuhmRxtbWGbDEmo=";
+  #         allowedIPs = ["192.168.200.0/24" "192.168.220.0/24" "10.0.0.36/32" "fd34::10:0:0:36/128"];
+  #         endpoint = "kmc.gr.jp:51820";
+  #         persistentKeepalive = 25;
+  #       }
+  #     ];
+  #   };
+  # };
 
   services.xremap = {
     userName = "marimo";

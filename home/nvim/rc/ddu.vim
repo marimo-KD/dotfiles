@@ -61,3 +61,6 @@ nnoremap <Space>o <cmd>Ddu
 " hook_source {{{
 call ddu#custom#load_config(g:base_dir .. '/ddu.ts')
 " }}}
+" hook_post_update {{{
+call ddu#set_static_import_path()
+" }}}
