@@ -8,5 +8,6 @@
     nodejs-slim
     rust-bin.stable.latest.default
     rust-analyzer
+    marksman
   ];
 }

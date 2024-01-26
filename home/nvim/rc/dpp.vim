@@ -14,9 +14,9 @@ call InitPlugin('Shougo/dpp.vim')
 call InitPlugin('Shougo/dpp-ext-lazy')
 
 
-let s:dpp_dir = s:cache_home .. '/dpp'
+let g:dpp_dir = s:cache_home .. '/dpp'
 
-if dpp#min#load_state(s:dpp_dir)
+if dpp#min#load_state(g:dpp_dir)
   for s:plugin in [
         \   'Shougo/dpp-ext-installer',
         \   'Shougo/dpp-ext-local',
@@ -39,7 +39,7 @@ if dpp#min#load_state(s:dpp_dir)
           \ : echohl WarningMsg
           \ | echomsg 'dpp load_state() is failed'
           \ | echohl NONE
-          \ | call dpp#make_state(s:dpp_dir, g:base_dir .. '/dpp.ts')
+          \ | call dpp#make_state(g:dpp_dir, g:base_dir .. '/dpp.ts')
   augroup END
 else
   augroup MyAutoCmd4InstallPlugin

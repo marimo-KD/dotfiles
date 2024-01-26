@@ -52,7 +52,6 @@ export class Config extends BaseConfig {
     const tomls: Toml[] = [];
     for (
       const tomlFile of [
-        // "/merge.toml",
         "/dpp.toml",
         "/eager.toml",
       ]

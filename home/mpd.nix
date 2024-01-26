@@ -1,15 +1,7 @@
 {config, pkgs, ...} : 
 {
   programs = {
-    password-store.enable = true;
-    gpg = {
-      enable = true;
-    };
     ncmpcpp.enable = true;
-  };
-  services.gpg-agent = {
-    enable = true;
-    pinentryFlavor = "curses";
   };
   services.mpd = {
     enable = true;
@@ -22,15 +14,6 @@
     musicDirectory = /home/marimo/Music;
   };
   home.packages = with pkgs; [
-    bat
-    cmigemo
-    fd
-    # nb
-    zk
-    fzf
-    gnuplot
-    helix
-    kakoune
-    ripgrep
+    ymuse
   ];
 }

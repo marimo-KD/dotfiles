@@ -1,6 +1,14 @@
 [[plugins]]
 repo = 'vim-denops/denops.vim'
 on_event = ['CursorHold']
+hook_add = '''
+"let g:denops_server_addr = '127.0.0.1:32123'
+'''
+
+[[plugins]]
+repo = 'delphinus/skkeleton_indicator.nvim'
+on_source = 'skkeleton'
+lua_source = 'require("skkeleton_indicator").setup{}'
 
 [[plugins]]
 repo = 'vim-skk/skkeleton'
@@ -12,7 +20,7 @@ hook_add = '''
 '''
 hook_source = '''
   call skkeleton#config(#{
-    \ globalDictionaries : ['/nix/store/bi7qiz4h005vv01dgi8m0k9jj5jjl07y-skk-dicts-unstable-2020-03-24/share/SKK-JISYO.combined',''],
+    \ globalDictionaries : ['/nix/store/amqacnyszfqh1kaj4zvghb87j987q03r-skk-dicts-unstable-2020-03-24/share/SKK-JISYO.combined'],
     \ eggLikeNewline: v:true,
     \ registerConvertResult: v:true,
     \ userJisyo: '~/SKK/skk-jisyo',
@@ -27,6 +35,7 @@ hook_source = '''
     autocmd User skkeleton-enable-post lmap <buffer> l <Plug>(skkeleton-disable)
     autocmd User skkeleton-disable-pre call s:skkeleton_post()
   augroup END
+  
   function! s:skkeleton_pre() abort
     let s:prev_buffer_config = ddc#custom#get_buffer()
     call ddc#custom#patch_buffer('sources', ['skkeleton'])

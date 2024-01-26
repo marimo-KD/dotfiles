@@ -1,0 +1,178 @@
+## preanble
+[documentclass]
+body = '\\documentclass[$1]{$2}$0'
+
+[usepackage]
+body = '\\usepackage{$1}$0'
+
+## environments
+[align]
+prefix = 'align'
+body = '''
+\\begin{align}
+\t$0
+\\end{align}\
+'''
+
+[begin]
+prefix = 'begin'
+body = '''
+\\begin{$1}
+\t$2
+\\end{$1}\
+'''
+
+[displaymath]
+prefix = ['$$', '\\[']
+body = '''
+\\[ $0 \\]\
+'''
+
+[document]
+prefix = 'document'
+body = '''
+\\begin{document}
+$0
+\\end{document}
+'''
+
+[enumerate]
+prefix = 'enumerate'
+body = '''
+\\begin{enumerate}[label=$1]
+\t\\item $0
+\\end{enumerate}
+'''
+
+[equation]
+prefix = 'equation'
+body = '''
+\\begin{equation}
+\t$0
+\\end{equation}\
+'''
+
+## commands
+[reference]
+prefix = 'ref'
+body = '\\ref{$1}$0'
+
+[citation]
+prefix = 'cite'
+body = '\\cite{$1}$0'
+
+## math
+[fraction]
+prefix = 'frac'
+body = '\\frac{$1}{$2}$0'
+
+[integral]
+prefix = 'int'
+body = '\\int_{$1}^{$2} $0'
+
+[differential]
+prefix = 'diff'
+body = '\\diff$1{$2}{$3}$0'
+
+[partial]
+prefix = 'diffp'
+body = '\\diffp$1{$2}{$3}$0'
+
+[infty]
+prefix = 'inf'
+body = '\\infty'
+
+[automatic-brace]
+prefix = 'ab'
+body = '\\ab ($1)$0'
+
+[automatic-brace-b]
+prefix = 'abb'
+body = '\\ab \\{$1\\}$0'
+
+[automatic-brace-B]
+prefix = 'abB'
+body = '\\ab [$1]$0'
+
+[bra]
+body = '\\bra <$1|$0'
+
+[ket]
+body = '\\ket |$1>$0'
+
+[braket]
+prefix = 'braket'
+body = '\\braket <$1|$2>$0'
+
+## greeks
+[alpha]
+body = '\\alpha'
+[beta]
+body = '\\beta'
+[gamma]
+body = '\\gamma'
+[Gamma]
+body = '\\Gamma'
+[delta]
+body = '\\delta'
+[Delta]
+body = '\\Delta'
+[epsilon]
+body = '\\epsilon'
+[zeta]
+body = '\\zeta'
+[eta]
+body = '\\eta'
+[theta]
+body = '\\theta'
+[Theta]
+body = '\\Theta'
+[iota]
+body = '\\iota'
+[kappa]
+body = '\\kappa'
+[lambda]
+body = '\\lambda'
+[Lambda]
+body = '\\Lambda'
+[mu]
+body = '\\mu'
+[nu]
+body = '\\nu'
+[xi]
+body = '\\xi'
+[Xi]
+body = '\\Xi'
+[pi]
+body = '\\pi'
+[Pi]
+body = '\\Pi'
+[rho]
+body = '\\rho'
+[sigma]
+body = '\\sigma'
+[Sigma]
+body = '\\Sigma'
+[tau]
+body = '\\tau'
+[upsilon]
+body = '\\upsilon'
+[Upsilon]
+body = '\\Upsilon'
+[phi]
+body = '\\phi'
+[Phi]
+body = '\\Phi'
+[chi]
+body = '\\chi'
+[psi]
+body = '\\psi'
+[Psi]
+body = '\\Psi'
+[omega]
+body = '\\omega'
+[Omega]
+body = '\\Omega'
+
+
+

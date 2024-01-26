@@ -64,7 +64,7 @@ export class Config extends BaseConfig {
               denops: Denops;
               previewWinId: number;
             }) => {
-              await fn.win_execute(args.denops, args.previewWinId, "normal! zt");
+              await fn.win_execute(args.denops, args.previewWinId, "normal! zz");
             },
             previewFloating: true,
             previewFloatingBorder: "rounded",
@@ -91,31 +91,34 @@ export class Config extends BaseConfig {
         _: {
           ignoreCase: true,
           matchers: ["matcher_fzf"],
+          sorters: ["sorter_fzf"],
           smartCase: true,
         },
         file_old: {
           matchers: [
-            "matcher_relative",
-            "matcher_fzf",
+            "matcher_zf",
+            "matcher_kensaku",
           ],
           converters: ["converter_hl_dir"],
           columns: ["icon_filename_ff"],
         },
         file_rec: {
           matchers: [
-            "matcher_substring",
-            "matcher_hidden",
+            "matcher_zf",
+            "matcher_kensaku",
           ],
           converters: ["converter_hl_dir"],
           columns: ["icon_filename_ff"],
         },
         file: {
           matchers: [
-            "matcher_substring",
             "matcher_hidden",
           ],
           converters: ["converter_hl_dir"],
           columns: ["icon_filename"],
+        },
+        line: {
+          matchers: ["matcher_substring", "matcher_kensaku"],
         },
         dein: {
           defaultAction: "cd",
@@ -136,6 +139,9 @@ export class Config extends BaseConfig {
         converter_hl_dir: {
           hlGroup: ["Directory", "Keyword"],
         },
+        matcher_kensaku: {
+          highlightMatched: 'Search',
+        }
       },
       kindOptions: {
         action: {
@@ -189,7 +195,10 @@ export class Config extends BaseConfig {
       },
       kindParams: {},
       columnParams: {
-        icon_filename_ff: {pathDisplayOption: "relative"}
+        icon_filename_ff: {
+          pathDisplayOption: "relative",
+          padding: 0,
+        }
       },
       actionOptions: {
         narrow: {

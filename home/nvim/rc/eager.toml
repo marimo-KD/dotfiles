@@ -1,9 +1,17 @@
 [[plugins]]
-repo = 'itchyny/vim-parenmatch'
+repo = 'andymass/vim-matchup'
 
 [[plugins]]
 repo = 'osyo-manga/vim-precious'
+if = false
 depends = ['context_filetype.vim']
+
+[[plugins]]
+repo = 'lukas-reineke/indent-blankline.nvim'
+if = 'has("nvim")'
+lua_add = '''
+  require("ibl").setup()
+'''
 
 [[plugins]]
 repo = 'lambdalisue/suda.vim'
@@ -11,33 +19,42 @@ hook_add = '''
   let g:suda_smart_edit = 1
 '''
 
+#[[plugins]]
+#repo = 'folke/noice.nvim'
+##if = 'has("nvim")'
+#if = false
+#depends = ['nui.nvim', 'nvim-notify']
+#lua_add = '''
+#  local noice = require("noice")
+#  noice.setup({
+#    lsp = {
+#      -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+#      override = {
+#        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+#        ["vim.lsp.util.stylize_markdown"] = true,
+#      },
+#    },
+#    -- you can enable a preset for easier configuration
+#    presets = {
+#      long_message_to_split = true, -- long messages will be sent to a split
+#      lsp_doc_border = false, -- add a border to hover docs and signature help
+#    },
+#  })
+#'''
+#
+#[[plugins]]
+#repo = 'MunifTanjim/nui.nvim'
+#if = 'has("nvim")'
+#
+#[[plugins]]
+#repo = 'rcarriga/nvim-notify'
+#if = 'has("nvim")'
+
 [[plugins]]
-repo = 'folke/noice.nvim'
-if = 'has("nvim")'
-depends = ['nui.nvim', 'nvim-notify']
+repo = 'folke/which-key.nvim'
 lua_add = '''
-  local noice = require("noice")
-  noice.setup({
-    lsp = {
-      -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
-      override = {
-        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-        ["vim.lsp.util.stylize_markdown"] = true,
-      },
-    },
-    -- you can enable a preset for easier configuration
-    presets = {
-      long_message_to_split = true, -- long messages will be sent to a split
-      lsp_doc_border = false, -- add a border to hover docs and signature help
-    },
-  })
+  require('which-key').setup{}
 '''
-
-[[plugins]]
-repo = 'MunifTanjim/nui.nvim'
-
-[[plugins]]
-repo = 'rcarriga/nvim-notify'
 
 [[plugins]]
 repo = 'rebelot/heirline.nvim'

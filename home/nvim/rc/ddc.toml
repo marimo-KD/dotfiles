@@ -1,7 +1,7 @@
 [[plugins]]
 repo = 'Shougo/ddc.vim'
 depends = 'denops.vim'
-on_event = ['InsertEnter', 'CursorHold']
+on_event = ['CmdlineEnter', 'InsertEnter', 'CursorHold']
 hooks_file = '~/.config/nvim/rc/ddc.vim'
 
 [[plugins]]
@@ -9,12 +9,13 @@ repo = 'Shougo/pum.vim'
 hook_source = '''
   call pum#set_option(#{
   \  auto_select: v:false,
-  \  border: 'rounded',
+  \  border: 'single',
+  \  commit_characters: ['.'],
   \  follow_cursor: v:true,
   \  max_height: 8,
   \  max_width: 80,
-  \  preview: v:true,
-  \  preview_border: 'rounded',
+  \  preview: v:false,
+  \  preview_border: 'single',
   \  preview_height: 10,
   \  preview_width: 80,
   \ })
@@ -30,26 +31,18 @@ depends = 'pum.vim'
 on_source = 'ddc.vim'
 
 [[plugins]]
-repo = 'hrsh7th/vim-vsnip'
-#depends = ['friendly-snippets']
+repo = 'uga-rosa/denippet.vim'
+on_source = 'ddc.vim'
 hook_source = '''
-  " Expand
-  imap <expr> <C-l> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-l>'
-  smap <expr> <C-l> vsnip#expandable() ? '<Plug>(vsnip-expand)' : '<C-l>'
-
-  " Jump forward or backward
-  imap <expr> <C-f> vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<C-f>'
-  smap <expr> <C-f> vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<C-f>'
-  imap <expr> <C-b> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-b>'
-  smap <expr> <C-b> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-b>'
+let dir = stdpath('config') . '/snippet/'
+for file in glob(dir . '*.*', 1, 1)
+  call denippet#load(file)
+endfor
 '''
 
 [[plugins]]
 repo = 'uga-rosa/ddc-source-lsp-setup'
 if = 'has("nvim")'
-
-[[plugins]]
-repo = 'rafamadriz/friendly-snippets'
 
 # ddc sources
 [[plugins]]
@@ -58,6 +51,7 @@ on_source = 'ddc.vim'
 
 [[plugins]]
 repo = 'uga-rosa/ddc-source-vsnip'
+if = false
 on_source = 'ddc.vim'
 depends = 'vim-vsnip'
 
@@ -71,6 +65,10 @@ on_source = 'ddc.vim'
 
 [[plugins]]
 repo = 'Shougo/ddc-cmdline'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-cmdline-history'
 on_source = 'ddc.vim'
 
 [[plugins]]
@@ -88,25 +86,43 @@ lua_source = '''
   -- local capabilities = vim.lsp.protocol.make_client_capabilities()
   -- capabilities.textDocument.completion.completionItem.snippetSupport = true
   require("ddc_source_lsp_setup").setup()
-  nvim_lsp.rust_analyzer.setup{
-    cmd = {'rustup', 'run', 'stable', 'rust-analyzer'},
-  }
+  nvim_lsp.rust_analyzer.setup{}
   nvim_lsp.clangd.setup{}
   nvim_lsp.denols.setup{}
   nvim_lsp.ocamllsp.setup{}
   nvim_lsp.hls.setup{
     filetypes = {'haskell', 'lhaskell', 'cabal'},
   }
+  nvim_lsp.marksman.setup{}
   nvim_lsp.typst_lsp.setup{
-    settings = {
-      exportPdf = "onSave"
+    typst_lsp = {
+      settings = {
+        exportPdf = "onSave"
+      }
     }
   }
   nvim_lsp.texlab.setup{
-    settings = {
-      texlab = {
-        build = {executable = "lualatex", args = { "%f" },},
+    texlab = {
+      build = {
+        args = { "-interaction=nonstopmode", "-synctex=1", "%f" },
+        executable = "latexmk",
+        forwardSearchAfter = false,
+        onSave = true,
       },
+      chktex = {
+        onEdit = false,
+        onOpenAndSave = true
+      },
+      diagnosticsDelay = 300,
+      formatterLineLength = 80,
+      forwardSearch = {
+        executable = "zathura",
+        args = {"--synctex-forward", "%l:1:%f", "%p"},
+      },
+      latexFormatter = "latexindent",
+      latexindent = {
+        modifyLineBreaks = false
+      }
     }
   }
   nvim_lsp['satysfi-ls'].setup{
@@ -118,30 +134,27 @@ lua_source = '''
 [[plugins]]
 repo = 'Shougo/ddc-source-shell-native'
 on_source = 'ddc.vim'
-hook_source = '''
-  call ddc#custom#patch_filetype(
-        \ ['zsh', 'deol'], 'sources',
-        \ ['shell-native', 'file']
-        \)
-'''
 
 [[plugins]]
 repo = 'Shougo/ddc-source-nvim-lua'
 on_source = 'ddc.vim'
 
 [[plugins]]
+repo = 'Shougo/ddc-source-omni'
+if = false
+on_source = 'ddc.vim'
+
+[[plugins]]
 repo = 'Shougo/neco-vim'
 on_source = 'ddc.vim'
-hook_source = '''
-  call ddc#custom#patch_filetype(
-    \ ['vim'], 'sources',
-    \ ['necovim', 'around', 'file']
-    \ )
-'''
 
 # ddc matchers
 [[plugins]]
 repo = 'Shougo/ddc-filter-matcher_head'
+on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-filter-matcher_length'
 on_source = 'ddc.vim'
 
 [[plugins]]
@@ -157,3 +170,14 @@ on_source = 'ddc.vim'
 [[plugins]]
 repo = 'Shougo/ddc-filter-converter_remove_overlap'
 on_source = 'ddc.vim'
+
+[[plugins]]
+repo = 'matsui54/denops-signature_help'
+on_source = 'ddc.vim'
+hook_source = 'call signature_help#enable()'
+
+[[plugins]]
+repo = 'matsui54/denops-popup-preview.vim'
+if = false
+on_source = 'ddc.vim'
+hook_source = 'call popup_preview#enable()'

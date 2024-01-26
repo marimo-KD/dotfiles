@@ -3,25 +3,25 @@
     enable = true;
     xwayland.enable = true;
   };
-  programs.waybar = {
-    enable = true;
-  };
   xdg.enable = true;
   home.file.".config/hypr" = {
     source = ./hypr;
     recursive = true;
   };
 
-  programs.obs-studio = {
-    enable = true;
+  programs = {
+    obs-studio.enable = true;
+    firefox.enable = true;
+    waybar.enable = true;
   };
   home.packages = with pkgs; [
     simple-scan # scanner
     lapce # editor
-    neovide # neovim gui
+    neovide # neovim gui 1
+    # goneovim # neovim gui 2
     discord 
     slack
-    obsidian
+    # obsidian
     foot # terminal emulater
     grim # screenshot
     mako # notification
@@ -32,6 +32,7 @@
     wofi # launcher
     xdg-utils
     zathura # pdf viewer
+    apvlv # pdf viewer
   ];
 
   # discord

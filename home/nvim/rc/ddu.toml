@@ -44,7 +44,6 @@ ddu-ff = '''
   endif
 '''
 ddu-ff-filter = '''
-  set winblend=50
   inoremap <buffer><silent> <CR> <ESC><cmd>close<CR>
   nnoremap <buffer><silent> <CR> <ESC>close<CR>
   nnoremap <buffer><silent> q
@@ -155,6 +154,16 @@ on_source = 'ddu.vim'
 [[plugins]]
 repo = 'Shougo/ddu-filter-matcher_relative'
 on_source = 'ddu.vim'
+
+[[plugins]]
+repo = 'hasundue/ddu-filter-zf'
+on_source = 'ddu.vim'
+build = 'deno task fetch'
+
+[[plugins]]
+repo = 'Milly/ddu-filter-kensaku'
+on_source = 'ddu.vim'
+depends = ['kensaku.vim']
 
 [[plugins]]
 repo = 'yuki-yano/ddu-filter-fzf'

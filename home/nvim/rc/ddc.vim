@@ -1,13 +1,16 @@
-"hook_add {{{
+" hook_add {{{
 nnoremap : <cmd>call CommandlinePre()<CR>:
 function! CommandlinePre() abort
   " Note: This disables default command line completion!
-  call dpp#source(['ddc.vim'])
-
   let b:prev_buffer_config = ddc#custom#get_buffer()
+  
+  call ddc#custom#patch_buffer('sourceOptions', #{
+  \ _: #{
+  \   keywordPattern: '[0-9a-zA-Z_:#-]*',
+  \ },
+  \ })
 
   autocmd User DDCCmdlineLeave ++once call CommandlinePost()
-  " autocmd InsertEnter <buffer> ++once call CommandlinePost()
 
   " Enable command line completion
   call ddc#enable_cmdline_completion()
@@ -19,37 +22,35 @@ function! CommandlinePost() abort
     unlet b:prev_buffer_config
   endif
 endfunction
+
 " }}}
 " hook_source {{{
-inoremap <silent><expr> <Tab>
-      \ pum#visible() ? '<cmd>call pum#map#insert_relative(+1)<CR>' :
-      \ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
-      \ '<Tab>' : ddc#map#manual_complete()
-inoremap <S-Tab> <cmd>call pum#map#insert_relative(-1)<CR>
 inoremap <C-n> <cmd>call pum#map#insert_relative(+1)<CR>
 inoremap <C-p> <cmd>call pum#map#insert_relative(-1)<CR>
 inoremap <C-y> <cmd>call pum#map#confirm()<CR>
-inoremap <expr> <C-e> ddc#visible() ?
-      \ ? '<cmd>call ddc#hide()<CR>'
-      \ : '<End>'
+inoremap <expr> <C-e> pum#visible()
+  \ ? '<cmd>call pum#map#cancel()<CR>'
+  \ : '<End>'
 
-cnoremap <silent><expr> <Tab>
-      \ pum#visible() ? '<Cmd>call pum#map#insert_relative(+1)<CR>' :
-      \ ddc#map#manual_complete()
-cnoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
-cnoremap <C-n>   <Cmd>call pum#map#insert_relative(+1)<CR>
-cnoremap <C-p>   <Cmd>call pum#map#insert_relative(-1)<CR>
-cnoremap <C-y>   <Cmd>call pum#map#confirm()<CR>
-cnoremap <expr> <C-e> ddc#visible() ?
-      \ ? '<cmd>call ddc#hide()<CR>'
+inoremap <expr> <Tab> denippet#jumpable() ? '<Plug>(denippet-jump-next)' : '<Tab>'
+inoremap <expr> <S-Tab> denippet#jumpable(-1) ? '<Plug>(denippet-jump-prev)' : '<S-Tab>'
+snoremap <expr> <Tab> denippet#jumpable() ? '<Plug>(denippet-jump-next)' : '<Tab>'
+snoremap <expr> <S-Tab> denippet#jumpable(-1) ? '<Plug>(denippet-jump-prev)' : '<S-Tab>'
+
+cnoremap <C-n>   <cmd>call pum#map#insert_relative(+1)<CR>
+cnoremap <C-p>   <cmd>call pum#map#insert_relative(-1)<CR>
+cnoremap <C-y>   <cmd>call pum#map#confirm()<CR>
+cnoremap <expr> <C-e> pum#visible()
+      \ ? '<cmd>call pum#map#cancel()<CR>'
       \ : '<End>'
 
 call ddc#custom#patch_global(#{
   \ autoCompleteEvents: [
-  \   'InsertEnter', 'TextChangedI', 'TextChangedP', 'TextChangedT', 'CmdlineEnter', 'CmdlineChanged',
+  \   'InsertEnter', 'TextChangedI', 'TextChangedP', 'CmdlineEnter', 'CmdlineChanged',
   \ ],
+  \ backspaceCompletion: v:true,
   \ ui: 'pum',
-  \ sources: ['buffer', 'file', 'lsp', 'vsnip'],
+  \ sources: ['lsp', 'denippet', 'around', 'file'],
   \ cmdlineSources: {
   \   ':': ['cmdline', 'around'],
   \   '@': ['cmdline', 'around', 'file'],
@@ -64,20 +65,38 @@ call ddc#custom#patch_global(#{
   \     ignoreCase: v:true,
   \     matchers: ['matcher_fuzzy'],
   \     sorters : ['sorter_fuzzy'],
-  \     converters: ['converter_remove_overlap', 'converter_fuzzy'],
+  \     converters: ['converter_fuzzy'],
   \     timeout: 1000,
   \   },
-  \   around: #{mark: '[A]' },
-  \   buffer: #{mark: '[B]'},
+  \   around: #{mark: '[A]',
+  \             matchers: ['matcher_head', 'matcher_length'],
+  \             converters: ['converter_remove_overlap'],},
+  \   buffer: #{mark: '[B]',
+  \             matchers: ['matcher_head', 'matcher_length'],
+  \             converters: ['converter_remove_overlap'],},
   \   cmdline: #{mark: '[cmd]', forceCompletionPattern: "\\S/\\S*|\\.\\w*",},
-  \   eskk: #{mark: '[eskk]', matchers: [], sorters: [], minAutoCompleteLength: 1,},
+  \   cmdline-history: #{mark: '[cmd]',
+  \                      matchers: ['matcher_head', 'matcher_length'],
+  \                      converters: ['converters_remove_overlap']},
   \   file: #{mark: '[f]', isVolatile: v:true, forceCompletionPattern: '\S/\S*',},
   \   input: #{mark: '[input]'},
   \   necovim: #{mark: '[neco]'},
   \   nvim-lua: #{mark: '[lua]', forceCompletionPattern: '\.\w*'},
-  \   lsp: #{mark: '[lsp]', forceCompletionPattern: '\.\w*|::\w*|->\w*', dup: 'keep', sorters: ['sorter_lsp-kind'], converters: ['converter_kind_labels']},
-  \   skkeleton: #{mark: '[skk]', matchers: ['skkeleton'], sorters:[], minAutoCompleteLength: 2, isVolatile: v:true,},
+  \   lsp: #{mark: '[lsp]', 
+  \          keywordPattern: '\k+',
+  \          forceCompletionPattern: '\.\w*|::\w*|->\w*',
+  \          dup: 'keep',
+  \          sorters: ['sorter_fuzzy', 'sorter_lsp-kind'],
+  \          converters: ['converter_fuzzy', 'converter_kind_labels'],
+  \          minAutoCompleteLength: 1,},
+  \   skkeleton: #{mark: '[skk]',
+  \                matchers: [],
+  \                sorters: [],
+  \                converters: [],
+  \                minAutoCompleteLength: 2,
+  \                isVolatile: v:true,},
   \   vsnip: #{mark: '[vsnip]'},
+  \   denippet: #{mark: '[snip]'},
   \   shell-native: #{mark: '[zsh]', isVolatile: v:true, forceCompletionPattern: '\S/\S*',},
   \ },
   \ sourceParams: #{
@@ -89,13 +108,16 @@ call ddc#custom#patch_global(#{
   \   },
   \   lsp: #{
   \     snippetEngine: denops#callback#register({
-  \           body -> vsnip#anonymous(body)
+  \           body -> denippet#anonymous(body)
   \     }),
   \     enableResolveItem: v:true,
   \     enableAdditionalTextEdit: v:true,
   \   },
   \ },
   \ filterParams: #{
+  \   matcher_fuzzy: #{
+  \     splitMode: 'word',
+  \   },
   \   converter_kind_labels: #{
   \     kindLabels: #{
   \       Text: "",
@@ -136,8 +158,19 @@ call ddc#custom#patch_global(#{
   \   }
   \ }
   \ })
+call ddc#custom#patch_filetype(
+  \ ['zsh', 'deol'], 'sources',
+  \ ['shell-native', 'file']
+  \)
+call ddc#custom#patch_filetype(
+  \ ['vim'], 'sources',
+  \ ['necovim', 'around', 'file']
+  \ )
 call ddc#enable_terminal_completion()
 call ddc#enable(#{
   \ context_filetype: has('nvim') ? 'treesitter' : 'context_filetype',
   \ })
+" }}}
+" hook_post_update {{{
+call ddc#set_static_import_path()
 " }}}
