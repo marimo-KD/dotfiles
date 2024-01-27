@@ -1,6 +1,9 @@
 {config, pkgs, ...}:
 let
-  emanote = import (builtins.fetchTarball "https://github.com/srid/emanote/archive/master.tar.gz");
+  emanote = import (builtins.fetchTarball {
+    url = "https://github.com/srid/emanote/archive/master.tar.gz";
+    sha256 = "2ab29038da39c17c9ddd9bf0694585be72f36694c4ef1211f6bf4588dd515423";
+  });
 in {
   imports = [ emanote.homeManagerModule ];
   services.emanote = {
