@@ -1,11 +1,7 @@
 {pkgs, ...}: {
   programs.emacs = {
     enable = true;
-    package = pkgs.emacs29-pgtk;
-  };
-  services.emacs = {
-    enable = false;
-    package = pkgs.emacs29-pgtk;
+    package = (if pkgs.stdenv.isDarwin then pkgs.emacs-macport else pkgs.emacs29-pgtk);
   };
   home.packages = with pkgs; [
     graphviz

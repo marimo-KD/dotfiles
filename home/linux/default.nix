@@ -1,4 +1,4 @@
-{
+{...}: {
   home = rec {
     username = "marimo";
     homeDirectory = "/home/${username}";
@@ -8,9 +8,9 @@
   imports = [
     ../editor
     ../desktopEnvironment
-    ../cli.nix
-    ../dev.nix
-    ../mpd.nix
-    ../typeset.nix
+    ../shell
+    ../terminal
+    ../programs
+    ../programs/mpd.nix
   ];
 }

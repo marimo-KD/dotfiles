@@ -71,19 +71,6 @@
     xkbVariant = "";
   };
 
-  services.kmscon = {
-    enable = false;
-    hwRender = true;
-    extraConfig = "font-size=13";
-    extraOptions = "--no-drm";
-    fonts = [
-      { name = "Inconsolata Nerd Font Mono";
-        package = pkgs.nerdfonts; }
-      { name = "Noto Sans CJK JP";
-        package = pkgs.noto-fonts-cjk-sans; }
-    ];
-  };
-
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.marimo = {
     isNormalUser = true;
@@ -94,8 +81,6 @@
 
   environment.systemPackages = with pkgs; [
     curl
-    sheldon
-    #neovim-remote
     lm_sensors
   ];
 
@@ -140,29 +125,29 @@
       viAlias = true;
       vimAlias = true;
     };
-    zsh = { enable = true; };
   };
 
   fonts = {
     packages = with pkgs; [
+      noto-fonts
       noto-fonts-cjk-serif
       noto-fonts-cjk-sans
       noto-fonts-emoji
-      nerdfonts
-      ipaexfont
       source-han-sans
       source-han-mono
       source-han-serif
+      sarasa-gothic
+      (nerdfonts.overrides { fonts = ["Iosevka"]; })
       ibm-plex
+      ipaexfont
       iosevka
-      liberation_ttf
     ];
     fontDir.enable = true;
     fontconfig = {
       defaultFonts = {
         serif = ["Noto Serif CJK JP" "Noto Color Emoji"];
         sansSerif = ["Noto Sans CJK JP" "Noto Color Emoji"];
-        monospace = ["JetBrainsMono Nerd Font" "Noto Color Emoji"];
+        monospace = ["Iosevka Nerd Font" "Noto Color Emoji"];
         emoji = ["Noto Color Emoji"];
       };
       allowBitmaps = false;
