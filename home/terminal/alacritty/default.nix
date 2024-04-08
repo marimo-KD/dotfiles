@@ -1,5 +1,5 @@
-{...}: {
-  home.packages = pkgs.alacritty;
+{pkgs, ...}: {
+  home.packages = [pkgs.alacritty];
   home.file.".config/alacritty" = {
     source = ./alacritty;
     recursive = true;

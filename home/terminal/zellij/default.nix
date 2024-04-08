@@ -1,4 +1,4 @@
-{...}: {
+{pkgs, ...}: {
   programs.zellij.enable = true;
   home.file.".config/zellij/config.kdl".text = ''
   default_shell "nu"

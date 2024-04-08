@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   programs.waybar.enable = true;
-  home.files.".config/waybar" = {
+  home.file.".config/waybar" = {
     source = ./waybar;
     recursive = true;
   };

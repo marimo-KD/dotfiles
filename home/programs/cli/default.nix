@@ -5,7 +5,7 @@
     password-store.enable = true;
   };
   services.gpg-agent = {
-    enable = true;
+    enable = (if pkgs.stdenv.isDarwin then false else true);
     pinentryFlavor = "curses";
   };
   home.packages = with pkgs; [

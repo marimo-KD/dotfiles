@@ -2,7 +2,7 @@
   home.packages = with pkgs; [
     wofi
   ];
-  home.files.".config/wofi" = {
+  home.file.".config/wofi" = {
     source = ./wofi;
     recursive = true;
   };

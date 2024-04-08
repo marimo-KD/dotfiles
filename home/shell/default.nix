@@ -1,7 +1,6 @@
 {...}: {
-  import = [
+  imports = [
     ./nu
-    ./starhip
     ./bash
   ];
   programs = {

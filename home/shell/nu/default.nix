@@ -37,5 +37,5 @@
     carapace.enableNushellIntegration = true;
     starship.enableNushellIntegration = true;
     zoxide.enableNushellIntegration = true;
-  }
+  };
 }

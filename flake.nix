@@ -56,10 +56,18 @@
       malusHome = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
           system = "aarch64-darwin";
-          modules = [
-            ./home/darwin
+          config.allowUnfree = true;
+          overlays = [
+            (import inputs.rust-overlay)
+            inputs.neovim-nightly-overlay.overlay
           ];
         };
+        extraSpecialArgs = {
+          inherit inputs;
+        };
+        modules = [
+          ./home/darwin
+        ];
       };
     };
   };
