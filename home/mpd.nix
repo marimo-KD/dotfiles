@@ -11,7 +11,7 @@
         name "Pipewire Output"
       }
     '';
-    musicDirectory = /home/marimo/Music;
+    musicDirectory = "${config.home.homeDirectory}/Music";
   };
   home.packages = with pkgs; [
     ymuse

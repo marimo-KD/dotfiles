@@ -67,8 +67,6 @@ set mouse=a
 set foldmethod=marker
 
 " Statusline
-if has("nvim")
-  set laststatus=3
-else
-  set laststatus=2
-endif
+set laststatus=0
+" Cmdline
+set cmdheight=0

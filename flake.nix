@@ -1,6 +1,8 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nix-darwin.url = "github:LnL7/nix-darwin";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -9,33 +11,55 @@
     xremap.url = "github:xremap/nix-flake";
     rust-overlay.url = "github:oxalica/rust-overlay";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    zjstatus.url = "github:dj95/zjstatus";
   };
 
-  outputs = inputs : {
+  outputs = inputs@{self, nixpkgs, nix-darwin, home-manager, ...} : {
     nixosConfigurations = {
-      myNixOS = inputs.nixpkgs.lib.nixosSystem {
+      monix = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
           inherit inputs;
         };
         modules = [
-          ./configuration.nix
+          ./hosts/monix
+        ];
+      };
+    };
+    darwinConfigurations = {
+      malus = nix-darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        modules = [
+          ./hosts/malus
         ];
       };
     };
     homeConfigurations = {
-      myHome = inputs.home-manager.lib.homeManagerConfiguration {
-        pkgs = import inputs.nixpkgs {
+      monixHome = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
           system = "x86_64-linux";
           config.allowUnfree = true;
-          overlays = [(import inputs.rust-overlay) inputs.neovim-nightly-overlay.overlay];
+          overlays = [
+            (import inputs.rust-overlay) inputs.neovim-nightly-overlay.overlay
+            (final: prev: {
+              zjstatus = inputs.zjstatus.packages.${prev.system}.default;
+            })
+          ];
         };
         extraSpecialArgs = {
           inherit inputs;
         };
         modules = [
-          ./home.nix
+          ./home/linux
         ];
+      };
+      malusHome = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs {
+          system = "aarch64-darwin";
+          modules = [
+            ./home/darwin
+          ];
+        };
       };
     };
   };

@@ -16,6 +16,10 @@ call InitPlugin('Shougo/dpp-ext-lazy')
 
 let g:dpp_dir = s:cache_home .. '/dpp'
 
+function DppMakeState()
+  call dpp#make_state(g:dpp_dir, g:base_dir .. '/dpp.ts')
+endfunction
+
 if dpp#min#load_state(g:dpp_dir)
   for s:plugin in [
         \   'Shougo/dpp-ext-installer',
@@ -28,28 +32,22 @@ if dpp#min#load_state(g:dpp_dir)
     call InitPlugin(s:plugin)
   endfor
 
-  if has('nvim')
-    runtime! plugin/denops.vim
-    echomsg 'denops is loaded'
-  endif
+  "if has('nvim')
+  "  runtime! plugin/denops.vim
+  "  echomsg 'denops is loaded'
+  "endif
 
-  augroup MyAutoCmd4DenopsReady
-    autocmd!
+  augroup MyAutoCmd
     autocmd User DenopsReady
           \ : echohl WarningMsg
           \ | echomsg 'dpp load_state() is failed'
           \ | echohl NONE
-          \ | call dpp#make_state(g:dpp_dir, g:base_dir .. '/dpp.ts')
-  augroup END
-else
-  augroup MyAutoCmd4InstallPlugin
-    autocmd!
-    autocmd BufWritePost *.lua,*.vim,*.toml,*.ts,vimrc,.vimrc
-          \ call dpp#check_files()
+          \ | call DppMakeState()
+          \ | echomsg 'dpp make_state() is called'
   augroup END
 endif
 
-augroup MyAutoCmd4makeState
+augroup MyAutoCmd
   autocmd User Dpp:makeStatePost
         \ : echohl WarningMsg
         \ | echomsg 'dpp make_state() is done'

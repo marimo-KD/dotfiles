@@ -1,0 +1,71 @@
+[[plugins]]
+repo = 'andymass/vim-matchup'
+
+[[plugins]]
+repo = 'lukas-reineke/indent-blankline.nvim'
+if = 'has("nvim")'
+lua_add = '''
+  require("ibl").setup()
+'''
+
+[[plugins]]
+repo = 'lambdalisue/suda.vim'
+hook_add = '''
+  let g:suda_smart_edit = 1
+'''
+
+# {{{ ColorScheme
+[[plugins]]
+repo = 'lifepillar/vim-gruvbox8'
+hook_add = '''
+  let g:gruvbox_italicize_strings = 0
+  let g:gruvbox_plugin_hi_groups = 0
+  let g:gruvbox_filetype_hi_groups = 1
+'''
+[[plugins]]
+repo = 'catppuccin/nvim'
+name = 'catppuccin'
+lua_add = '''
+  require('catppuccin').setup{
+    flavour = 'macchiato',
+    integrations = {
+      alpha = false,
+      dashboard = false,
+      hop = false,
+      notify = false,
+      native_lsp = {
+        enabled = true,
+      },
+      treesitter = true,
+      telescope = false,
+    },
+  }
+'''
+# }}}
+
+[[plugins]]
+repo = 'vim-jp/vimdoc-ja'
+hook_add = '''
+  set helplang=ja,en
+'''
+
+[plugins.ftplugin]
+python = '''
+  setlocal shiftwidth=4
+  setlocal softtabstop=4
+  setlocal tabstop=4
+  setlocal expandtab
+'''
+satysfi = '''
+  setlocal autoindent
+  setlocal indentexpr=
+  setlocal equalprg=
+  setlocal shiftwidth=2
+  setlocal softtabstop=2
+  setlocal tabstop=2
+  setlocal suffixesadd+=.saty,.satyh,.satyg
+  setlocal matchpairs+=<:>
+  "setlocal foldmethod=indent
+  setlocal foldnestmax=4
+  setlocal foldminlines=5
+'''

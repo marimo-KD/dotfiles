@@ -232,3 +232,4 @@ default_floating_border none
 exec --no-startup-id mako
 exec --no-startup-id fcitx5 -d
 exec --no-startup-id foot --server
+exec --no-startup-id steam

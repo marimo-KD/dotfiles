@@ -5,13 +5,17 @@ syntax off
 filetype off
 const g:base_dir = fnamemodify(expand('<sfile>'), ':h') .. '/rc'
 
-if filereadable(expand('~/.secretvimrc'))
+if filereadable('~/.secretvimrc'->expand())
   source ~/.secretvimrc
 endif
 
 if has('nvim')
   lua if vim.loader then vim.loader.enable() end
 endif
+
+augroup MyAutoCmd
+  autocmd!
+augroup END
 
 source `=g:base_dir .. '/dpp.vim'`
 
@@ -24,11 +28,6 @@ if has('nvim')
   colorscheme catppuccin
 else
   colorscheme gruvbox8
-endif
-
-if executable('nvr')
-  let $EDITOR = 'nvr -cc split -c "set bufhidden=delete" --remote-wait'
-  unlet $MANPAGER
 endif
 
 if exists('g:neovide')

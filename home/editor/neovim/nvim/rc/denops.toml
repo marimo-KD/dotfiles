@@ -3,7 +3,12 @@ repo = 'vim-denops/denops.vim'
 on_event = ['CursorHold']
 hook_add = '''
 "let g:denops_server_addr = '127.0.0.1:32123'
+let g:denops#server#deno_args = ['-q', '--no-lock', '-A', '--unstable-kv', '--unstable-ffi']
 '''
+
+[[plugins]]
+repo = 'gamoutatsumi/dps-ghosttext.vim'
+on_cmd = ['GhostStart']
 
 [[plugins]]
 repo = 'delphinus/skkeleton_indicator.nvim'
@@ -15,18 +20,23 @@ repo = 'vim-skk/skkeleton'
 on_map = { ic = '<Plug>(skkeleton-toggle)' }
 depends = ['denops.vim']
 hook_add = '''
-  imap <C-j> <Plug>(skkeleton-toggle)
-  cmap <C-j> <Plug>(skkeleton-toggle)
+  inoremap <C-j> <Plug>(skkeleton-toggle)
+  cnoremap <C-j> <Plug>(skkeleton-toggle)
+  nnoremap <C-j> i<Plug>(skkeleton-toggle)
 '''
 hook_source = '''
   call skkeleton#config(#{
-    \ globalDictionaries : ['/nix/store/amqacnyszfqh1kaj4zvghb87j987q03r-skk-dicts-unstable-2020-03-24/share/SKK-JISYO.combined'],
+    \ globalDictionaries : map(['SKK-JISYO.L', 'SKK-JISYO.geo', 'SKK-JISYO.jinmei', 'SKK-JISYO.propernoun', 'SKK-JISYO.edict'], "'~/SKK/'->expand() . v:val"),
     \ eggLikeNewline: v:true,
     \ registerConvertResult: v:true,
-    \ userJisyo: '~/SKK/skk-jisyo',
+    \ userDictionary: '~/SKK/skk-jisyo'->expand(),
+    \ databasePath: '~/SKK/skkeleton.db'->expand(),
+    \ sources: ['deno_kv', 'skk_dictionary'],
+    \ completionRankFile: '~/SKK/skkeleton_rank.json'->expand(),
     \ })
   call skkeleton#register_kanatable('rom', {
-    \ ',': ['，'],
+    \ 'jj': 'escape',
+    \ ',': ['、'],
     \ '.': ['。'],
     \ })
   augroup rc_skk
@@ -39,6 +49,7 @@ hook_source = '''
   function! s:skkeleton_pre() abort
     let s:prev_buffer_config = ddc#custom#get_buffer()
     call ddc#custom#patch_buffer('sources', ['skkeleton'])
+    call ddc#custom#patch_buffer('sourceOptions', #{_: #{keywordPattern: '[ァ-ヮア-ンー]+'}})
   endfunction
   function! s:skkeleton_post() abort
     call ddc#custom#set_buffer(s:prev_buffer_config)

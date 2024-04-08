@@ -11,7 +11,9 @@
 
   programs = {
     obs-studio.enable = true;
-    firefox.enable = true;
+    firefox = {
+      enable = true;
+    };
     waybar.enable = true;
   };
   home.packages = with pkgs; [
@@ -19,8 +21,8 @@
     lapce # editor
     neovide # neovim gui 1
     # goneovim # neovim gui 2
-    discord 
-    slack
+    # discord 
+    # slack
     # obsidian
     foot # terminal emulater
     grim # screenshot
@@ -31,8 +33,9 @@
     wl-clipboard # clipboard
     wofi # launcher
     xdg-utils
-    zathura # pdf viewer
+    # zathura # pdf viewer
     apvlv # pdf viewer
+    rnote # stylus note taking
   ];
 
   # discord

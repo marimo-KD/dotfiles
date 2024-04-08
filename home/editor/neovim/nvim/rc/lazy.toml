@@ -9,19 +9,34 @@ hook_add = '''
   nnoremap <Leader>lh  <cmd>lua vim.lsp.buf.hover()<CR>
   nnoremap <Leader>lr  <cmd>lua vim.lsp.buf.rename()<CR>
 '''
+lua_source = '''
+  -- require('vim.lsp._watchfiles')._watchfunc = require('vim._watch').watch
+  local nvim_lsp = require'lspconfig'
+  nvim_lsp.rust_analyzer.setup{}
+  nvim_lsp.clangd.setup{}
+  nvim_lsp.denols.setup{}
+  nvim_lsp.ocamllsp.setup{}
+  nvim_lsp.hls.setup{
+    filetypes = {'haskell', 'lhaskell', 'cabal'},
+  }
+  nvim_lsp.marksman.setup{}
+  nvim_lsp.typst_lsp.setup{
+    typst_lsp = {
+      settings = {
+        exportPdf = "onSave"
+      }
+    }
+  }
+  nvim_lsp['satysfi-ls'].setup{
+    autostart = true,
+  }
+--  require'lspconfig'.pyls.setup{}
+'''
 
 [[plugins]]
 repo = 'j-hui/fidget.nvim'
 on_event = 'LspAttach'
 lua_source = 'require("fidget").setup()'
-
-[[plugins]]
-repo = 'nvimdev/lspsaga.nvim'
-if = false
-on_event = 'LspAttach'
-lua_source = '''
-require("lspsaga").setup()
-'''
 
 # Highlight
 [[plugins]]
@@ -55,10 +70,6 @@ parser_config.satysfi = {
 '''
 
 [[plugins]]
-repo = 'HiPhish/rainbow-delimiters.nvim'
-on_event = ['LspAttach']
-
-[[plugins]]
 repo = 'Shougo/context_filetype.vim'
 
 [[plugins]]
@@ -67,20 +78,10 @@ on_ft = 'typst'
 
 [[plugins]]
 repo = 'lervag/vimtex'
-if = false
-on_ft = ['tex']
+on_ft = ['latex', 'plaintex', 'tex']
 on_source = '''
 let g:vimtex_view_method = 'zathura'
-'''
-
-[[plugins]]
-repo = 'zk-org/zk-nvim'
-on_ft = ['markdown']
-lua_source = '''
-require("zk").setup({
-  picker = "select",
-  lsp = {},
-})
+let g:vimtex_compiler_method = 'latexmk'
 '''
 
 # Terminal
@@ -128,20 +129,6 @@ deol = '''
   nnoremap <buffer> e <Plug>(deol_edit)
   setlocal winhighlight=Normal:NormalFloat
 '''
-
-
-# {{{ Lua Library
-[[plugins]]
-repo = 'nvim-lua/popup.nvim'
-depends = ['plenary.nvim']
-
-[[plugins]]
-repo = 'nvim-lua/plenary.nvim'
-
-[[plugins]]
-repo = 'nvim-tree/nvim-web-devicons'
-on_lua = 'nvim-web-devicons'
-# }}}
 
 [[plugins]]
 repo = 'junegunn/vim-easy-align'
@@ -244,17 +231,6 @@ hook_add = '''
   xmap <silent>if <Plug>(textobj-between-i)
   omap <silent>af <Plug>(textobj-between-a)
   xmap <silent>af <Plug>(textobj-between-a)
-'''
-
-[[plugins]]
-repo = 'somini/vim-textobj-fold'
-on_map = { xo = '<Plug>(textobj-fold' }
-depends = 'vim-textobj-user'
-hook_add = '''
-  omap <silent>iz <Plug>(textobj-fold-i)
-  xmap <silent>iz <Plug>(textobj-fold-i)
-  omap <silent>az <Plug>(textobj-fold-a)
-  xmap <silent>az <Plug>(textobj-fold-a)
 '''
 
 [[plugins]]
