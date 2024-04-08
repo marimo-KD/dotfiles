@@ -2,20 +2,29 @@
   imports = [];
   users.users.marimo = {
     home = "/Users/marimo";
+    shell = "bash";
   };
   networking = {
-    hostname = "monix";
+    hostName = "malus";
+    computerName = "malus";
   };
+
+  documentation.enable = false;
 
   nixpkgs.config.allowUnfree = true;
 
   programs.zsh.enable = true;
 
-  services.nix-darwin.enable = true;
-  # services.nix-daemon.enable = true; # multi-user install
-  nix.settings.trusted-users = ["marimo"];
+  services.nix-daemon.enable = true; # multi-user install
+  nix.settings = {
+    trusted-users = ["marimo"];
+    experimental-features = "nix-command flakes";
+  };
 
-  services.tailscale.enable = true;
+  services.tailscale = {
+    enable = true;
+    overrideLocalDns = true;
+  };
 
   fonts = {
     fontDir.enable = true;
