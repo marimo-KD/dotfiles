@@ -63,6 +63,9 @@
           overlays = [
             (import inputs.rust-overlay)
             inputs.neovim-nightly-overlay.overlay
+            (final: prev: {
+              zjstatus = inputs.zjstatus.packages.${prev.system}.default;
+            })
           ];
         };
         extraSpecialArgs = {

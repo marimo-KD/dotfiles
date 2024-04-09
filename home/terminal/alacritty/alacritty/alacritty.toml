@@ -1,7 +1,7 @@
 import = [
-  "~/.config/alacritty/catppuccin-latte.toml"
-  "~/.config/alacritty/catppuccin-macchiato.toml"
-];
+  "~/.config/alacritty/catppuccin-latte.toml",
+  "~/.config/alacritty/catppuccin-macchiato.toml",
+]
 
 [window]
 dynamic_padding = true
@@ -9,5 +9,5 @@ opacity = 0.9
 option_as_alt = "Both"
 
 [font]
-normal = {family = "Sarasa Gothic Term J", style = "Regular"}
+normal = {family = "Sarasa Term J", style = "Regular"}
 

@@ -1,7 +1,7 @@
 {pkgs, ...}: {
   programs = {
-    obs-studio.enable = true;
     firefox.enable = (if pkgs.stdenv.isDarwin then false else true);
+    obs-studio.enable = (if pkgs.stdenv.isDarwin then false else true);
   };
   home.packages = with pkgs; [
     discord

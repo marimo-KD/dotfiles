@@ -4,8 +4,6 @@
     ./emacs
   ];
   home.packages = with pkgs; [
-    lapce
-    neovide
     kakoune
     helix
   ];
