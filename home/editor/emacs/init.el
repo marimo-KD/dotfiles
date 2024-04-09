@@ -135,6 +135,8 @@
 (use-package tramp
   :ensure nil
   :defer t
+  :custom
+  (tramp-default-method "scpx")
   :config
   ;; for nixos machines
   (add-to-list 'tramp-remote-path "/run/current-system/sw/bin"))
@@ -736,6 +738,7 @@
   (org-roam-index-file "~/Org/roam/index.org")
   :config
   (add-to-list 'org-tags-exclude-from-inheritance "task")
+  (require 'vulpea-buffer)
   (defun vulpea-project-p ()
     "Return non-nil if current buffer has any todo entry.
 
