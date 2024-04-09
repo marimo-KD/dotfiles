@@ -6,7 +6,7 @@
   };
   services.gpg-agent = {
     enable = (if pkgs.stdenv.isDarwin then false else true);
-    pinentryFlavor = "curses";
+    pinentryPackage = pkgs.pinentry-tty;
   };
   home.packages = with pkgs; [
     bat
