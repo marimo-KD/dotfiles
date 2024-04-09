@@ -136,8 +136,8 @@
       source-han-sans
       source-han-mono
       source-han-serif
-      sarasa-gothic
       (nerdfonts.override { fonts = ["Iosevka"]; })
+      plemoljp-nf
       ibm-plex
       ipaexfont
       iosevka

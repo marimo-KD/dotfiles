@@ -2,7 +2,7 @@
   imports = [];
   users.users.marimo = {
     home = "/Users/marimo";
-    shell = "bash";
+    shell = pkgs.bashInteractive;
   };
   networking = {
     hostName = "malus";
@@ -14,6 +14,8 @@
   nixpkgs.config.allowUnfree = true;
 
   programs.zsh.enable = true;
+  programs.bash.enable = true;
+  environment.shells = [ pkgs.bashInteractive pkgs.zsh ];
 
   services.nix-daemon.enable = true; # multi-user install
   nix.settings = {
@@ -36,7 +38,8 @@
       source-han-sans
       source-han-serif
       source-han-mono
-      sarasa-gothic
+      plemoljp-nf
+      ibm-plex
       iosevka
       (nerdfonts.override { fonts = [ "Iosevka" ]; })
     ];

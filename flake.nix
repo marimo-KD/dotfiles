@@ -12,6 +12,7 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     zjstatus.url = "github:dj95/zjstatus";
+    nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
   };
 
   outputs = inputs@{self, nixpkgs, nix-darwin, home-manager, ...} : {
@@ -63,6 +64,7 @@
           overlays = [
             (import inputs.rust-overlay)
             inputs.neovim-nightly-overlay.overlay
+            inputs.nixpkgs-firefox-darwin.overlay
             (final: prev: {
               zjstatus = inputs.zjstatus.packages.${prev.system}.default;
             })
