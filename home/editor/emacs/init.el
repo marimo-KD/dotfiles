@@ -132,6 +132,13 @@
   (if (display-graphic-p)
       (my/set-font 12)))
 
+(use-package tramp
+  :ensure nil
+  :defer t
+  :config
+  ;; for nixos machines
+  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin"))
+
 ;; UI
 (use-package doom-themes
   :ensure t
