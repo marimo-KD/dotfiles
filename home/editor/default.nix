@@ -4,7 +4,7 @@
     ./emacs
   ];
   home.packages = with pkgs; [
-    tree-sitter.withPlugins (_: allGrammars)
+    (tree-sitter.withPlugins (p: builtins.attrValues p))
     kakoune
     helix
   ];
