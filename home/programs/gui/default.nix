@@ -1,6 +1,9 @@
 {pkgs, ...}: {
   programs = {
-    firefox.enable = (if pkgs.stdenv.isDarwin then false else true);
+    firefox = {
+      enable = true;
+      package = (if pkgs.stdenv.isDarwin then pkgs.firefox-bin else pkgs.firefox);
+    };
     obs-studio.enable = (if pkgs.stdenv.isDarwin then false else true);
   };
   home.packages = with pkgs; [

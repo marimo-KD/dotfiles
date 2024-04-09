@@ -9,5 +9,5 @@ opacity = 0.9
 option_as_alt = "Both"
 
 [font]
-normal = {family = "Sarasa Term J", style = "Regular"}
-
+normal = {family = "PlemolJP Console NF", style = "Text"}
+size = 14
