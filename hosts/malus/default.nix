@@ -1,4 +1,4 @@
-{...}:{
+{pkgs, ...}:{
   imports = [];
   users.users.marimo = {
     home = "/Users/marimo";
