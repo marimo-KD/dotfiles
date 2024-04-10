@@ -142,15 +142,13 @@
   (add-to-list 'tramp-remote-path "/run/current-system/sw/bin"))
 
 ;; UI
-(use-package doom-themes
+(use-package apropospriate-theme
   :ensure t
-  :custom
-  (doom-themes-enable-bold t)
-  (doom-themes-enable-italic t)
   :config
-  (load-theme 'doom-solarized-light t)
-  (doom-themes-visual-bell-config)
-  (doom-themes-org-config))
+  (load-theme 'apropospriate-light t)
+  (let ((line (face-attribute 'mode-line :underline)))
+    (set-face-attribute 'mode-line          nil :overline line :box nil)
+    (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil)))
 
 (use-package solaire-mode
   :ensure t
@@ -165,19 +163,24 @@
   :config
   (nyan-mode 1))
 
-(use-package doom-modeline
+(use-package moody
   :ensure t
-  :hook
-  (elpaca-after-init . doom-modeline-mode)
-  :custom
-  (doom-modeline-icon t)
-  (doom-modeline-major-mode-icon t)
-  (doom-modeline-minor-modes nil)
-  (doom-modeline-modal-icon t)
-  (doom-modeline-modal-modern-icon t)
   :config
+  (setq x-underline-at-descent-line t)
+  (column-number-mode 0)
   (line-number-mode 0)
-  (column-number-mode 0))
+  (moody-replace-mode-line-front-space)
+  (moody-replace-mode-line-buffer-identification)
+  (moody-replace-vc-mode)
+  (moody-replace-eldoc-minibuffer-message-function)
+  (when (eq system-type 'darwin)
+    (setq moody-slant-function 'moody-slant-apple-rgb)))
+
+(use-package minions
+  :ensure t
+  :config
+  (minions-mode)
+  (setq minions-mode-line-lighter "[+]"))
 
 (use-package dashboard
   :ensure t
@@ -322,6 +325,7 @@
      (?p . paragraph)))
   (meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
   :config
+  (meow-setup-indicator)
   (meow-thing-register 'angle
                        '(pair ("<") (">"))
                        '(pair ("<") (">")))
@@ -461,8 +465,8 @@
       ("u" vundo "Visual Undo"))
      "Code"
      (("l" eglot-hydra/body "LSP")
-      ("g" avy-goto-word-1 "Avy Word")
-      ("G" avy-hydra/body "More avy"))
+      ("f" avy-goto-word-1 "Avy Word")
+      ("F" avy-hydra/body "More avy"))
      "View"
      (("D" delete-other-windows "Only this win")
       ("w" ace-window "Window select")
@@ -472,6 +476,7 @@
       ("n" org-capture "Org-capture")
       ("a" consult-org-agenda "Agenda")
       ("m" major-mode-hydra "Major Mode Hydra")
+      ("g" magit-status "Magit!")
       ("d" dashboard-open "Dashboard"))))
   (pretty-hydra-define window-hydra (:separator "-" :title "Window" :foreign-keys warn :quit-key "q")
     ("Move"
@@ -640,25 +645,25 @@
 (use-package ddskk
   :ensure t
   :bind ("C-x j" . skk-mode)
-  :custom
-  (skk-large-jisyo
-        "~/SKK/SKK-JISYO.L")
-  (skk-jisyo "~/SKK/skk-jisyo")
-  (skk-jisyo-code 'utf-8)
-  (skk-delete-implies-kakutei nil)
-  (skk-henkan-strict-okuri-precedence t)
-  (skk-kutouten-type 'jp)
-  (skk-use-auto-kutouten t)
-  (skk-check-okurigana-on-touroku 'ask)
-  (skk-show-annotation t)
-  (skk-show-icon t)
-  (skk-show-mode-show t)
-  (skk-status-indicator 'minor-mode)
-  (skk-preload t)
-  (skk-show-inline 'vertical)
-  (skk-dcomp-activate t)
-  (skk-dcomp-multiple-activate t)
-  (default-input-method "japanese-skk"))
+  :init
+  (setq default-input-method "japanese-skk")
+  :config
+  (setq skk-user-directory "~/SKK")
+  (setq skk-large-jisyo "~/SKK/SKK-JISYO.L")
+  (setq skk-jisyo (cons "~/SKK/skk-jisyo" 'utf-8))
+  (setq skk-delete-implies-kakutei nil)
+  (setq skk-henkan-strict-okuri-precedence t)
+  (setq skk-kutouten-type 'jp)
+  (setq skk-use-auto-kutouten t)
+  (setq skk-check-okurigana-on-touroku 'ask)
+  (setq skk-show-annotation t)
+  (setq skk-show-icon t)
+  (setq skk-show-mode-show t)
+  (setq skk-status-indicator 'left)
+  (setq skk-preload t)
+  (setq skk-show-inline 'vertical)
+  (setq skk-dcomp-activate t)
+  (setq skk-dcomp-multiple-activate t))
 
 (use-package ddskk-posframe
   :ensure t
@@ -944,6 +949,11 @@ tasks."
   :defer t
   :after eglot)
 
+;; git
+(use-package magit
+  :ensure t
+  :defer t)
+
 ;; flymake
 (use-package flymake
   :ensure nil
@@ -992,6 +1002,7 @@ tasks."
 ;; Enable magic file name and GC
 (setq file-name-handler-alist my-saved-file-name-handler-alist)
 (setq gc-cons-percentage 0.2)
+(setq gc-cons-threshold 40000000)
 (add-hook 'focus-out-hook #'garbage-collect)
 (setq garbage-collection-messages t)
 
