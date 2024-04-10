@@ -38,10 +38,10 @@
       source-han-sans
       source-han-serif
       source-han-mono
+      plemoljp
       plemoljp-nf
       ibm-plex
-      iosevka
-      (nerdfonts.override { fonts = [ "Iosevka" ]; })
+      (nerdfonts.override { fonts = [ "Iosevka" "NerdFontsSymbolsOnly"]; })
     ];
   };
 }

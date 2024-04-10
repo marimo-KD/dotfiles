@@ -116,9 +116,9 @@
     (mac-auto-ascii-mode 1))
   ;; font
   (defun my/set-font (size)
-    (let* ((asciifont "PlemolJP35 Console NF")
+    (let* ((asciifont "PlemolJP35")
            (asciipropo "IBM Plex Sans JP")
-           (jpfont "PlemolJP35 Console NF")
+           (jpfont "PlemolJP35")
            (h (* size 10))
            (fontspec (font-spec :family asciifont))
            (jp-fontspec (font-spec :family jpfont)))
@@ -194,7 +194,11 @@
   :config
   (dashboard-setup-startup-hook))
 
-(use-package nerd-icons :ensure t :defer t)
+(use-package nerd-icons
+  :ensure t
+  :defer t
+  :config
+  (ignore-errors (nerd-icons-set-font)))
 
 (use-package nerd-icons-completion
   :ensure t

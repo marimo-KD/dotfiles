@@ -136,7 +136,8 @@
       source-han-sans
       source-han-mono
       source-han-serif
-      (nerdfonts.override { fonts = ["Iosevka"]; })
+      (nerdfonts.override { fonts = ["Iosevka" "NerdFontsSymbolsOnly"]; })
+      plemoljp
       plemoljp-nf
       ibm-plex
       ipaexfont
@@ -147,7 +148,7 @@
       defaultFonts = {
         serif = ["Noto Serif CJK JP" "Noto Color Emoji"];
         sansSerif = ["Noto Sans CJK JP" "Noto Color Emoji"];
-        monospace = ["Iosevka Nerd Font" "Noto Color Emoji"];
+        monospace = ["PlemolJP" "Noto Color Emoji"];
         emoji = ["Noto Color Emoji"];
       };
       allowBitmaps = false;
