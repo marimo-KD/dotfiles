@@ -82,6 +82,15 @@
 (elpaca elpaca-use-package
   (elpaca-use-package-mode))
 
+;; update seq
+(defun +elpaca-unload-seq (e) "Unload seq before continuing the elpaca build, then continue to build the recipe E."
+  (and (featurep 'seq) (unload-feature 'seq t))
+  (elpaca--continue-build e))
+(elpaca `(seq :build ,(append (butlast (if (file-exists-p (expand-file-name "seq" elpaca-builds-directory))
+                                          elpaca--pre-built-steps
+                                        elpaca-build-steps))
+                             (list '+elpaca-unload-seq 'elpaca--activate-package))))
+
 (elpaca-wait)
 
 (use-package emacs
@@ -951,6 +960,10 @@ tasks."
 
 ;; git
 (use-package magit
+  :ensure t
+  :defer t)
+
+(use-package transient
   :ensure t
   :defer t)
 
