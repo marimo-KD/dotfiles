@@ -656,12 +656,12 @@
   :bind ("C-x j" . skk-mode)
   :init
   (setq default-input-method "japanese-skk")
-  :config
   (setq skk-user-directory "~/SKK")
   (setq skk-large-jisyo "~/SKK/SKK-JISYO.L")
   (setq skk-jisyo (cons "~/SKK/skk-jisyo" 'utf-8))
   (setq skk-delete-implies-kakutei nil)
   (setq skk-henkan-strict-okuri-precedence t)
+  (setq skk-egg-link-newline t)
   (setq skk-kutouten-type 'jp)
   (setq skk-use-auto-kutouten t)
   (setq skk-check-okurigana-on-touroku 'ask)
