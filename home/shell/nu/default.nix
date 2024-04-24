@@ -17,7 +17,7 @@
         }
       }
 
-      start_zellij
+      # start_zellij
 
       def --env ya [...args] {
         let tmp = (mktemp -t "yazi-cwd.XXXXX")

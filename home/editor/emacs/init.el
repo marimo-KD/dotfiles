@@ -1,3 +1,4 @@
+
 ;;; -*- lexical-binding: t -*-
 
 ;; Disable magic file name temporary
@@ -79,6 +80,7 @@
 (elpaca `(,@elpaca-order))
 
 ;; use-package
+(setq use-package-enable-imenu-support t)
 (elpaca elpaca-use-package
   (elpaca-use-package-mode))
 
@@ -87,9 +89,9 @@
   (and (featurep 'seq) (unload-feature 'seq t))
   (elpaca--continue-build e))
 (elpaca `(seq :build ,(append (butlast (if (file-exists-p (expand-file-name "seq" elpaca-builds-directory))
-                                          elpaca--pre-built-steps
-                                        elpaca-build-steps))
-                             (list '+elpaca-unload-seq 'elpaca--activate-package))))
+                                           elpaca--pre-built-steps
+                                         elpaca-build-steps))
+                              (list '+elpaca-unload-seq 'elpaca--activate-package))))
 
 (elpaca-wait)
 
@@ -100,6 +102,13 @@
   (setq scroll-step 1)
   (setq use-short-answers t)
   (setq native-comp-async-report-warnings-errors nil)
+  (setq inhibit-x-resources t)
+  (setq inhibit-startup-buffer-menu t)
+  (setq custom-file (locate-user-emacs-file "custom.el"))
+  (when (file-exists-p (expand-file-name custom-file))
+    (load-file (expand-file-name custom-file)))
+  (when (file-exists-p "~/.emacs.d/agenda-files.el")
+    (load "~/.emacs.d/agenda-files.el"))
   ;; indent
   (setq tab-always-indent 'complete)
   (electric-indent-mode 1)
@@ -125,13 +134,14 @@
     (mac-auto-ascii-mode 1))
   ;; font
   (defun my/set-font (size)
-    (let* ((asciifont "PlemolJP35")
+    (let* ((asciifont "PlemolJP")
            (asciipropo "IBM Plex Sans JP")
-           (jpfont "PlemolJP35")
+           (jpfont "PlemolJP")
            (h (* size 10))
            (fontspec (font-spec :family asciifont))
            (jp-fontspec (font-spec :family jpfont)))
       (set-face-attribute 'default nil :family asciifont :height h)
+      (set-face-attribute 'fixed-pitch nil :family asciifont :height h)
       (set-face-attribute 'variable-pitch nil :family asciipropo :height h)
       (set-fontset-font t 'japanese-jisx0213.2004-1 jp-fontspec)
       (set-fontset-font t 'japanese-jisx0213-2 jp-fontspec)
@@ -140,6 +150,8 @@
       (set-fontset-font t '(#x0370 . #x03FF) fontspec)))
   (if (display-graphic-p)
       (my/set-font 12)))
+
+(use-package save-sexp :ensure (:host github :repo "emacsattic/save-sexp") :defer t)
 
 (use-package tramp
   :ensure nil
@@ -153,16 +165,21 @@
 ;; UI
 (use-package apropospriate-theme
   :ensure t
+  :disabled
   :config
   (load-theme 'apropospriate-light t)
   (let ((line (face-attribute 'mode-line :underline)))
     (set-face-attribute 'mode-line          nil :overline line :box nil)
     (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil)))
 
-(use-package solaire-mode
+(use-package catppuccin-theme
   :ensure t
   :config
-  (solaire-global-mode t))
+  (setq catppuccin-flavor 'latte)
+  (load-theme 'catppuccin t)
+  (let ((line (face-attribute 'mode-line :underline)))
+    (set-face-attribute 'mode-line          nil :overline line :underline line :box nil)
+    (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil)))
 
 (use-package nyan-mode
   :ensure t
@@ -227,6 +244,10 @@
   :after corfu
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
+(use-package nerd-icons-dired
+  :ensure t
+  :hook (dired-mode . nerd-icons-dired-mode))
 
 (use-package highlight-indent-guides
   :ensure t
@@ -304,9 +325,9 @@
   :ensure t
   :demand t
   :hook
-  (meow-insert-exit . (lambda nil
-                        (if (and (boundp 'skk-mode) skk-mode) (skk-latin-mode-on))))
-  (meow-insert-exit . corfu-quit)
+  ((meow-normal-mode . (lambda nil
+                         (if (and (boundp 'skk-mode) skk-mode) (skk-latin-mode-on))))
+   (meow-insert-exit . corfu-quit))
   :bind
   (:map meow-normal-state-keymap
         ("C-j" . (lambda ()
@@ -474,8 +495,8 @@
       ("u" vundo "Visual Undo"))
      "Code"
      (("l" eglot-hydra/body "LSP")
-      ("f" avy-goto-word-1 "Avy Word")
-      ("F" avy-hydra/body "More avy"))
+      ("v" avy-goto-word-1 "Avy Word")
+      ("V" avy-hydra/body "More avy"))
      "View"
      (("D" delete-other-windows "Only this win")
       ("w" ace-window "Window select")
@@ -483,10 +504,10 @@
      "Tool"
      (("j" org-hydra/body "Org")
       ("n" org-capture "Org-capture")
-      ("a" consult-org-agenda "Agenda")
+      ("a" org-agenda "Agenda")
       ("m" major-mode-hydra "Major Mode Hydra")
       ("g" magit-status "Magit!")
-      ("d" dashboard-open "Dashboard"))))
+      ("@" dashboard-open "Dashboard"))))
   (pretty-hydra-define window-hydra (:separator "-" :title "Window" :foreign-keys warn :quit-key "q")
     ("Move"
      (("h" windmove-left "Move Left")
@@ -504,7 +525,7 @@
 
 (use-package hydra-posframe
   :ensure (:host github :repo "Ladicle/hydra-posframe")
-  :after (hydra solaire-mode)
+  :after (hydra)
   :hook (elpaca-after-init . hydra-posframe-mode)
   :custom-face
   (hydra-posframe-face ((t :inherit solaire-default-face)))
@@ -551,7 +572,8 @@
 
 (use-package vertico-repeat
   :ensure nil
-  :after vertico)
+  :after vertico
+  :hook (minibuffer-setup . vertico-repeat-save))
 
 (use-package vertico-directory
   :ensure nil
@@ -595,7 +617,7 @@
    ("C-h B" . embark-bindings))
   :init
   (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
-  (setq prefix-help-command #'embark-prefix-help-command)
+  (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
   :config
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
@@ -654,6 +676,7 @@
 (use-package ddskk
   :ensure t
   :bind ("C-x j" . skk-mode)
+  :defer t
   :init
   (setq default-input-method "japanese-skk")
   (setq skk-user-directory "~/SKK")
@@ -661,24 +684,24 @@
   (setq skk-jisyo (cons "~/SKK/skk-jisyo" 'utf-8))
   (setq skk-delete-implies-kakutei nil)
   (setq skk-henkan-strict-okuri-precedence t)
-  (setq skk-egg-link-newline t)
+  (setq skk-egg-like-newline t)
   (setq skk-kutouten-type 'jp)
   (setq skk-use-auto-kutouten t)
   (setq skk-check-okurigana-on-touroku 'ask)
+  (setq skk-status-indicator 'left)
   (setq skk-show-annotation t)
   (setq skk-show-icon t)
   (setq skk-show-mode-show t)
-  (setq skk-status-indicator 'left)
   (setq skk-preload t)
-  (setq skk-show-inline 'vertical)
   (setq skk-dcomp-activate t)
-  (setq skk-dcomp-multiple-activate t))
-
-(use-package ddskk-posframe
-  :ensure t
-  :after ddskk
-  :custom
-  (ddskk-posframe-mode t))
+  (setq skk-dcomp-multiple-activate t)
+  :hook
+  (find-file . (lambda nil (skk-latin-mode 1)))
+  :config
+  (use-package ddskk-posframe
+    :ensure t
+    :config
+    (ddskk-posframe-mode t)))
 
 ;; org
 (use-package org
@@ -726,7 +749,14 @@
         ("g" org-roam-graph-show "Show Graph")
         ("b" org-roam-buffer-toggle "Roam Buffer" :toggle t :exit nil)
         ("!" org-id-get-create "Get ID")
-        ("@" org-roam-db-sync "Sync"))))))
+        ("@" org-roam-db-sync "Sync")))))
+  :config
+  (defvar org-export-directory "~/Org/export")
+
+  (defun org-export-output-file-name--set-directory (orig-fn extension &optional subtreep pub-dir)
+    (setq pub-dir (or pub-dir org-export-directory))
+    (funcall orig-fn extension subtreep pub-dir))
+  (advice-add 'org-export-output-file-name :around 'org-export-output-file-name--set-directory))
 
 (use-package org-agenda
   :ensure nil
@@ -734,8 +764,40 @@
   :custom
   (org-agenda-span 'day)
   (org-log-done 'time)
-  (org-agenda-files '("~/Org/todo.org")))
-  
+  :config
+  (require 'org-roam))
+
+(use-package ox-latex
+  :ensure nil
+  :after org
+  :config
+  (require 'ox-latex)
+  (setq org-latex-pdf-process '("latexmk -f -output-directory=%o -pdfdvi -gg %f"))
+  (setq org-export-in-background t)
+  (setq org-file-apps '(("pdf" . "zathura %s")))
+  (setq org-latex-default-class "jlreq")
+  (setq org-latex-compiler "")
+  (add-to-list 'org-latex-classes
+               '("jlreq"
+                 "\\documentclass[11pt,paper=a4]{jlreq}
+[NO-DEFAULT-PACKAGES]
+\\usepackage{amsmath}
+\\ifdefined\\kanjiskip
+  \\usepackage[dvipdfmx]{graphicx}
+  \\usepackage[dvipdfmx]{hyperref}
+  \\usepackage{pxjahyper}
+  \\hypersetup{colorlinks=true}
+\\else
+  \\usepackage{graphicx}
+  \\usepackage{hyperref}
+  \\hypersetup{pdfencoding=auto,colorlinks=true}
+\\fi"
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
 (use-package org-modern
   :ensure t
   :after org
@@ -755,14 +817,12 @@
   (org-roam-directory "~/Org/roam")
   (org-roam-index-file "~/Org/roam/index.org")
   :config
-  (add-to-list 'org-tags-exclude-from-inheritance "task")
   (require 'vulpea-buffer)
   (defun vulpea-project-p ()
     "Return non-nil if current buffer has any todo entry.
-
-TODO entries marked as done are ignored, meaning the this
-function returns nil if current buffer contains only completed
-tasks."
+    TODO entries marked as done are ignored, meaning the this
+    function returns nil if current buffer contains only completed
+    tasks."
     (org-element-map
         (org-element-parse-buffer 'headline)
         'headline
@@ -785,7 +845,7 @@ tasks."
 
           ;; cleanup duplicates
           (setq tags (seq-uniq tags))
-
+          
           ;; update tags if changed
           (when (or (seq-difference tags original-tags)
                     (seq-difference original-tags tags))
@@ -812,14 +872,16 @@ tasks."
 
   (defun vulpea-agenda-files-update (&rest _)
     "Update the value of `org-agenda-files'."
-    (setq org-agenda-files (vulpea-project-files)))
+    (setq org-agenda-files (vulpea-project-files))
+    (require 'save-sexp)
+    (save-sexp-save-setq "~/.emacs.d/agenda-files.el" 'org-agenda-files))
 
   (add-hook 'find-file-hook #'vulpea-project-update-tag)
   (add-hook 'before-save-hook #'vulpea-project-update-tag)
 
   (advice-add 'org-agenda :before #'vulpea-agenda-files-update)
   (advice-add 'org-todo-list :before #'vulpea-agenda-files-update)
-  (org-roam-mode)
+  (add-to-list 'org-tags-exclude-from-inheritance "task")
   (org-roam-db-autosync-mode t))
 
 (use-package vulpea
@@ -966,6 +1028,20 @@ tasks."
 (use-package transient
   :ensure t
   :defer t)
+
+(use-package git-auto-commit-mode
+  :ensure t
+  :defer t
+  :custom
+  (gac-automatically-add-new-files-p t)
+  :config
+  (defun gac-pull-before-push (&rest _args)
+    (let ((current-file (buffer-file-name)))
+      (shell-command "git pull")
+      (when current-file
+        (with-current-buffer (find-buffer-visiting current-file)
+          (revert-buffer t t t)))))
+  (advice-add 'gac-push :before #'gac-pull-before-push))
 
 ;; flymake
 (use-package flymake

@@ -13,6 +13,7 @@
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     zjstatus.url = "github:dj95/zjstatus";
     nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
+    musnix.url = "github:musnix/musnix";
   };
 
   outputs = inputs@{self, nixpkgs, nix-darwin, home-manager, ...} : {
@@ -23,6 +24,7 @@
           inherit inputs;
         };
         modules = [
+          inputs.musnix.nixosModules.musnix
           ./hosts/monix
         ];
       };

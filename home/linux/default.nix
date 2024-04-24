@@ -12,5 +12,6 @@
     ../terminal
     ../programs
     ../programs/mpd.nix
+    ../programs/daw.nix
   ];
 }

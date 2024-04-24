@@ -34,12 +34,9 @@
 
   networking.hostName = "monix"; # Define your hostname.
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
   # Enable networking
-  networking.networkmanager.enable = true;
+  systemd.network.enable = true;
+  networking.useNetworkd = true;
 
   # Set your time zone.
   time.timeZone = "Asia/Tokyo";
@@ -75,7 +72,7 @@
   users.users.marimo = {
     isNormalUser = true;
     description = "marimo";
-    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "libvirtd"];
+    extraGroups = [ "audio" "networkmanager" "wheel" "scanner" "lp" "libvirtd"];
     packages = with pkgs; [];
   };
 
@@ -105,6 +102,7 @@
     steam = {
       enable = true;
       remotePlay.openFirewall = true;
+      gamescopeSession.enable = true;
     };
     gamemode = {
       enable = true;
@@ -125,6 +123,7 @@
       viAlias = true;
       vimAlias = true;
     };
+    dconf.enable = true;
   };
 
   fonts = {
@@ -148,7 +147,7 @@
       defaultFonts = {
         serif = ["Noto Serif CJK JP" "Noto Color Emoji"];
         sansSerif = ["Noto Sans CJK JP" "Noto Color Emoji"];
-        monospace = ["PlemolJP" "Noto Color Emoji"];
+        monospace = ["IBM Plex Mono" "Noto Color Emoji"];
         emoji = ["Noto Color Emoji"];
       };
       allowBitmaps = false;
@@ -242,6 +241,7 @@
     pulse.enable = true;
   };
   programs.noisetorch.enable = true;
+  musnix.enable = true;
 
   services.flatpak.enable = true;
 
