@@ -174,12 +174,18 @@
 
 (use-package catppuccin-theme
   :ensure t
+  :disabled
   :config
   (setq catppuccin-flavor 'latte)
   (load-theme 'catppuccin t)
   (let ((line (face-attribute 'mode-line :underline)))
     (set-face-attribute 'mode-line          nil :overline line :underline line :box nil)
     (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil)))
+
+(use-package gruvbox-theme
+  :ensure t
+  :config
+  (load-theme 'gruvbox-light-medium t))
 
 (use-package nyan-mode
   :ensure t
@@ -200,7 +206,10 @@
   (moody-replace-vc-mode)
   (moody-replace-eldoc-minibuffer-message-function)
   (when (eq system-type 'darwin)
-    (setq moody-slant-function 'moody-slant-apple-rgb)))
+    (setq moody-slant-function 'moody-slant-apple-rgb))
+  (let ((line (face-attribute 'mode-line :underline)))
+    (set-face-attribute 'mode-line          nil :overline line :box nil)
+    (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil)))
 
 (use-package minions
   :ensure t
