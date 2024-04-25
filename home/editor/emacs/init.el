@@ -163,25 +163,6 @@
   (add-to-list 'tramp-remote-path "/run/current-system/sw/bin"))
 
 ;; UI
-(use-package apropospriate-theme
-  :ensure t
-  :disabled
-  :config
-  (load-theme 'apropospriate-light t)
-  (let ((line (face-attribute 'mode-line :underline)))
-    (set-face-attribute 'mode-line          nil :overline line :box nil)
-    (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil)))
-
-(use-package catppuccin-theme
-  :ensure t
-  :disabled
-  :config
-  (setq catppuccin-flavor 'latte)
-  (load-theme 'catppuccin t)
-  (let ((line (face-attribute 'mode-line :underline)))
-    (set-face-attribute 'mode-line          nil :overline line :underline line :box nil)
-    (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil)))
-
 (use-package gruvbox-theme
   :ensure t
   :config
@@ -189,33 +170,34 @@
 
 (use-package nyan-mode
   :ensure t
+  :disabled
   :custom
   (nyan-animate-nyancat t)
   (nyan-wavy-trail t)
   :config
   (nyan-mode 1))
 
-(use-package moody
+(use-package telephone-line
   :ensure t
   :config
-  (setq x-underline-at-descent-line t)
-  (column-number-mode 0)
-  (line-number-mode 0)
-  (moody-replace-mode-line-front-space)
-  (moody-replace-mode-line-buffer-identification)
-  (moody-replace-vc-mode)
-  (moody-replace-eldoc-minibuffer-message-function)
-  (when (eq system-type 'darwin)
-    (setq moody-slant-function 'moody-slant-apple-rgb))
-  (let ((line (face-attribute 'mode-line :underline)))
-    (set-face-attribute 'mode-line          nil :overline line :box nil)
-    (set-face-attribute 'mode-line-inactive nil :overline line :underline line :box nil)))
-
-(use-package minions
-  :ensure t
-  :config
-  (minions-mode)
-  (setq minions-mode-line-lighter "[+]"))
+  (defun telephone-line-modal-face (active)
+    (cond ((not active) 'mode-line-inactive)
+          ((and meow-normal-mode (region-active-p)) 'telephone-line-evil-visual)
+          (meow-normal-mode 'telephone-line-evil-normal)
+          (meow-insert-mode 'telephone-line-evil-insert)
+          (meow-motion-mode 'telephone-line-evil-emacs)
+          (meow-keypad-mode 'telephone-line-evil-operator)
+          (meow-beacon-mode 'telephone-line-evil-replace)))
+  (setq telephone-line-lhs
+        '((evil . (telephone-line-meow-tag-segment))
+          (accent . (telephone-line-vc-segment
+                     telephone-line-process-segment))
+          (nil . (telephone-line-buffer-segment))))
+  (setq telephone-line-rhs
+        '((nil . (telephone-line-misc-info-segment))
+          (accent . (telephone-line-major-mode-segment))
+          (evil . (telephone-line-airline-position-segment))))
+  (telephone-line-mode 1))
 
 (use-package dashboard
   :ensure t
@@ -364,7 +346,6 @@
      (?p . paragraph)))
   (meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
   :config
-  (meow-setup-indicator)
   (meow-thing-register 'angle
                        '(pair ("<") (">"))
                        '(pair ("<") (">")))
@@ -707,10 +688,12 @@
   :hook
   (find-file . (lambda nil (skk-latin-mode 1)))
   :config
-  (use-package ddskk-posframe
-    :ensure t
-    :config
-    (ddskk-posframe-mode t)))
+  (require 'ddskk-posframe))
+
+(use-package ddskk-posframe
+  :ensure t
+  :config
+  (ddskk-posframe-mode t))
 
 ;; org
 (use-package org
