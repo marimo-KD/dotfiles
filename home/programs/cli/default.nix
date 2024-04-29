@@ -39,6 +39,7 @@ let dptrp1py = pkgs.python3Packages.buildPythonPackage rec {
     fd
     fzf
     ripgrep
+    gnuplot
   ] ++ [
     dptrp1py
   ];

@@ -101,7 +101,7 @@
   (setq completion-cycle-threshold 3)
   (setq scroll-step 1)
   (setq use-short-answers t)
-  (setq native-comp-async-report-warnings-errors nil)
+  (setq native-comp-async-report-warnings-errors 'silent)
   (setq inhibit-x-resources t)
   (setq inhibit-startup-buffer-menu t)
   (setq custom-file (locate-user-emacs-file "custom.el"))
@@ -109,9 +109,9 @@
     (load-file (expand-file-name custom-file)))
   (when (file-exists-p "~/.emacs.d/agenda-files.el")
     (load "~/.emacs.d/agenda-files.el"))
+  (setq line-spacing 0.3)
   ;; indent
   (setq tab-always-indent 'complete)
-  (electric-indent-mode 1)
   (setq-default indent-tabs-mode nil)
   (setq-default tab-width 2)
   (xterm-mouse-mode 1)
@@ -128,6 +128,7 @@
   (setq ffap-machine-p-known 'reject)
   (setq idle-update-delay 1.0)
   (setq redisplay-skip-fontification-on-input t)
+  (setq inhibit-compacting-font-caches t)
   (when (equal window-system 'mac)
     (setq mac-option-modifier 'meta)
     (setq mac-command-modifier 'super)
@@ -151,6 +152,22 @@
   (if (display-graphic-p)
       (my/set-font 12)))
 
+(use-package elec-pair
+  :ensure nil
+  :init (electric-indent-mode 1))
+
+(use-package hl-line
+  :ensure nil
+  :init (global-hl-line-mode 1))
+
+(use-package autorevert
+  :ensure nil
+  :init (global-auto-revert-mode 1))
+
+(use-package so-long
+  :ensure nil
+  :init (global-so-long-mode 1))
+
 (use-package save-sexp :ensure (:host github :repo "emacsattic/save-sexp") :defer t)
 
 (use-package tramp
@@ -163,10 +180,13 @@
   (add-to-list 'tramp-remote-path "/run/current-system/sw/bin"))
 
 ;; UI
-(use-package gruvbox-theme
+(use-package ef-themes
   :ensure t
+  :custom
+  (ef-themes-mixed-fonts nil)
+  (ef-themes-variable-pitch-ui nil)
   :config
-  (load-theme 'gruvbox-light-medium t))
+  (load-theme 'ef-melissa-light t))
 
 (use-package nyan-mode
   :ensure t
@@ -177,27 +197,35 @@
   :config
   (nyan-mode 1))
 
-(use-package telephone-line
-  :ensure t
+(use-package awesome-tray
+  :ensure (:host github :repo "manateelazycat/awesome-tray")
+  :disabled
+  :custom
+  (awesome-tray-hide-mode-line t)
+  (awesome-tray-meow-show-mode t)
+  (awesome-tray-input-method-local-style "SKK")
+  (awesome-tray-input-method-local-methods '("japanese-skk"))
+  (awesome-tray-active-modules '("meow" "input-method" "mode-name" "file-path" "git" "belong" "location"))
+  (awesome-tray-essential-modules '("meow" "file-path" "location"))
   :config
-  (defun telephone-line-modal-face (active)
-    (cond ((not active) 'mode-line-inactive)
-          ((and meow-normal-mode (region-active-p)) 'telephone-line-evil-visual)
-          (meow-normal-mode 'telephone-line-evil-normal)
-          (meow-insert-mode 'telephone-line-evil-insert)
-          (meow-motion-mode 'telephone-line-evil-emacs)
-          (meow-keypad-mode 'telephone-line-evil-operator)
-          (meow-beacon-mode 'telephone-line-evil-replace)))
-  (setq telephone-line-lhs
-        '((evil . (telephone-line-meow-tag-segment))
-          (accent . (telephone-line-vc-segment
-                     telephone-line-process-segment))
-          (nil . (telephone-line-buffer-segment))))
-  (setq telephone-line-rhs
-        '((nil . (telephone-line-misc-info-segment))
-          (accent . (telephone-line-major-mode-segment))
-          (evil . (telephone-line-airline-position-segment))))
-  (telephone-line-mode 1))
+  (awesome-tray-mode 1))
+
+(use-package doom-modeline
+  :ensure t
+  :custom
+  (doom-modeline-support-imenu t)
+  (doom-modeline-icon t)
+  (doom-modeline-buffer-name t)
+  (doom-modeline-minor-modes nil)
+  :init
+  (doom-modeline-mode 1))
+
+(use-package perfect-margin
+  :ensure t
+  :custom
+  (perfect-margin-ignore-filters nil)
+  :config
+  (perfect-margin-mode 1))
 
 (use-package dashboard
   :ensure t
@@ -426,6 +454,8 @@
    '("q" . meow-join)
    '("g" . meow-grab)
    '("G" . meow-pop-grab)
+   '("b" . meow-swap-grab)
+   '("B" . meow-sync-grab)
    
    '("," . meow-beginning-of-thing)
    '("." . meow-end-of-thing)
@@ -450,6 +480,11 @@
    '("[" . indent-rigidly-left-to-tab-stop)
    '("]" . indent-rigidly-right-to-tab-stop)
 
+   '("pa(" . insert-pair)
+   '("pa[" . insert-pair)
+   '("pa\"" . insert-pair)
+   '("pa'" . insert-pair)
+
    ;; command
    '("z" . origami-hydra/body)
    '(";" . main-hydra/body)
@@ -466,8 +501,7 @@
   (which-key-idle-delay 0.7)
   (which-key-show-early-on-C-h t))
 
-(use-package hydra
-  :ensure t)
+(use-package hydra :ensure t)
 
 (use-package major-mode-hydra
   :ensure t
@@ -486,7 +520,8 @@
      "Code"
      (("l" eglot-hydra/body "LSP")
       ("v" avy-goto-word-1 "Avy Word")
-      ("V" avy-hydra/body "More avy"))
+      ("V" avy-hydra/body "More avy")
+      ("i" consult-imenu "Imenu"))
      "View"
      (("D" delete-other-windows "Only this win")
       ("w" ace-window "Window select")
@@ -600,14 +635,11 @@
 
 (use-package embark
   :ensure t
-  :defer 2
+  :defer 5
   :bind
   (("C-." . embark-act)
    ("M-." . embark-dwim)
    ("C-h B" . embark-bindings))
-  :init
-  (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
-  (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
   :config
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
@@ -662,6 +694,20 @@
   (add-to-list 'completion-at-point-functions #'cape-tex)
   (add-to-list 'completion-at-point-functions #'cape-keyword))
 
+;; snippet
+(use-package tempel
+  :ensure t
+  :init
+  (defun tempel-setup-capf ()
+    (setq-local completion-at-point-functions
+                (cons #'tempel-complete
+                      completion-at-point-functions)))
+  (add-hook 'prog-mode-hook 'tempel-setup-capf)
+  (add-hook 'text-mode-hook 'tempel-setup-capf)
+  (add-hook 'org-mode-hook 'tempel-setup-capf))
+
+(use-package tempel-collection :ensure t :after tempel)
+
 ;; skk
 (use-package ddskk
   :ensure t
@@ -678,9 +724,9 @@
   (setq skk-kutouten-type 'jp)
   (setq skk-use-auto-kutouten t)
   (setq skk-check-okurigana-on-touroku 'ask)
-  (setq skk-status-indicator 'left)
+  (setq skk-status-indicator 'minor-mode)
+  (setq skk-show-icon nil)
   (setq skk-show-annotation t)
-  (setq skk-show-icon t)
   (setq skk-show-mode-show t)
   (setq skk-preload t)
   (setq skk-dcomp-activate t)
@@ -703,6 +749,10 @@
   (org-return-follows-link t)
   (org-mouse-1-follows-link t)
   (org-directory "~/Org")
+  (org-preview-latex-default-process 'dvisvgm)
+  (org-preview-latex-image-directory "~/Org/resources/ltximg/")
+  (org-src-fontify-natively t)
+  (org-src-tab-acts-natively t)
   :init
   (with-eval-after-load 'pretty-hydra
     (pretty-hydra-define org-hydra
@@ -734,7 +784,7 @@
        "Task"
        (("s" org-schedule "Schedule")
         ("d" org-deadline "Deadline")
-        ("c" org-toggle-checkbox "Check"))
+        ("x" org-toggle-checkbox "Check"))
        "Roam"
        (("f" consult-org-roam-file-find "Find")
         ("i" org-roam-node-insert "Insert")
@@ -748,16 +798,29 @@
   (defun org-export-output-file-name--set-directory (orig-fn extension &optional subtreep pub-dir)
     (setq pub-dir (or pub-dir org-export-directory))
     (funcall orig-fn extension subtreep pub-dir))
-  (advice-add 'org-export-output-file-name :around 'org-export-output-file-name--set-directory))
+  (advice-add 'org-export-output-file-name :around 'org-export-output-file-name--set-directory)
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((C . t)
+     (gnuplot . t)
+     (emacs-lisp . nil))))
+
+(use-package org-indent
+  :ensure nil
+  :hook (org-mode . org-indent-mode))
+
+(use-package org-attach
+  :ensure nil
+  :custom
+  (org-attach-id-dir "~/Org/resources"))
 
 (use-package org-agenda
   :ensure nil
   :defer t
   :custom
   (org-agenda-span 'day)
-  (org-log-done 'time)
-  :config
-  (require 'org-roam))
+  (org-log-done 'time))
 
 (use-package ox-latex
   :ensure nil
@@ -798,16 +861,58 @@
   (org-mode . org-modern-mode)
   (org-agenda-finalize . org-modern-agenda)
   :custom
-  (org-hide-emphasis-markers t))
+  (org-auto-align-tags nil)
+  (org-tags-column 0)
+  (org-catch-invisible-edits 'show-and-error)
+  (org-special-ctrl-a/e t)
+  (org-insert-heading-respect-content t)
+  (org-hide-emphasis-markers t)
+  (org-pretty-entities t)
+  ;; (org-ellipsis '…')
+  (org-agenda-tags-column 0)
+  (org-agenda-block-separator ?─)
+  (org-agenda-time-grid
+   '((daily today require-timed)
+     (800 1000 1200 1400 1600 1800 2000)
+     " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
+  (org-agenda-current-time-string
+   "◀── now ─────────────────────────────────────────────────"))
+
+(use-package org-modern-indent
+  :ensure (:host github :repo "jdtsmith/org-modern-indent")
+  :disabled
+  :defer t
+  :init
+  (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
 
 (use-package org-roam
   :ensure t
-  :after org
   :defer t
   :custom
   (org-roam-db-location "~/.emacs.d/org-roam.db")
   (org-roam-directory "~/Org/roam")
   (org-roam-index-file "~/Org/roam/index.org")
+  (org-roam-node-display-template
+   (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (org-roam-capture-templates
+   '(("m" "main" plain
+      "%?"
+      :if-new (file+head "main/%<%Y%m%d%H%M%S>-${slug}.org"
+                         "#+title: ${title}\n")
+      :immediate-finish t
+      :unnarrowed t)
+     ("r" "reference" plain "%?"
+      :if-new
+      (file+head "reference/%<%Y%m%d%H%M%S>-${title}.org"
+                 "#+title: ${title}\n")
+      :immediate-finish t
+      :unnarrowed t)
+     ("a" "article" plain "%?"
+      :if-new
+      (file+head "article/%<%Y%m%d%H%M%S>-${title}.org"
+                 "#+title: ${title}\n#+filetags: :article:\n")
+      :immediate-finish t
+      :unnarrowed t)))
   :config
   (require 'vulpea-buffer)
   (defun vulpea-project-p ()
@@ -874,6 +979,17 @@
   (advice-add 'org-agenda :before #'vulpea-agenda-files-update)
   (advice-add 'org-todo-list :before #'vulpea-agenda-files-update)
   (add-to-list 'org-tags-exclude-from-inheritance "task")
+  (cl-defmethod org-roam-node-type ((node org-roam-node))
+    "Return the TYPE of NODE."
+    (condition-case nil
+        (file-name-nondirectory
+         (directory-file-name
+          (file-name-directory
+           (file-relative-name (org-roam-node-file node) org-roam-directory))))
+      (error "")))
+  (defun org-roam-tag-new-node-as-draft ()
+    (org-roam-tag-add '("draft")))
+  (add-hook 'org-roam-capture-new-node-hook #'org-roam-tag-new-node-as-draft)
   (org-roam-db-autosync-mode t))
 
 (use-package vulpea
@@ -1005,7 +1121,9 @@
 (use-package eldoc-box
   :ensure t
   :defer t
-  :hook (eglot-managed-mode . eldoc-box-hover-mode))
+  :hook
+  (eglot-managed-mode . eldoc-box-hover-mode)
+  (eldoc-mode . eldoc-box-hover-mode))
 
 (use-package consult-eglot
   :ensure t
@@ -1034,6 +1152,14 @@
         (with-current-buffer (find-buffer-visiting current-file)
           (revert-buffer t t t)))))
   (advice-add 'gac-push :before #'gac-pull-before-push))
+
+;; terminal
+(use-package vterm :ensure t :defer t)
+
+(use-package meow-vterm
+  :ensure (:host github :repo "accelbread/meow-vterm")
+  :init
+  (meow-vterm-enable))
 
 ;; flymake
 (use-package flymake
@@ -1077,6 +1203,12 @@
   :ensure t
   :defer t
   :mode "\\.nix\\'")
+
+;; Gnuplot
+(use-package gnuplot
+  :ensure t
+  :defer t
+  :mode ("\\.gp\\'" . gnuplot-mode))
 
 (elpaca-process-queues)
 
