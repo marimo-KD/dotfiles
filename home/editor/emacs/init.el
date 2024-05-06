@@ -1,4 +1,3 @@
-
 ;;; -*- lexical-binding: t -*-
 
 ;; Disable magic file name temporary
@@ -8,92 +7,36 @@
 ;;(require 'profiler)
 ;;(profiler-start 'cpu)
 
+;; package.el
+(require 'package)
 
-;;(defvar setup-tracker--level 0)
-;;(defvar setup-tracker--parents nil)
-;;(defvar setup-tracker--times nil)
+(add-to-list 'package-archives '("gnu-elpa-devel" . "https://elpa.gnu.org/devel/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
-;;(when load-file-name
-;;  (push load-file-name setup-tracker--parents)
-;;  (push (current-time) setup-tracker--times)
-;;  (setq setup-tracker--level (1+ setup-tracker--level)))
-;;(add-variable-watcher
-;; 'load-file-name
-;; (lambda (_ v &rest __)
-;;   (cond ((equal v (car setup-tracker--parents))
-;;          nil)
-;;         ((equal v (cadr setup-tracker--parents))
-;;          (setq setup-tracker--level (1- setup-tracker--level))
-;;          (let* ((now (current-time))
-;;                 (start (pop setup-tracker--times))
-;;                 (elapsed (+ (* (- (nth 1 now) (nth 1 start)) 1000)
-;;                             (/ (- (nth 2 now) (nth 2 start)) 1000))))
-;;            (with-current-buffer (get-buffer-create "*setup-tracker*")
-;;              (save-excursion
-;;                (goto-char (point-min))
-;;                (dotimes (_ setup-tracker--level) (insert "> "))
-;;                (insert
-;;                 (file-name-nondirectory (pop setup-tracker--parents))
-;;                 " (" (number-to-string elapsed) " msec)\n")))))
-;;         (t
-;;          (push v setup-tracker--parents)
-;;          (push (current-time) setup-tracker--times)
-;;          (setq setup-tracker--level (1+ setup-tracker--level))))))
+(setq package-archive-priorities
+      '(("gnu-elpa-devel" . 3)
+        ("melpa" . 2)
+        ("nongnu" . 1)))
 
-(defvar elpaca-installer-version 0.7)
-(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
-(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
-(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                              :ref nil :depth 1
-                              :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-                              :build (:not elpaca--activate-package)))
-(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-       (build (expand-file-name "elpaca/" elpaca-builds-directory))
-       (order (cdr elpaca-order))
-       (default-directory repo))
-  (add-to-list 'load-path (if (file-exists-p build) build repo))
-  (unless (file-exists-p repo)
-    (make-directory repo t)
-    (when (< emacs-major-version 28) (require 'subr-x))
-    (condition-case-unless-debug err
-        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                 ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
-                                                 ,@(when-let ((depth (plist-get order :depth)))
-                                                     (list (format "--depth=%d" depth) "--no-single-branch"))
-                                                 ,(plist-get order :repo) ,repo))))
-                 ((zerop (call-process "git" nil buffer t "checkout"
-                                       (or (plist-get order :ref) "--"))))
-                 (emacs (concat invocation-directory invocation-name))
-                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-                 ((require 'elpaca))
-                 ((elpaca-generate-autoloads "elpaca" repo)))
-            (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-          (error "%s" (with-current-buffer buffer (buffer-string))))
-      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
-  (unless (require 'elpaca-autoloads nil t)
-    (require 'elpaca)
-    (elpaca-generate-autoloads "elpaca" repo)
-    (load "./elpaca-autoloads")))
-(add-hook 'after-init-hook #'elpaca-process-queues)
-(elpaca `(,@elpaca-order))
+(setq package-install-upgrade-built-in t
+      package-native-compile t)
 
 ;; use-package
-(setq use-package-enable-imenu-support t)
-(elpaca elpaca-use-package
-  (elpaca-use-package-mode))
+(use-package use-package
+  :custom
+  (use-package-enable-imenu-support t)
+  (use-package-always-ensure t))
 
-;; update seq
-(defun +elpaca-unload-seq (e) "Unload seq before continuing the elpaca build, then continue to build the recipe E."
-  (and (featurep 'seq) (unload-feature 'seq t))
-  (elpaca--continue-build e))
-(elpaca `(seq :build ,(append (butlast (if (file-exists-p (expand-file-name "seq" elpaca-builds-directory))
-                                           elpaca--pre-built-steps
-                                         elpaca-build-steps))
-                              (list '+elpaca-unload-seq 'elpaca--activate-package))))
 
-(elpaca-wait)
+(unless (package-installed-p 'vc-use-package)
+  (package-vc-install "https://github.com/slotThe/vc-use-package"))
+(require 'vc-use-package)
+
+(use-package auto-compile
+  :config
+  (setq load-prefer-newer t)
+  (auto-compile-on-load-mode 1)
+  (auto-compile-on-save-mode 1))
 
 (use-package emacs
   :ensure nil
@@ -102,11 +45,6 @@
   (setq scroll-step 1)
   (setq use-short-answers t)
   (setq native-comp-async-report-warnings-errors 'silent)
-  (setq inhibit-x-resources t)
-  (setq inhibit-startup-buffer-menu t)
-  (setq custom-file (locate-user-emacs-file "custom.el"))
-  (when (file-exists-p (expand-file-name custom-file))
-    (load-file (expand-file-name custom-file)))
   (when (file-exists-p "~/.emacs.d/agenda-files.el")
     (load "~/.emacs.d/agenda-files.el"))
   (setq line-spacing 0.3)
@@ -152,7 +90,13 @@
   (if (display-graphic-p)
       (my/set-font 12)))
 
-(use-package elec-pair
+(use-package server
+  :ensure nil
+  :config
+  (unless (server-running-p)
+    (server-start)))
+
+(use-package electric
   :ensure nil
   :init (electric-indent-mode 1))
 
@@ -164,11 +108,15 @@
   :ensure nil
   :init (global-auto-revert-mode 1))
 
+(use-package subword
+  :ensure nil
+  :init (global-subword-mode 1))
+
 (use-package so-long
   :ensure nil
   :init (global-so-long-mode 1))
 
-(use-package save-sexp :ensure (:host github :repo "emacsattic/save-sexp") :defer t)
+(use-package save-sexp :vc (:fetcher github :repo "emacsattic/save-sexp") :defer t)
 
 (use-package tramp
   :ensure nil
@@ -181,37 +129,13 @@
 
 ;; UI
 (use-package ef-themes
-  :ensure t
   :custom
   (ef-themes-mixed-fonts nil)
   (ef-themes-variable-pitch-ui nil)
   :config
   (load-theme 'ef-melissa-light t))
 
-(use-package nyan-mode
-  :ensure t
-  :disabled
-  :custom
-  (nyan-animate-nyancat t)
-  (nyan-wavy-trail t)
-  :config
-  (nyan-mode 1))
-
-(use-package awesome-tray
-  :ensure (:host github :repo "manateelazycat/awesome-tray")
-  :disabled
-  :custom
-  (awesome-tray-hide-mode-line t)
-  (awesome-tray-meow-show-mode t)
-  (awesome-tray-input-method-local-style "SKK")
-  (awesome-tray-input-method-local-methods '("japanese-skk"))
-  (awesome-tray-active-modules '("meow" "input-method" "mode-name" "file-path" "git" "belong" "location"))
-  (awesome-tray-essential-modules '("meow" "file-path" "location"))
-  :config
-  (awesome-tray-mode 1))
-
 (use-package doom-modeline
-  :ensure t
   :custom
   (doom-modeline-support-imenu t)
   (doom-modeline-icon t)
@@ -221,37 +145,32 @@
   (doom-modeline-mode 1))
 
 (use-package perfect-margin
-  :ensure t
   :custom
   (perfect-margin-ignore-filters nil)
   :config
   (perfect-margin-mode 1))
 
 (use-package dashboard
-  :ensure t
   :custom
   (dashboard-startup-banner 'logo)
   (dashboard-items '((recents . 15)
-                     (bookmarks . 5)
                      (agenda . 5)))
   (dashboard-display-icons-p t)
   (dashboard-icon-type 'nerd-icons)
   (dashboard-set-headings-icons t)
   (dashboard-set-file-icons t)
   :hook
-  (elpaca-after-init . dashboard-insert-startupify-lists)
-  (elpaca-after-init . dashboard-initialize)
+  (after-init . dashboard-insert-startupify-lists)
+  (after-init . dashboard-initialize)
   :config
   (dashboard-setup-startup-hook))
 
 (use-package nerd-icons
-  :ensure t
   :defer t
   :config
   (ignore-errors (nerd-icons-set-font)))
 
 (use-package nerd-icons-completion
-  :ensure t
   :defer t
   :config
   (nerd-icons-completion-mode)
@@ -259,17 +178,14 @@
   (marginalia-mode . nerd-icons-completion-marginalia-setup))
 
 (use-package nerd-icons-corfu
-  :ensure t
   :after corfu
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 (use-package nerd-icons-dired
-  :ensure t
   :hook (dired-mode . nerd-icons-dired-mode))
 
 (use-package highlight-indent-guides
-  :ensure t
   :defer t
   :custom
   (highlight-indent-guides-method 'bitmap)
@@ -279,39 +195,29 @@
   (prog-mode . highlight-indent-guides-mode))
 
 (use-package aggressive-indent
-  :ensure t
   :defer t
   :hook
   (emacs-lisp-mode . aggressive-indent-mode))
 
 (use-package rainbow-delimiters
-  :ensure t
   :defer t
   :hook
   (prog-mode . rainbow-delimiters-mode))
-
-(use-package pulsar
-  :ensure t
-  :config
-  (pulsar-global-mode t))
 
 (use-package uniquify
   :ensure nil
   :custom
   (uniquify-buffer-name-style 'post-forward-angle-brackets))
 
-(use-package undo-fu
-  :defer t
-  :ensure t)
+(use-package undo-fu :defer t)
 
 (use-package vundo
   :defer t
-  :ensure t
   :custom
   (vundo-glyph-alist vundo-unicode-symbols))
 
 (use-package origami
-  :ensure (:host github :repo "elp-revive/origami.el")
+  :vc (:fetcher github :repo "elp-revive/origami.el")
   :defer t
   :init
   (with-eval-after-load 'pretty-hydra
@@ -338,10 +244,9 @@
   :config
   (global-origami-mode t))
   
-(use-package expreg :ensure t :defer t)
+(use-package expreg :defer t)
 
 (use-package meow
-  :ensure t
   :demand t
   :hook
   ((meow-normal-mode . (lambda nil
@@ -392,6 +297,32 @@
     (interactive)
     (let ((meow-use-clipboard t))
       (meow-save)))
+
+  (add-to-list 'insert-pair-alist '(?$ "\\(" "\\)"))
+  
+  (defun insert-pair-region (start end char)
+    (interactive
+     (list (region-beginning) (region-end)
+           (read-char "Wrapping Char (command): ")))
+    (let* ((pair (or (assoc char insert-pair-alist)
+                     (rassoc (list char) insert-pair-alist)))
+           (open (cond ((and pair (nth 2 pair)) (nth 1 pair))
+                       (pair (nth 0 pair))
+                       (t char)))
+           (close (cond ((and pair (nth 2 pair)) (nth 2 pair))
+                        (pair (nth 1 pair))
+                        (t char))))
+      (save-excursion
+        (goto-char start)
+        (setq start (point-marker))
+        (goto-char end)
+        (setq end (point-marker))
+        (goto-char start)
+        (insert open)
+        (goto-char end)
+        (insert close))
+      (goto-char start)))
+
   (meow-motion-overwrite-define-key
    '("j" . meow-next)
    '("k" . meow-prev)
@@ -433,6 +364,9 @@
    '("j" . meow-next)
    '("k" . meow-prev)
    '("l" . meow-right)
+
+   '("{" . scroll-up)
+   '("}" . scroll-down)
    
    '("/" . consult-line)
    
@@ -446,7 +380,7 @@
    '("I" . meow-back-symbol)
    '("o" . meow-next-word)
    '("O" . meow-next-symbol)
-   
+
    '("a" . meow-mark-word)
    '("A" . meow-mark-symbol)
    '("s" . meow-line)
@@ -457,10 +391,10 @@
    '("b" . meow-swap-grab)
    '("B" . meow-sync-grab)
    
-   '("," . meow-beginning-of-thing)
-   '("." . meow-end-of-thing)
-   '("<" . meow-inner-of-thing)
-   '(">" . meow-bounds-of-thing)
+   '("z" . meow-beginning-of-thing)
+   '("x" . meow-end-of-thing)
+   '("Z" . meow-inner-of-thing)
+   '("X" . meow-bounds-of-thing)
 
    ;; editing
    '("d" . meow-kill)
@@ -477,34 +411,33 @@
    
    '("u" . undo-fu-only-undo)
    '("U" . undo-fu-only-redo)
-   '("[" . indent-rigidly-left-to-tab-stop)
-   '("]" . indent-rigidly-right-to-tab-stop)
+   '("<" . indent-rigidly-left-to-tab-stop)
+   '(">" . indent-rigidly-right-to-tab-stop)
 
-   '("pa(" . insert-pair)
-   '("pa[" . insert-pair)
-   '("pa\"" . insert-pair)
-   '("pa'" . insert-pair)
-
+   '("pe" . insert-pair-region)
+   '("pd" . delete-pair)
+   
    ;; command
-   '("z" . origami-hydra/body)
+   '("," . origami-hydra/body)
    '(";" . main-hydra/body)
+   '("." . embark-act)
    '("m" . major-mode-hydra)
    '("n" . vertico-repeat)
+   '("\'" . avy-goto-word-1)
+   '("\"" . avy-hydra/body)
    ;; ignore escape
    '("<escape>" . ignore))
   (meow-global-mode +1))
 
 (use-package which-key
-  :ensure t
-  :hook (elpaca-after-init . which-key-mode)
+  :hook (after-init . which-key-mode)
   :custom
   (which-key-idle-delay 0.7)
   (which-key-show-early-on-C-h t))
 
-(use-package hydra :ensure t)
+(use-package hydra)
 
 (use-package major-mode-hydra
-  :ensure t
   :config
   (pretty-hydra-define main-hydra (:separator "=" :title "Main" :foreign-keys warn :quit-key "q" :exit t)
     ("File"
@@ -514,22 +447,20 @@
       ("r" find-recentf "Recent")
       ("s" save-buffer "Save file"))
      "Edit"
-     (("e" align-regexp "Align regexp")
-      ("z" origami-hydra/body "Origami")
+     (("z" origami-hydra/body "Origami")
       ("u" vundo "Visual Undo"))
      "Code"
      (("l" eglot-hydra/body "LSP")
-      ("v" avy-goto-word-1 "Avy Word")
-      ("V" avy-hydra/body "More avy")
       ("i" consult-imenu "Imenu"))
      "View"
      (("D" delete-other-windows "Only this win")
       ("w" ace-window "Window select")
       ("W" window-hydra/body "Window control"))
      "Tool"
-     (("j" org-hydra/body "Org")
+     (("j" major-mode-hydras/org-mode/body "Org")
       ("n" org-capture "Org-capture")
       ("a" org-agenda "Agenda")
+      ("v" vterm "Terminal")
       ("m" major-mode-hydra "Major Mode Hydra")
       ("g" magit-status "Magit!")
       ("@" dashboard-open "Dashboard"))))
@@ -549,9 +480,9 @@
       ("D" delete-other-windows "Only This Win")))))
 
 (use-package hydra-posframe
-  :ensure (:host github :repo "Ladicle/hydra-posframe")
+  :vc (:fetcher github :repo "Ladicle/hydra-posframe")
   :after (hydra)
-  :hook (elpaca-after-init . hydra-posframe-mode)
+  :hook (after-init . hydra-posframe-mode)
   :custom-face
   (hydra-posframe-face ((t :inherit solaire-default-face)))
   :custom
@@ -561,7 +492,6 @@
 
 ;; ace/avy
 (use-package ace-window
-  :ensure t
   :defer t
   :custom
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
@@ -569,7 +499,6 @@
   (aw-leading-char-face ((t (:height 4.0 :foreground "#f1fa8c")))))
 
 (use-package avy
-  :ensure t
   :defer t
   :init
   (with-eval-after-load 'pretty-hydra
@@ -589,7 +518,6 @@
 
 ;; mini-buffer completion
 (use-package vertico
-  :ensure t
   :custom
   (vertico-cycle t)
   :init
@@ -608,7 +536,7 @@
         ("<backspace>" . vertico-directory-delete-char)))
 
 (use-package vertico-truncate
-  :ensure (:host github :repo "jdtsmith/vertico-truncate")
+  :vc (:fetcher github :repo "jdtsmith/vertico-truncate")
   :config
   (vertico-truncate-mode t))
 
@@ -619,14 +547,12 @@
   (savehist-mode))
 
 (use-package orderless
-  :ensure t
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package marginalia
-  :ensure t
   :after (vertico)
   :bind (:map minibuffer-local-map
               ("M-A" . marginalia-cycle))
@@ -634,8 +560,7 @@
   (marginalia-mode))
 
 (use-package embark
-  :ensure t
-  :defer 5
+  :defer 2
   :bind
   (("C-." . embark-act)
    ("M-." . embark-dwim)
@@ -648,20 +573,18 @@
                  (window-parameters (mode-line-format . none)))))
 
 (use-package consult
-  :ensure t
   :defer t
   :custom
   (consult-preview-key 'any))
 
 (use-package embark-consult
-  :ensure t
   :after (embark consult)
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
   
 ;; code-completion
 (use-package corfu
-  :ensure t
+  :defer 1
   :custom
   (corfu-auto t)
   (corfu-cycle t)
@@ -671,22 +594,20 @@
   (corfu-scroll-margin 2)
   :bind (:map corfu-map
               ("RET" . nil))
-  :init
-  (global-corfu-mode))
+  :config
+  (global-corfu-mode 1))
 
 (use-package corfu-popupinfo
   :ensure nil
   :hook (corfu-mode . corfu-popupinfo-mode))
 
 (use-package corfu-terminal
-  :ensure t
   :if (not (display-graphic-p))
   :after corfu
   :config
   (corfu-terminal-mode +1))
 
 (use-package cape
-  :ensure t
   :after corfu
   :init
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
@@ -695,22 +616,15 @@
   (add-to-list 'completion-at-point-functions #'cape-keyword))
 
 ;; snippet
-(use-package tempel
-  :ensure t
+(use-package yasnippet
+  :after cape
   :init
-  (defun tempel-setup-capf ()
-    (setq-local completion-at-point-functions
-                (cons #'tempel-complete
-                      completion-at-point-functions)))
-  (add-hook 'prog-mode-hook 'tempel-setup-capf)
-  (add-hook 'text-mode-hook 'tempel-setup-capf)
-  (add-hook 'org-mode-hook 'tempel-setup-capf))
-
-(use-package tempel-collection :ensure t :after tempel)
+  (yas-global-mode 1)
+  :config
+  (add-to-list 'completion-at-point-functions (cape-company-to-capf #'company-yasnippet)))
 
 ;; skk
 (use-package ddskk
-  :ensure t
   :bind ("C-x j" . skk-mode)
   :defer t
   :init
@@ -732,14 +646,12 @@
   (setq skk-dcomp-activate t)
   (setq skk-dcomp-multiple-activate t)
   :hook
-  (find-file . (lambda nil (skk-latin-mode 1)))
-  :config
-  (require 'ddskk-posframe))
+  (find-file . (lambda nil (skk-latin-mode 1))))
 
 (use-package ddskk-posframe
-  :ensure t
-  :config
-  (ddskk-posframe-mode t))
+  :init
+  (ddskk-posframe-mode 1))
+
 
 ;; org
 (use-package org
@@ -754,21 +666,6 @@
   (org-src-fontify-natively t)
   (org-src-tab-acts-natively t)
   :init
-  (with-eval-after-load 'pretty-hydra
-    (pretty-hydra-define org-hydra
-      (:title "Org" :separator "=" :quit-key "q" :foreign-keys warn :exit t)
-      ("Notes"
-       (("a" org-agenda "Agenda")
-        ("n" org-capture "Note")
-        ("c" calendar "Calendar"))
-       "Journal"
-       (("j" org-journal-new-entry "New Entry")
-        ("t" (org-journal-new-entry '(4)) "Today"))
-       "Roam"
-       (("f" org-roam-node-find "Find Node")
-        ("i" org-roam-node-insert "Insert Node")
-        ("g" org-roam-graph-show "Show Graph")
-        ("b" org-roam-buffer-toggle "Roam Buffer" :toggle t)))))
   (with-eval-after-load 'major-mode-hydra
     (major-mode-hydra-define org-mode
       (:separator "-" :title "Org" :quit-key "q" :exit t)
@@ -798,20 +695,130 @@
   (defun org-export-output-file-name--set-directory (orig-fn extension &optional subtreep pub-dir)
     (setq pub-dir (or pub-dir org-export-directory))
     (funcall orig-fn extension subtreep pub-dir))
-  (advice-add 'org-export-output-file-name :around 'org-export-output-file-name--set-directory)
+  (advice-add 'org-export-output-file-name :around 'org-export-output-file-name--set-directory))
 
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((C . t)
-     (gnuplot . t)
-     (emacs-lisp . nil))))
-
-(use-package org-indent
+(use-package ob
   :ensure nil
-  :hook (org-mode . org-indent-mode))
+  :defer t
+  :after org
+  :custom (org-babel-load-languages nil)
+  :init
+  ;; ob lazy loading
+  ;; https://misohena.jp/blog/2022-08-16-reduce-org-mode-startup-time-org-babel.html
+  (with-eval-after-load 'org
+    (defvar my-org-babel-languages
+      ;;(<langname> . ob-<filename>.el)
+      '((elisp . emacs-lisp)
+        (emacs-lisp . emacs-lisp)
+        (makefile . makefile)
+        (ditaa . ditaa)
+        (dot . dot)
+        (plantuml . plantuml)
+        (perl . perl)
+        (cpp . C)
+        (C++ . C)
+        (D . C)
+        (C . C)
+        (js . js)
+        (java . java)
+        (org . org)
+        (R . R)
+        (gnuplot . gnuplot)
+        (python . python)
+        (shell . shell)
+        (sh . shell)
+        (bash . shell)
+        (zsh . shell)
+        (fish . shell)
+        (csh . shell)
+        (ash . shell)
+        (dash . shell)
+        (ksh . shell)
+        (mksh . shell)
+        (posh . shell)))
+
+    (defun my-org-babel-language-files ()
+      "重複しない全ての言語バックエンドファイル名を返す。"
+      (seq-uniq (mapcar #'cdr my-org-babel-languages)))
+
+    ;; my-org-babel-languagesからorg-babel-load-languagesを設定する。
+    ;; org-lintやorg-pcompleteにorg-babel-load-languagesを使った処理がある
+    ;; ようなので。
+    ;; このときcustom-set-variablesを使わないようにすること。
+    ;; org-babel-do-load-languagesが呼ばれて全部読み込まれてしまうので。
+    (setq org-babel-load-languages
+          (mapcar (lambda (lang) (cons lang t)) ;;(emacs-lisp . t)のような形式
+                  (my-org-babel-language-files)))
+
+    (defun my-org-require-lang-file (lang-file-name)
+      "ob-LANG-FILE-NAME.elを読み込む。"
+      (when lang-file-name
+        (require (intern (format "ob-%s" lang-file-name)) nil t)))
+
+    (defun my-org-require-lang (lang)
+      "LANGを読み込む。"
+      (my-org-require-lang-file
+       (alist-get
+        (if (stringp lang) (intern lang) lang)
+        my-org-babel-languages)))
+
+    (defun my-org-require-lang-all ()
+      "全ての言語を読み込む。"
+      (mapc #'my-org-require-lang-file
+            (my-org-babel-language-files)))
+
+    ;; org-elementで言語名を返す時、その言語をロードする。
+    (advice-add #'org-element-property :around #'my-org-element-property)
+    (defun my-org-element-property (original-fun property element)
+      (let ((value (funcall original-fun property element)))
+        (when (eq property :language)
+          (my-org-require-lang value))
+        value))
+
+    ;; ob-table.elに(org-babel-execute-src-block nil (list "emacs-lisp" "results" params))
+    ;; のような呼び出し方をする所があるので。
+    (advice-add #'org-babel-execute-src-block :around
+                #'my-org-babel-execute-src-block)
+    (defun my-org-babel-execute-src-block (original-fun
+                                           &optional arg info params)
+      (my-org-require-lang (nth 0 info))
+      (funcall original-fun arg info params))
+
+    ;; (match-string)の値を直接langとして渡しているので。
+    (advice-add #'org-babel-enter-header-arg-w-completion :around
+                #'my-org-babel-enter-header-arg-w-completion)
+    (defun my-org-babel-enter-header-arg-w-completion (original-fun
+                                                       lang)
+      (my-org-require-lang lang)
+      (funcall original-fun lang))
+
+    ;; org-lint(org-lint-wrong-header-argument, org-lint-wrong-header-value)内で参照しているので。
+    ;; 面倒なので全部読み込んでしまう。
+    (advice-add #'org-lint :around #'my-org-lint)
+    (defun my-org-lint (original-fun &rest args)
+      (my-org-require-lang-all)
+      (apply original-fun args))))
+
+  (use-package org-indent
+    :ensure nil
+    :after org
+    :disabled
+    :hook (org-mode . org-indent-mode))
+
+  (use-package ob-async :after org)
+
+(use-package org-tempo :ensure nil :after org)
+
+(use-package org-src
+  :ensure nil
+  :after org
+  :custom
+  (org-src-preserve-indentation t)
+  (org-edit-src-content-indentation 0))
 
 (use-package org-attach
   :ensure nil
+  :after org
   :custom
   (org-attach-id-dir "~/Org/resources"))
 
@@ -825,13 +832,12 @@
 (use-package ox-latex
   :ensure nil
   :after org
+  :defer t
   :config
-  (require 'ox-latex)
-  (setq org-latex-pdf-process '("latexmk -f -output-directory=%o -pdfdvi -gg %f"))
+  (setq org-latex-pdf-process '("latexmk -f -pdfdvi -gg -output-directory=%o %f"))
   (setq org-export-in-background t)
   (setq org-file-apps '(("pdf" . "zathura %s")))
   (setq org-latex-default-class "jlreq")
-  (setq org-latex-compiler "")
   (add-to-list 'org-latex-classes
                '("jlreq"
                  "\\documentclass[11pt,paper=a4]{jlreq}
@@ -854,7 +860,6 @@
                  ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
 (use-package org-modern
-  :ensure t
   :after org
   :defer t
   :hook
@@ -879,14 +884,13 @@
    "◀── now ─────────────────────────────────────────────────"))
 
 (use-package org-modern-indent
-  :ensure (:host github :repo "jdtsmith/org-modern-indent")
+  :vc (:fetcher github :repo "jdtsmith/org-modern-indent")
   :disabled
   :defer t
   :init
   (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
 
 (use-package org-roam
-  :ensure t
   :defer t
   :custom
   (org-roam-db-location "~/.emacs.d/org-roam.db")
@@ -993,12 +997,10 @@
   (org-roam-db-autosync-mode t))
 
 (use-package vulpea
-  :ensure t
   :defer t
   :hook (org-roam-db-autosync-mode . vulpea-db-autosync-enable))
 
 (use-package consult-org-roam
-  :ensure t
   :defer t
   :after org-roam
   :custom
@@ -1020,7 +1022,6 @@
       "* TODO %?\n %i\n %a"))))
 
 (use-package org-journal
-  :ensure t
   :defer t
   :bind
   (nil :map calendar-mode-map
@@ -1066,7 +1067,6 @@
         ("sm" org-journal-search-month "Month"))))))
          
 (use-package japanese-holidays
-  :ensure t
   :defer t
   :after calendar
   :config
@@ -1076,7 +1076,6 @@
 
 ;; lsp
 (use-package eglot
-  :ensure nil
   :defer t
   :custom
   (eglot-autoshutdown t)
@@ -1090,16 +1089,16 @@
   :config
   (defun my/eglot-capf ()
     (setq-local completion-at-point-functions
-                (list (cape-super-capf
+                (list (cape-capf-super
                        #'eglot-completion-at-point
-                       ;;#'tempel-expand
+                       (cape-company-to-capf #'company-yasnippet)
                        #'cape-file))))
-  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
+  ;; (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
   (add-to-list 'eglot-server-programs '(c++-mode . ("clangd")))
   (add-to-list 'eglot-server-programs '(rustic-mode . ("rust-analyzer")))
   (add-to-list 'eglot-server-programs '(tex-mode . ("texlab")))
-  (setq completion-category-overrides '((eglot (styles orderless basic))))
-  (fset #'jsonrpc--log-event #'ignore)
+  (setq completion-category-overrides '((eglot (styles orderless))
+                                        (eglot-capf (styles orderless))))
   :init
   (with-eval-after-load 'pretty-hydra
     (pretty-hydra-define eglot-hydra
@@ -1118,29 +1117,47 @@
        (("/" consult-eglot-symbols "Symbol")))
       )))
 
+(use-package jsonrpc
+  :defer t
+  :config
+  (setq jsonrpc-default-request-timeout 3000)
+  (fset #'jsonrpc--log-event #'ignore))
+
+(use-package eglot-booster
+  :vc (:fetcher github :repo "jdtsmith/eglot-booster")
+  :after eglot
+  :config
+  (eglot-booster-mode 1))
+
+(use-package eglot-x
+  :vc (:fetcher github :repo "nemethf/eglot-x")
+  :after eglot
+  :config
+  (eglot-x-setup))
+
+(use-package eglot-signature-eldoc-talkative
+  :after (eldoc-box eglot)
+  :config
+  (advice-add #'eglot-signature-eldoc-function
+              :override #'eglot-signature-eldoc-talkative))
+
+(use-package consult-eglot
+  :defer t
+  :after eglot)
+
+;; eldoc
 (use-package eldoc-box
-  :ensure t
   :defer t
   :hook
   (eglot-managed-mode . eldoc-box-hover-mode)
   (eldoc-mode . eldoc-box-hover-mode))
 
-(use-package consult-eglot
-  :ensure t
-  :defer t
-  :after eglot)
-
 ;; git
-(use-package magit
-  :ensure t
-  :defer t)
+(use-package magit :defer t)
 
-(use-package transient
-  :ensure t
-  :defer t)
+(use-package transient :defer t)
 
 (use-package git-auto-commit-mode
-  :ensure t
   :defer t
   :custom
   (gac-automatically-add-new-files-p t)
@@ -1154,12 +1171,30 @@
   (advice-add 'gac-push :before #'gac-pull-before-push))
 
 ;; terminal
-(use-package vterm :ensure t :defer t)
+(use-package vterm :defer t)
 
 (use-package meow-vterm
-  :ensure (:host github :repo "accelbread/meow-vterm")
+  :vc (:fetcher github :repo "accelbread/meow-vterm")
+  :defer t
   :init
-  (meow-vterm-enable))
+  (defun my/meow-vterm-setup ()
+    "Modified meow-vterm-setup for lazy loading"
+    (require 'meow-vterm)
+    (define-key vterm-mode-map (kbd "C-c ESC") #'vterm-send-escape)
+    (dolist (c '((yank . vterm-yank)
+                 (xterm-paste . vterm-xterm-paste)
+                 (yank-pop . vterm-yank-pop)
+                 (mouse-yank-primary . vterm-yank-primary)
+                 (self-insert-command . vterm--self-insert)
+                 (beginning-of-defun . vterm-previous-prompt)
+                 (end-of-defun . vterm-next-prompt)))
+      (define-key meow-vterm-normal-mode-map (vector 'remap (car c)) (cdr c)))
+    (meow-vterm-setup))
+  (defun my/meow-vterm-enable ()
+    "Modified meow-vterm-enable for lazy loading"
+    (setq vterm-keymap-exceptions '("C-c"))
+    (add-hook 'vterm-mode-hook #'my/meow-vterm-setup))
+  (my/meow-vterm-enable))
 
 ;; flymake
 (use-package flymake
@@ -1172,27 +1207,34 @@
          ("C-c p" . flymake-goto-prev-error)))
 
 (use-package flymake-diagnostic-at-point
-  :ensure t
   :defer t
   :after flymake
   :hook
   (flymake-mode . flymake-diagnostic-at-point-mode)
   :config
   (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake))
-  
+
+;; dired
+(use-package async
+  :defer t
+  :init
+  (with-eval-after-load 'dired (dired-async-mode 1)))
+
 ;; treesitter
-(use-package treesit-auto
-  :ensure t
+(use-package treesit
+  :ensure nil
   :custom
-  (treesit-auto-install 'prompt)
-  (treesit-font-lock-level 4)
+  (treesit-font-lock-level 4))
+
+(use-package treesit-auto
+  :custom
+  (treesit-auto-install t)
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
 ;; Rust
 (use-package rustic
-  :ensure t
   :defer t
   :custom
   (rustic-lsp-client 'eglot)
@@ -1200,22 +1242,18 @@
 
 ;; Nix
 (use-package nix-mode
-  :ensure t
   :defer t
   :mode "\\.nix\\'")
 
 ;; Gnuplot
 (use-package gnuplot
-  :ensure t
   :defer t
   :mode ("\\.gp\\'" . gnuplot-mode))
 
-(elpaca-process-queues)
-
 ;; Enable magic file name and GC
 (setq file-name-handler-alist my-saved-file-name-handler-alist)
-(setq gc-cons-percentage 0.2)
-(setq gc-cons-threshold 40000000)
+(setq gc-cons-percentge 0.2)
+(setq gc-cons-threshold 100000000) ;; 100mb
 (add-hook 'focus-out-hook #'garbage-collect)
 (setq garbage-collection-messages t)
 

@@ -38,4 +38,9 @@
     starship.enableNushellIntegration = true;
     zoxide.enableNushellIntegration = true;
   };
+  home.file.".config/nushell/emacs-config.nu".text = ''
+    source ~/.config/nushell/config.nu
+    source ~/.config/nushell/vterm.nu                        
+  '';
+  home.file.".config/nushell/vterm.nu".source = ./vterm.nu;
 }
