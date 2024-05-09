@@ -133,7 +133,8 @@
   (tramp-default-method "scpx")
   :config
   ;; for nixos machines
-  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin"))
+  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin")
+  (add-to-list 'tramp-remote-path "/run/wrappers/bin"))
 
 ;; UI
 (use-package ef-themes
@@ -1227,6 +1228,7 @@
 
 ;; terminal
 (use-package vterm
+  :ensure nil ;; installed by Nix
   :defer t
   :config
   (setf vterm-shell "nu --config ~/.config/nushell/emacs-config.nu")

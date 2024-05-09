@@ -1,7 +1,15 @@
 {pkgs, ...}:{
   programs.emacs = {
     enable = true;
-    package = (if pkgs.stdenv.isDarwin then pkgs.emacs-macport else pkgs.emacs29-pgtk);
+    package = (
+      let myemacs = (
+            if pkgs.stdenv.isDarwin
+            then pkgs.emacs-macport
+            else pkgs.emacs29-pgtk
+          );
+      in myemacs
+    );
+    extraPackages = (epkgs: [epkgs.vterm]);
   };
   home.file.".emacs.d/init.el".source = ./init.el;
   home.file.".emacs.d/early-init.el".source = ./early-init.el;

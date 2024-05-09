@@ -1,4 +1,4 @@
-{...}: {
+{pkgs, ...}: {
   programs = {
     nushell = {
       enable = true;
@@ -38,9 +38,12 @@
     starship.enableNushellIntegration = true;
     zoxide.enableNushellIntegration = true;
   };
-  home.file.".config/nushell/emacs-config.nu".text = ''
+  home.file.".config/nushell/emacs-config.nu".text = if pkgs.stdenv.isDarwin then ''
+    source `~/Library/Application Support/nushell/config.nu`
+    source ~/.config/nushell/vterm.nu
+    '' else ''
     source ~/.config/nushell/config.nu
-    source ~/.config/nushell/vterm.nu                        
+    source ~/.config/nushell/vterm.nu
   '';
   home.file.".config/nushell/vterm.nu".source = ./vterm.nu;
 }
