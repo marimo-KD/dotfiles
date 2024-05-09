@@ -27,7 +27,6 @@
   (use-package-enable-imenu-support t)
   (use-package-always-ensure t))
 
-
 (unless (package-installed-p 'vc-use-package)
   (package-vc-install "https://github.com/slotThe/vc-use-package"))
 (require 'vc-use-package)
@@ -52,7 +51,6 @@
   (setq tab-always-indent 'complete)
   (setq-default indent-tabs-mode nil)
   (setq-default tab-width 2)
-  (xterm-mouse-mode 1)
   ;; performance
   (setq process-adaptive-read-buffering t)
   (setq blink-matching-paren nil)
@@ -96,13 +94,23 @@
   (unless (server-running-p)
     (server-start)))
 
+(use-package xt-mouse
+  :ensure nil
+  :if (not (display-graphic-p))
+  :init (xterm-mouse-mode 1))
+
 (use-package electric
   :ensure nil
-  :init (electric-indent-mode 1))
+  :hook (prog-mode . electric-indent-mode))
 
 (use-package hl-line
   :ensure nil
   :init (global-hl-line-mode 1))
+
+(use-package lin
+  :custom
+  (lin-face 'lin-red)
+  :config (lin-global-mode))
 
 (use-package autorevert
   :ensure nil
@@ -141,8 +149,12 @@
   (doom-modeline-icon t)
   (doom-modeline-buffer-name t)
   (doom-modeline-minor-modes nil)
-  :init
-  (doom-modeline-mode 1))
+  (doom-modeline-height 26)
+  :hook (after-init . doom-modeline-mode)
+  :config
+  (doom-modeline-def-modeline 'main
+    '(bar workspace-name window-number modals matches follow buffer-info remote-host buffer-position word-count)
+    '(compilation misc-info github debug lsp input-method buffer-encoding major-mode process vcs check)))
 
 (use-package perfect-margin
   :custom
@@ -435,9 +447,10 @@
   (which-key-idle-delay 0.7)
   (which-key-show-early-on-C-h t))
 
-(use-package hydra)
+(use-package hydra :defer t)
 
 (use-package major-mode-hydra
+  :commands (major-mode-hydra origami-hydra/body main-hydra/body avy-hydra/body)
   :config
   (pretty-hydra-define main-hydra (:separator "=" :title "Main" :foreign-keys warn :quit-key "q" :exit t)
     ("File"
@@ -451,6 +464,7 @@
       ("u" vundo "Visual Undo"))
      "Code"
      (("l" eglot-hydra/body "LSP")
+      ("h" eldoc-box-help-at-point "ElDoc")
       ("i" consult-imenu "Imenu"))
      "View"
      (("D" delete-other-windows "Only this win")
@@ -487,7 +501,8 @@
   (hydra-posframe-face ((t :inherit solaire-default-face)))
   :custom
   (hydra-posframe-parameters '((left-fringe . 5)
-                               (right-fringe . 5)))
+                               (right-fringe . 5)
+                               (alpha-background . 80)))
   (hydra-posframe-poshandler #'posframe-poshandler-frame-bottom-right-corner))
 
 ;; ace/avy
@@ -520,8 +535,32 @@
 (use-package vertico
   :custom
   (vertico-cycle t)
-  :init
+  :config
+  (defvar +vertico-current-arrow t)
+
+  (cl-defmethod vertico--format-candidate :around
+    (cand prefix suffix index start &context ((and +vertico-current-arrow
+                                                   (not (bound-and-true-p vertico-flat-mode)))
+                                              (eql t)))
+    (setq cand (cl-call-next-method cand prefix suffix index start))
+    (if (bound-and-true-p vertico-grid-mode)
+        (if (= vertico--index index)
+            (concat (nerd-icons-faicon "nf-fa-hand_o_right") " " cand)
+          (concat #("_" 0 1 (display " ")) cand))
+      (if (= vertico--index index)
+          (concat " " (nerd-icons-faicon "nf-fa-hand_o_right") " " cand)
+        (concat "    " cand))))
   (vertico-mode))
+
+(use-package vertico-posframe
+  :vc (:fetcher github :repo "tumashu/vertico-posframe")
+  :init
+  (vertico-posframe-mode 1)
+  :custom
+  (vertico-posframe-parameters
+   '((left-fringe . 5)
+     (right-fringe . 5)
+     (alpha-background . 90))))
 
 (use-package vertico-repeat
   :ensure nil
@@ -584,7 +623,6 @@
   
 ;; code-completion
 (use-package corfu
-  :defer 1
   :custom
   (corfu-auto t)
   (corfu-cycle t)
@@ -594,7 +632,7 @@
   (corfu-scroll-margin 2)
   :bind (:map corfu-map
               ("RET" . nil))
-  :config
+  :init
   (global-corfu-mode 1))
 
 (use-package corfu-popupinfo
@@ -609,19 +647,21 @@
 
 (use-package cape
   :after corfu
-  :init
+  :config
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-file)
-  (add-to-list 'completion-at-point-functions #'cape-tex)
   (add-to-list 'completion-at-point-functions #'cape-keyword))
 
 ;; snippet
 (use-package yasnippet
-  :after cape
   :init
-  (yas-global-mode 1)
+  (yas-global-mode 1))
+
+(use-package yasnippet-capf
+  :vc (:fetcher github :repo "elken/yasnippet-capf")
+  :after cape
   :config
-  (add-to-list 'completion-at-point-functions (cape-company-to-capf #'company-yasnippet)))
+  (add-to-list 'completion-at-point-functions #'yasnippet-capf))
 
 ;; skk
 (use-package ddskk
@@ -689,6 +729,14 @@
         ("b" org-roam-buffer-toggle "Roam Buffer" :toggle t :exit nil)
         ("!" org-id-get-create "Get ID")
         ("@" org-roam-db-sync "Sync")))))
+  (defun my/org-capf ()
+    (setq-local completion-at-point-functions
+                (list (cape-capf-super
+                       #'org-block-capf
+                       #'cape-tex
+                       #'cape-dabbrev
+                       #'pcomplete-completions-at-point))))
+  (add-hook 'org-mode-hook #'my/org-capf)
   :config
   (defvar org-export-directory "~/Org/export")
 
@@ -697,107 +745,113 @@
     (funcall orig-fn extension subtreep pub-dir))
   (advice-add 'org-export-output-file-name :around 'org-export-output-file-name--set-directory))
 
-(use-package ob
-  :ensure nil
+(use-package org-block-capf
+  :vc (:fetcher github :repo "xenodium/org-block-capf")
   :defer t
-  :after org
-  :custom (org-babel-load-languages nil)
-  :init
-  ;; ob lazy loading
-  ;; https://misohena.jp/blog/2022-08-16-reduce-org-mode-startup-time-org-babel.html
-  (with-eval-after-load 'org
-    (defvar my-org-babel-languages
-      ;;(<langname> . ob-<filename>.el)
-      '((elisp . emacs-lisp)
-        (emacs-lisp . emacs-lisp)
-        (makefile . makefile)
-        (ditaa . ditaa)
-        (dot . dot)
-        (plantuml . plantuml)
-        (perl . perl)
-        (cpp . C)
-        (C++ . C)
-        (D . C)
-        (C . C)
-        (js . js)
-        (java . java)
-        (org . org)
-        (R . R)
-        (gnuplot . gnuplot)
-        (python . python)
-        (shell . shell)
-        (sh . shell)
-        (bash . shell)
-        (zsh . shell)
-        (fish . shell)
-        (csh . shell)
-        (ash . shell)
-        (dash . shell)
-        (ksh . shell)
-        (mksh . shell)
-        (posh . shell)))
+  :custom
+  (org-block-capf-edit-style 'inline))
 
-    (defun my-org-babel-language-files ()
-      "重複しない全ての言語バックエンドファイル名を返す。"
-      (seq-uniq (mapcar #'cdr my-org-babel-languages)))
+(use-package ob
+:ensure nil
+:defer t
+:after org
+:custom (org-babel-load-languages nil)
+:init
+;; ob lazy loading
+;; https://misohena.jp/blog/2022-08-16-reduce-org-mode-startup-time-org-babel.html
+(with-eval-after-load 'org
+  (defvar my-org-babel-languages
+    ;;(<langname> . ob-<filename>.el)
+    '((elisp . emacs-lisp)
+      (emacs-lisp . emacs-lisp)
+      (makefile . makefile)
+      (ditaa . ditaa)
+      (dot . dot)
+      (plantuml . plantuml)
+      (perl . perl)
+      (cpp . C)
+      (C++ . C)
+      (D . C)
+      (C . C)
+      (js . js)
+      (java . java)
+      (org . org)
+      (R . R)
+      (gnuplot . gnuplot)
+      (python . python)
+      (shell . shell)
+      (sh . shell)
+      (bash . shell)
+      (zsh . shell)
+      (fish . shell)
+      (csh . shell)
+      (ash . shell)
+      (dash . shell)
+      (ksh . shell)
+      (mksh . shell)
+      (posh . shell)))
 
-    ;; my-org-babel-languagesからorg-babel-load-languagesを設定する。
-    ;; org-lintやorg-pcompleteにorg-babel-load-languagesを使った処理がある
-    ;; ようなので。
-    ;; このときcustom-set-variablesを使わないようにすること。
-    ;; org-babel-do-load-languagesが呼ばれて全部読み込まれてしまうので。
-    (setq org-babel-load-languages
-          (mapcar (lambda (lang) (cons lang t)) ;;(emacs-lisp . t)のような形式
-                  (my-org-babel-language-files)))
+  (defun my-org-babel-language-files ()
+    "重複しない全ての言語バックエンドファイル名を返す。"
+    (seq-uniq (mapcar #'cdr my-org-babel-languages)))
 
-    (defun my-org-require-lang-file (lang-file-name)
-      "ob-LANG-FILE-NAME.elを読み込む。"
-      (when lang-file-name
-        (require (intern (format "ob-%s" lang-file-name)) nil t)))
+  ;; my-org-babel-languagesからorg-babel-load-languagesを設定する。
+  ;; org-lintやorg-pcompleteにorg-babel-load-languagesを使った処理がある
+  ;; ようなので。
+  ;; このときcustom-set-variablesを使わないようにすること。
+  ;; org-babel-do-load-languagesが呼ばれて全部読み込まれてしまうので。
+  (setq org-babel-load-languages
+        (mapcar (lambda (lang) (cons lang t)) ;;(emacs-lisp . t)のような形式
+                (my-org-babel-language-files)))
 
-    (defun my-org-require-lang (lang)
-      "LANGを読み込む。"
-      (my-org-require-lang-file
-       (alist-get
-        (if (stringp lang) (intern lang) lang)
-        my-org-babel-languages)))
+  (defun my-org-require-lang-file (lang-file-name)
+    "ob-LANG-FILE-NAME.elを読み込む。"
+    (when lang-file-name
+      (require (intern (format "ob-%s" lang-file-name)) nil t)))
 
-    (defun my-org-require-lang-all ()
-      "全ての言語を読み込む。"
-      (mapc #'my-org-require-lang-file
-            (my-org-babel-language-files)))
+  (defun my-org-require-lang (lang)
+    "LANGを読み込む。"
+    (my-org-require-lang-file
+     (alist-get
+      (if (stringp lang) (intern lang) lang)
+      my-org-babel-languages)))
 
-    ;; org-elementで言語名を返す時、その言語をロードする。
-    (advice-add #'org-element-property :around #'my-org-element-property)
-    (defun my-org-element-property (original-fun property element)
-      (let ((value (funcall original-fun property element)))
-        (when (eq property :language)
-          (my-org-require-lang value))
-        value))
+  (defun my-org-require-lang-all ()
+    "全ての言語を読み込む。"
+    (mapc #'my-org-require-lang-file
+          (my-org-babel-language-files)))
 
-    ;; ob-table.elに(org-babel-execute-src-block nil (list "emacs-lisp" "results" params))
-    ;; のような呼び出し方をする所があるので。
-    (advice-add #'org-babel-execute-src-block :around
-                #'my-org-babel-execute-src-block)
-    (defun my-org-babel-execute-src-block (original-fun
-                                           &optional arg info params)
-      (my-org-require-lang (nth 0 info))
-      (funcall original-fun arg info params))
+  ;; org-elementで言語名を返す時、その言語をロードする。
+  (advice-add #'org-element-property :around #'my-org-element-property)
+  (defun my-org-element-property (original-fun property element)
+    (let ((value (funcall original-fun property element)))
+      (when (eq property :language)
+        (my-org-require-lang value))
+      value))
 
-    ;; (match-string)の値を直接langとして渡しているので。
-    (advice-add #'org-babel-enter-header-arg-w-completion :around
-                #'my-org-babel-enter-header-arg-w-completion)
-    (defun my-org-babel-enter-header-arg-w-completion (original-fun
-                                                       lang)
-      (my-org-require-lang lang)
-      (funcall original-fun lang))
+  ;; ob-table.elに(org-babel-execute-src-block nil (list "emacs-lisp" "results" params))
+  ;; のような呼び出し方をする所があるので。
+  (advice-add #'org-babel-execute-src-block :around
+              #'my-org-babel-execute-src-block)
+  (defun my-org-babel-execute-src-block (original-fun
+                                         &optional arg info params)
+    (my-org-require-lang (nth 0 info))
+    (funcall original-fun arg info params))
 
-    ;; org-lint(org-lint-wrong-header-argument, org-lint-wrong-header-value)内で参照しているので。
-    ;; 面倒なので全部読み込んでしまう。
-    (advice-add #'org-lint :around #'my-org-lint)
-    (defun my-org-lint (original-fun &rest args)
-      (my-org-require-lang-all)
-      (apply original-fun args))))
+  ;; (match-string)の値を直接langとして渡しているので。
+  (advice-add #'org-babel-enter-header-arg-w-completion :around
+              #'my-org-babel-enter-header-arg-w-completion)
+  (defun my-org-babel-enter-header-arg-w-completion (original-fun
+                                                     lang)
+    (my-org-require-lang lang)
+    (funcall original-fun lang))
+
+  ;; org-lint(org-lint-wrong-header-argument, org-lint-wrong-header-value)内で参照しているので。
+  ;; 面倒なので全部読み込んでしまう。
+  (advice-add #'org-lint :around #'my-org-lint)
+  (defun my-org-lint (original-fun &rest args)
+    (my-org-require-lang-all)
+    (apply original-fun args))))
 
   (use-package org-indent
     :ensure nil
@@ -896,6 +950,7 @@
   (org-roam-db-location "~/.emacs.d/org-roam.db")
   (org-roam-directory "~/Org/roam")
   (org-roam-index-file "~/Org/roam/index.org")
+  (org-roam-completion-functions '())
   (org-roam-node-display-template
    (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   (org-roam-capture-templates
@@ -1085,13 +1140,13 @@
   (eglot-sync-connect nil)
   :hook
   (eglot-managed-mode . my/eglot-capf)
-  ((c-mode c++-mode rustic-mode) . eglot-ensure)
+  ((c-ts-mode c++-ts-mode rust-ts-mode) . eglot-ensure)
   :config
   (defun my/eglot-capf ()
     (setq-local completion-at-point-functions
                 (list (cape-capf-super
                        #'eglot-completion-at-point
-                       (cape-company-to-capf #'company-yasnippet)
+                       #'yasnippet-capf
                        #'cape-file))))
   ;; (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
   (add-to-list 'eglot-server-programs '(c++-mode . ("clangd")))
@@ -1148,9 +1203,9 @@
 ;; eldoc
 (use-package eldoc-box
   :defer t
-  :hook
-  (eglot-managed-mode . eldoc-box-hover-mode)
-  (eldoc-mode . eldoc-box-hover-mode))
+  :bind ("<f5>" . eldoc-box-help-at-point)
+  :init
+  (remove-hook 'eldoc-display-functions #'eldoc-display-in-echo-area))
 
 ;; git
 (use-package magit :defer t)
@@ -1171,7 +1226,11 @@
   (advice-add 'gac-push :before #'gac-pull-before-push))
 
 ;; terminal
-(use-package vterm :defer t)
+(use-package vterm
+  :defer t
+  :config
+  (setf vterm-shell "nu --config ~/.config/nushell/emacs-config.nu")
+  (setq vterm-timer-delay 0.01))
 
 (use-package meow-vterm
   :vc (:fetcher github :repo "accelbread/meow-vterm")
@@ -1206,14 +1265,6 @@
          ("C-c n" . flymake-goto-next-error)
          ("C-c p" . flymake-goto-prev-error)))
 
-(use-package flymake-diagnostic-at-point
-  :defer t
-  :after flymake
-  :hook
-  (flymake-mode . flymake-diagnostic-at-point-mode)
-  :config
-  (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake))
-
 ;; dired
 (use-package async
   :defer t
@@ -1234,20 +1285,21 @@
   (global-treesit-auto-mode))
 
 ;; Rust
-(use-package rustic
-  :defer t
+(use-package rust-mode
+  :mode "\\.rs\\'"
   :custom
-  (rustic-lsp-client 'eglot)
-  :mode ("\\.rs\\'" . rustic-mode))
+  (rust-mode-treesitter-derive t))
+
+;; Nushell
+(use-package nushell-mode
+  :mode "\\.nu\\'")
 
 ;; Nix
 (use-package nix-mode
-  :defer t
   :mode "\\.nix\\'")
 
 ;; Gnuplot
 (use-package gnuplot
-  :defer t
   :mode ("\\.gp\\'" . gnuplot-mode))
 
 ;; Enable magic file name and GC
