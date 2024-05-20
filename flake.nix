@@ -11,9 +11,10 @@
     xremap.url = "github:xremap/nix-flake";
     rust-overlay.url = "github:oxalica/rust-overlay";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
-    zjstatus.url = "github:dj95/zjstatus";
+    #zjstatus.url = "github:dj95/zjstatus";
     nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
     musnix.url = "github:musnix/musnix";
+    catppuccin.url = "github:catppuccin/nix";
   };
 
   outputs = inputs@{self, nixpkgs, nix-darwin, home-manager, ...} : {
@@ -57,6 +58,11 @@
         };
         modules = [
           ./home/linux
+          inputs.catppuccin.homeManagerModules.catppuccin
+          {
+            catppuccin.flavour = "frappe";
+            catppuccin.accent = "pink";
+          }
         ];
       };
       malusHome = home-manager.lib.homeManagerConfiguration {
@@ -77,6 +83,11 @@
         };
         modules = [
           ./home/darwin
+          inputs.catppuccin.homeManagerModules.catppuccin
+          {
+            catppuccin.flavour = "frappe";
+            catppuccin.accent = "pink";
+          }
         ];
       };
     };

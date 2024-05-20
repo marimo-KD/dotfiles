@@ -41,7 +41,6 @@
   :ensure nil
   :config
   (setq completion-cycle-threshold 3)
-  (setq scroll-step 1)
   (setq use-short-answers t)
   (setq native-comp-async-report-warnings-errors 'silent)
   (when (file-exists-p "~/.emacs.d/agenda-files.el")
@@ -94,6 +93,16 @@
   (unless (server-running-p)
     (server-start)))
 
+(use-package pixel-scroll
+  :ensure nil
+  :init (pixel-scroll-precision-mode 1)
+  :custom
+  (mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+  (mouse-wheel-progressive-speed nil)
+  (mouse-wheel-follow-mouse 't)
+  (pixel-scroll-precision-scroll-height 40.0)
+  (scroll-step 1))
+
 (use-package xt-mouse
   :ensure nil
   :if (not (display-graphic-p))
@@ -102,6 +111,23 @@
 (use-package electric
   :ensure nil
   :hook (prog-mode . electric-indent-mode))
+
+(use-package whitespace
+  :ensure nil
+  :init (global-whitespace-mode 1)
+  :custom
+  (whitespace-style '(face
+                      trailing
+                      tabs
+                      spaces
+                      empty
+                      space-mark
+                      tab-mark))
+  (whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
+                                 (tab-mark ?\t [?\u00BB ?\t] [?\\ ?\t])))
+  (whitespace-space-regexp "\\(\u3000+\\)")
+  (whitespace-trailing-regexp "\\([ \u00A0]+\\)$")
+  (whitespace-action '(auto-cleanup)))
 
 (use-package hl-line
   :ensure nil
@@ -228,10 +254,10 @@
   :defer t
   :custom
   (vundo-glyph-alist vundo-unicode-symbols))
-
 (use-package origami
   :vc (:fetcher github :repo "elp-revive/origami.el")
   :defer t
+  :commands (origami-hydra/body)
   :init
   (with-eval-after-load 'pretty-hydra
     (pretty-hydra-define origami-hydra
@@ -496,10 +522,8 @@
 
 (use-package hydra-posframe
   :vc (:fetcher github :repo "Ladicle/hydra-posframe")
-  :after (hydra)
-  :hook (after-init . hydra-posframe-mode)
-  :custom-face
-  (hydra-posframe-face ((t :inherit solaire-default-face)))
+  :init
+  (hydra-posframe-mode)
   :custom
   (hydra-posframe-parameters '((left-fringe . 5)
                                (right-fringe . 5)
@@ -667,7 +691,6 @@
 ;; skk
 (use-package ddskk
   :bind ("C-x j" . skk-mode)
-  :defer t
   :init
   (setq default-input-method "japanese-skk")
   (setq skk-user-directory "~/SKK")
@@ -683,16 +706,20 @@
   (setq skk-show-icon nil)
   (setq skk-show-annotation t)
   (setq skk-show-mode-show t)
-  (setq skk-preload t)
   (setq skk-dcomp-activate t)
   (setq skk-dcomp-multiple-activate t)
+  (setq skk-azik-keyboard-type 'us101)
+  (setq skk-use-azik t)
+  (setq skk-rom-kana-rule-list
+        '(("q" nil skk-toggle-characters)
+          ("!" nil skk-purge-from-jisyo)
+          ("[" nil ("「" . "「"))))
   :hook
   (find-file . (lambda nil (skk-latin-mode 1))))
 
 (use-package ddskk-posframe
   :init
   (ddskk-posframe-mode 1))
-
 
 ;; org
 (use-package org
@@ -704,8 +731,7 @@
   (org-directory "~/Org")
   (org-preview-latex-default-process 'dvisvgm)
   (org-preview-latex-image-directory "~/Org/resources/ltximg/")
-  (org-src-fontify-natively t)
-  (org-src-tab-acts-natively t)
+  (org-id-method 'ts)
   :init
   (with-eval-after-load 'major-mode-hydra
     (major-mode-hydra-define org-mode
@@ -733,7 +759,6 @@
   (defun my/org-capf ()
     (setq-local completion-at-point-functions
                 (list (cape-capf-super
-                       #'org-block-capf
                        #'cape-tex
                        #'cape-dabbrev
                        #'pcomplete-completions-at-point))))
@@ -746,121 +771,207 @@
     (funcall orig-fn extension subtreep pub-dir))
   (advice-add 'org-export-output-file-name :around 'org-export-output-file-name--set-directory))
 
-(use-package org-block-capf
-  :vc (:fetcher github :repo "xenodium/org-block-capf")
-  :defer t
-  :custom
-  (org-block-capf-edit-style 'inline))
-
 (use-package ob
-:ensure nil
-:defer t
-:after org
-:custom (org-babel-load-languages nil)
-:init
-;; ob lazy loading
-;; https://misohena.jp/blog/2022-08-16-reduce-org-mode-startup-time-org-babel.html
-(with-eval-after-load 'org
-  (defvar my-org-babel-languages
-    ;;(<langname> . ob-<filename>.el)
-    '((elisp . emacs-lisp)
-      (emacs-lisp . emacs-lisp)
-      (makefile . makefile)
-      (ditaa . ditaa)
-      (dot . dot)
-      (plantuml . plantuml)
-      (perl . perl)
-      (cpp . C)
-      (C++ . C)
-      (D . C)
-      (C . C)
-      (js . js)
-      (java . java)
-      (org . org)
-      (R . R)
-      (gnuplot . gnuplot)
-      (python . python)
-      (shell . shell)
-      (sh . shell)
-      (bash . shell)
-      (zsh . shell)
-      (fish . shell)
-      (csh . shell)
-      (ash . shell)
-      (dash . shell)
-      (ksh . shell)
-      (mksh . shell)
-      (posh . shell)))
+  :ensure nil
+  :defer t
+  :after org
+  :custom
+  (org-babel-load-languages nil)
+  :init
+  ;; ob lazy loading
+  ;; https://misohena.jp/blog/2022-08-16-reduce-org-mode-startup-time-org-babel.html
+  (with-eval-after-load 'org
+    (defvar my-org-babel-languages
+      ;;(<langname> . ob-<filename>.el)
+      '((elisp . emacs-lisp)
+        (emacs-lisp . emacs-lisp)
+        (makefile . makefile)
+        (ditaa . ditaa)
+        (dot . dot)
+        (plantuml . plantuml)
+        (perl . perl)
+        (cpp . C)
+        (C++ . C)
+        (D . C)
+        (C . C)
+        (js . js)
+        (java . java)
+        (org . org)
+        (R . R)
+        (gnuplot . gnuplot)
+        (julia . julia-vterm)
+        (julia-vterm . julia-vterm)
+        (python . python)
+        (shell . shell)
+        (sh . shell)
+        (bash . shell)
+        (zsh . shell)
+        (fish . shell)
+        (csh . shell)
+        (ash . shell)
+        (dash . shell)
+        (ksh . shell)
+        (mksh . shell)
+        (posh . shell)))
 
-  (defun my-org-babel-language-files ()
-    "重複しない全ての言語バックエンドファイル名を返す。"
-    (seq-uniq (mapcar #'cdr my-org-babel-languages)))
+    (defun my-org-babel-language-files ()
+      "重複しない全ての言語バックエンドファイル名を返す。"
+      (seq-uniq (mapcar #'cdr my-org-babel-languages)))
 
-  ;; my-org-babel-languagesからorg-babel-load-languagesを設定する。
-  ;; org-lintやorg-pcompleteにorg-babel-load-languagesを使った処理がある
-  ;; ようなので。
-  ;; このときcustom-set-variablesを使わないようにすること。
-  ;; org-babel-do-load-languagesが呼ばれて全部読み込まれてしまうので。
-  (setq org-babel-load-languages
-        (mapcar (lambda (lang) (cons lang t)) ;;(emacs-lisp . t)のような形式
-                (my-org-babel-language-files)))
+    ;; my-org-babel-languagesからorg-babel-load-languagesを設定する。
+    ;; org-lintやorg-pcompleteにorg-babel-load-languagesを使った処理がある
+    ;; ようなので。
+    ;; このときcustom-set-variablesを使わないようにすること。
+    ;; org-babel-do-load-languagesが呼ばれて全部読み込まれてしまうので。
+    (setq org-babel-load-languages
+          (mapcar (lambda (lang) (cons lang t)) ;;(emacs-lisp . t)のような形式
+                  (my-org-babel-language-files)))
 
-  (defun my-org-require-lang-file (lang-file-name)
-    "ob-LANG-FILE-NAME.elを読み込む。"
-    (when lang-file-name
-      (require (intern (format "ob-%s" lang-file-name)) nil t)))
+    (defun my-org-require-lang-file (lang-file-name)
+      "ob-LANG-FILE-NAME.elを読み込む。"
+      (when lang-file-name
+        (require (intern (format "ob-%s" lang-file-name)) nil t)))
 
-  (defun my-org-require-lang (lang)
-    "LANGを読み込む。"
-    (my-org-require-lang-file
-     (alist-get
-      (if (stringp lang) (intern lang) lang)
-      my-org-babel-languages)))
+    (defun my-org-require-lang (lang)
+      "LANGを読み込む。"
+      (my-org-require-lang-file
+       (alist-get
+        (if (stringp lang) (intern lang) lang)
+        my-org-babel-languages)))
 
-  (defun my-org-require-lang-all ()
-    "全ての言語を読み込む。"
-    (mapc #'my-org-require-lang-file
-          (my-org-babel-language-files)))
+    (defun my-org-require-lang-all ()
+      "全ての言語を読み込む。"
+      (mapc #'my-org-require-lang-file
+            (my-org-babel-language-files)))
 
-  ;; org-elementで言語名を返す時、その言語をロードする。
-  (advice-add #'org-element-property :around #'my-org-element-property)
-  (defun my-org-element-property (original-fun property element)
-    (let ((value (funcall original-fun property element)))
-      (when (eq property :language)
-        (my-org-require-lang value))
-      value))
+    ;; org-elementで言語名を返す時、その言語をロードする。
+    (advice-add #'org-element-property :around #'my-org-element-property)
+    (defun my-org-element-property (original-fun property element)
+      (let ((value (funcall original-fun property element)))
+        (when (eq property :language)
+          (my-org-require-lang value))
+        value))
 
-  ;; ob-table.elに(org-babel-execute-src-block nil (list "emacs-lisp" "results" params))
-  ;; のような呼び出し方をする所があるので。
-  (advice-add #'org-babel-execute-src-block :around
-              #'my-org-babel-execute-src-block)
-  (defun my-org-babel-execute-src-block (original-fun
-                                         &optional arg info params)
-    (my-org-require-lang (nth 0 info))
-    (funcall original-fun arg info params))
+    ;; ob-table.elに(org-babel-execute-src-block nil (list "emacs-lisp" "results" params))
+    ;; のような呼び出し方をする所があるので。
+    (advice-add #'org-babel-execute-src-block :around
+                #'my-org-babel-execute-src-block)
+    (defun my-org-babel-execute-src-block (original-fun
+                                           &optional arg info params)
+      (my-org-require-lang (nth 0 info))
+      (funcall original-fun arg info params))
 
-  ;; (match-string)の値を直接langとして渡しているので。
-  (advice-add #'org-babel-enter-header-arg-w-completion :around
-              #'my-org-babel-enter-header-arg-w-completion)
-  (defun my-org-babel-enter-header-arg-w-completion (original-fun
-                                                     lang)
-    (my-org-require-lang lang)
-    (funcall original-fun lang))
+    ;; (match-string)の値を直接langとして渡しているので。
+    (advice-add #'org-babel-enter-header-arg-w-completion :around
+                #'my-org-babel-enter-header-arg-w-completion)
+    (defun my-org-babel-enter-header-arg-w-completion (original-fun
+                                                       lang)
+      (my-org-require-lang lang)
+      (funcall original-fun lang))
 
-  ;; org-lint(org-lint-wrong-header-argument, org-lint-wrong-header-value)内で参照しているので。
-  ;; 面倒なので全部読み込んでしまう。
-  (advice-add #'org-lint :around #'my-org-lint)
-  (defun my-org-lint (original-fun &rest args)
-    (my-org-require-lang-all)
-    (apply original-fun args))))
+    ;; org-lint(org-lint-wrong-header-argument, org-lint-wrong-header-value)内で参照しているので。
+    ;; 面倒なので全部読み込んでしまう。
+    (advice-add #'org-lint :around #'my-org-lint)
+    (defun my-org-lint (original-fun &rest args)
+      (my-org-require-lang-all)
+      (apply original-fun args)))
+  :config
+  (add-to-list 'org-babel-default-header-args '(:output-dir . "~/Org/resources"))
+  
+  ;; https://github.com/gmoutso/dotemacs/blob/master/lisp/tanglerc.el
+  ;; tangle functions org version 9.4
+  ;;
+  ;; to be used with header arguments :tangle yes :comments yes :noweb yes
 
-  (use-package org-indent
-    :ensure nil
-    :after org
-    :disabled
-    :hook (org-mode . org-indent-mode))
+  (setq org-babel-tangle-comment-format-beg
+        "%% [[%link][%source-name]]")
 
-  (use-package ob-async :after org)
+  (defun gm/org-babel-get-block-header (&optional property)
+    "Returns alist of header properties of this block or specific PROPERTY.
+
+Eg., use with PROPERTY :results or :session.
+"
+    (let* ((info (org-babel-get-src-block-info 'light))
+	         (properties (nth 2 info)))
+      (if property (cdr (assq property properties))
+        properties)))
+
+
+  ;; To be able to go to jump to the link in tangled file from a given block in org
+  ;; we need the comment link using 'gm/org-babel-tangle-get-this-comment-link
+  ;; most functions here try to get this (viz. getting the counter used in the link)
+
+  (defun gm/org-babel-tangle-count-this ()
+    "Count source block number in section.
+
+Note, does not give correct file search field in orglink as in the tangled file if before all headings!"
+    (let ((here (point))
+	        (beg (org-with-wide-buffer
+		            (org-with-limited-levels (or (outline-previous-heading) (point-min))))))
+      (let ((case-fold-search nil))
+	      (count-matches "^ *#\\+begin_src" beg here))))
+
+  (defun gm/org-babel-tangle-get-this-comment-link ()
+    "Extracts the org link that comments the source block in the tangled file."
+    (pcase-let*
+        ((counter (gm/org-babel-tangle-count-this))
+         (tangled-block (org-babel-tangle-single-block counter))
+         (`(,start ,file ,link ,source ,info ,body ,comment) tangled-block)
+         (link-data `(("start-line" . ,(number-to-string start))
+		                  ("file" . ,file)
+		                  ("link" . ,link)
+		                  ("source-name" . ,source))))
+      (org-fill-template
+		   org-babel-tangle-comment-format-beg link-data)))
+
+  (defun gm/goto-tangled-block ()
+    "The opposite of `org-babel-tangle-jump-to-org'. Jumps at tangled code from org src block.
+
+https://emacs.stackexchange.com/a/69591"
+    (interactive)
+    (if (org-in-src-block-p)
+        (let* ((header (car (org-babel-tangle-single-block 1 'only-this-block)))
+	             ;; ("test.py" ("python" 9 "test.org" "file:test.org::*a" "a:1" properties code nil))
+	             ;; if tangle is no then car will be nil!
+	             (tangle (car header))
+	             (rest (cadr header))
+               (lang (car rest))
+               (org-buffer (nth 2 rest))
+               (org-id (nth 3 rest))
+               (source-name (nth 4 rest))
+               (search-comment (gm/org-babel-tangle-get-this-comment-link))
+               (file (expand-file-name
+                      (org-babel-effective-tangled-filename org-buffer lang tangle))))
+          (if (not (file-exists-p file))
+              (message "File does not exist. 'org-babel-tangle' first to create file.")
+            (find-file file)
+            (beginning-of-buffer)
+            (search-forward search-comment)))
+      (message "Cannot jump to tangled file because point is not at org src block.")))
+
+  (defun gm/tangle-and-goto-block ()
+    "Goes to the tangled file at the source block."
+    (interactive)
+    (let ((current-prefix-arg 8))
+      (call-interactively 'org-babel-tangle))
+    (gm/goto-tangled-block))
+
+  (defun gm/detangle-and-goto-block ()
+    "Detangle and go to block at point.
+
+Note sure why this was written: all languages must be the same in org file."
+    (interactive)
+    (let ((org-src-preserve-indentation t))
+      (org-babel-detangle))
+    (org-babel-tangle-jump-to-org)))
+
+(use-package org-indent
+  :ensure nil
+  :after org
+  :disabled
+  :hook (org-mode . org-indent-mode))
+
+(use-package ob-async :after org)
 
 (use-package org-tempo :ensure nil :after org)
 
@@ -868,14 +979,27 @@
   :ensure nil
   :after org
   :custom
+  (org-src-fontify-natively t)
+  (org-src-tab-acts-natively t)
   (org-src-preserve-indentation t)
   (org-edit-src-content-indentation 0))
+
+(use-package org-noter
+  :after (:any org pdf-view)
+  :custom
+  (org-noter-notes-window-location 'vertical-split)
+  (org-noter-always-create-frame nil)
+  :config
+  (org-noter-enable-org-roam-integration))
 
 (use-package org-attach
   :ensure nil
   :after org
   :custom
-  (org-attach-id-dir "~/Org/resources"))
+  (org-attach-id-dir "~/Org/resources")
+  (org-attach-id-to-path-function-list
+   '(org-attach-id-ts-folder-format
+     org-attach-id-uuid-folder-format)))
 
 (use-package org-agenda
   :ensure nil
@@ -891,7 +1015,7 @@
   :config
   (setq org-latex-pdf-process '("latexmk -f -pdfdvi -gg -output-directory=%o %f"))
   (setq org-export-in-background t)
-  (setq org-file-apps '(("pdf" . "zathura %s")))
+  (setq org-file-apps '(("pdf" . "evince %s")))
   (setq org-latex-default-class "jlreq")
   (add-to-list 'org-latex-classes
                '("jlreq"
@@ -1230,9 +1354,13 @@
 (use-package vterm
   :ensure nil ;; installed by Nix
   :defer t
-  :config
-  (setf vterm-shell "nu --config ~/.config/nushell/emacs-config.nu")
-  (setq vterm-timer-delay 0.01))
+  :hook
+  (vterm-mode . (lambda ()
+                  (setq-local global-hl-line-mode nil)
+                  (hl-line-mode -1)))
+  :custom
+  (vterm-shell "nu --config ~/.config/nushell/emacs-config.nu")
+  (vterm-timer-delay 0.01))
 
 (use-package meow-vterm
   :vc (:fetcher github :repo "accelbread/meow-vterm")
@@ -1286,11 +1414,39 @@
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
+;; PDF
+(use-package pdf-tools
+  :ensure nil ;; installed by Nix
+  :defer t
+  :custom
+  (pdf-annot-activate-created-annotations t)
+  (pdf-cache-image-limit 15)
+  (image-cache-eviction-delay 15)
+  (pdf-view-resize-factor 1.1)
+  :init
+  (pdf-loader-install))
+
 ;; Rust
 (use-package rust-mode
   :mode "\\.rs\\'"
   :custom
   (rust-mode-treesitter-derive t))
+
+;; Julia
+(use-package julia-mode
+  :mode "\\.jl\\'")
+
+(use-package julia-vterm
+  :hook (julia-mode . julia-vterm-mode))
+
+(use-package ob-julia-vterm
+  :defer t
+  :config
+  (defalias 'org-babel-execute:julia 'org-babel-execute:julia-vterm)
+  (defalias 'org-babel-variable-assignments:julia 'org-babel-variable-assignments:julia-vterm))
+
+;; Ocaml
+(use-package tuareg :defer t)
 
 ;; Nushell
 (use-package nushell-mode

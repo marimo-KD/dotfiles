@@ -29,18 +29,23 @@ let dptrp1py = pkgs.python3Packages.buildPythonPackage rec {
     yazi.enable = true;
     gpg.enable = true;
     password-store.enable = true;
+    zoxide.enable = true;
+    bat = {
+      enable = true;
+      catppuccin.enable = true;
+    };
+    fzf = {
+      enable = true;
+      catppuccin.enable = true;
+    };
+    ripgrep.enable = true;
+    fd.enable = true;
   };
   services.gpg-agent = {
-    enable = (if pkgs.stdenv.isDarwin then false else true);
+    enable = true;
     pinentryPackage = pkgs.pinentry-tty;
   };
-  home.packages = with pkgs; [
-    bat
-    fd
-    fzf
-    ripgrep
-    gnuplot
-  ] ++ [
+  home.packages = [
     dptrp1py
   ];
 }

@@ -3,6 +3,6 @@
     ./alacritty
     ./foot
     ./tmux
-    ./zellij
+    #./zellij
   ];
 }

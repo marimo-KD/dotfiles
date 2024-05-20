@@ -19,6 +19,7 @@ in
     tex
     texlab
     typst
+    gnuplot
   ];
   home.file.".config/latexmk/latexmkrc".text = ''
 #!/usr/bin/env perl

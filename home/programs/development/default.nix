@@ -4,5 +4,6 @@
     ./rust.nix
     ./cpp.nix
     ./node.nix
+    ./julia.nix
   ];
 }

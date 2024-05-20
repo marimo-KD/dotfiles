@@ -9,7 +9,10 @@
           );
       in myemacs
     );
-    extraPackages = (epkgs: [epkgs.vterm]);
+    extraPackages = (epkgs: [
+      epkgs.vterm
+      epkgs.pdf-tools
+    ]);
   };
   home.file.".emacs.d/init.el".source = ./init.el;
   home.file.".emacs.d/early-init.el".source = ./early-init.el;
