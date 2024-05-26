@@ -282,7 +282,7 @@
         ("x" origami-reset "Reset")))))
   :config
   (global-origami-mode t))
-  
+
 (use-package expreg :defer t)
 
 (use-package meow
@@ -330,7 +330,7 @@
   (meow-thing-register 'backquote
                        '(pair ("`") ("`"))
                        '(pair ("`") ("`")))
-  
+
   (defun meow-save-clipboard ()
     "Copy in clipboard."
     (interactive)
@@ -338,7 +338,7 @@
       (meow-save)))
 
   (add-to-list 'insert-pair-alist '(?$ "\\(" "\\)"))
-  
+
   (defun insert-pair-region (start end char)
     (interactive
      (list (region-beginning) (region-end)
@@ -397,7 +397,7 @@
    '("2" . meow-expand-2)
    '("1" . meow-expand-1)
    '("-" . meow-reverse)
-   
+
    ;; basic movement
    '("h" . meow-left)
    '("j" . meow-next)
@@ -406,15 +406,15 @@
 
    '("{" . scroll-up)
    '("}" . scroll-down)
-   
+
    '("/" . consult-line)
-   
+
    ;; expansion
    '("H" . meow-left-expand)
    '("J" . meow-next-expand)
    '("K" . meow-prev-expand)
    '("L" . meow-right-expand)
-   
+
    '("i" . meow-back-word)
    '("I" . meow-back-symbol)
    '("o" . meow-next-word)
@@ -429,7 +429,7 @@
    '("G" . meow-pop-grab)
    '("b" . meow-swap-grab)
    '("B" . meow-sync-grab)
-   
+
    '("z" . meow-beginning-of-thing)
    '("x" . meow-end-of-thing)
    '("Z" . meow-inner-of-thing)
@@ -442,12 +442,12 @@
    '("C" . meow-save-clipboard)
    '("v" . meow-yank)
    '("V" . consult-yank-pop)
-   
+
    '("e" . meow-insert)
    '("E" . meow-open-above)
    '("r" . meow-append)
    '("R" . meow-open-below)
-   
+
    '("u" . undo-fu-only-undo)
    '("U" . undo-fu-only-redo)
    '("<" . indent-rigidly-left-to-tab-stop)
@@ -455,7 +455,7 @@
 
    '("pe" . insert-pair-region)
    '("pd" . delete-pair)
-   
+
    ;; command
    '("," . origami-hydra/body)
    '(";" . main-hydra/body)
@@ -605,7 +605,7 @@
   (vertico-truncate-mode t))
 
 (use-package savehist
-  :ensure nil 
+  :ensure nil
   :after (vertico)
   :init
   (savehist-mode))
@@ -645,7 +645,7 @@
   :after (embark consult)
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
-  
+
 ;; code-completion
 (use-package corfu
   :custom
@@ -693,6 +693,9 @@
   :bind ("C-x j" . skk-mode)
   :init
   (setq default-input-method "japanese-skk")
+  ;; disable system im
+  (setq pgtk-use-im-context-on-new-connection nil)
+  (pgtk-use-im-context nil)
   (setq skk-user-directory "~/SKK")
   (setq skk-large-jisyo "~/SKK/SKK-JISYO.L")
   (setq skk-jisyo (cons "~/SKK/skk-jisyo" 'utf-8))
@@ -877,7 +880,21 @@
       (apply original-fun args)))
   :config
   (add-to-list 'org-babel-default-header-args '(:output-dir . "~/Org/resources"))
-  
+
+  (defun my/org-babel-temp-stable-file-fixed (data prefix &optional suffix)
+    "Fixed version of org-babel-temp-stable-file. Original function uses sxhash, but
+sxhash see only head 7 elements of list. This behavior is not appropriate for file name."
+    (let ((path (format "%s%s%s%s"
+                        (file-name-as-directory (org-babel-temp-stable-directory))
+                        prefix
+                        (secure-hash 'md5 (format "%s" data))
+                        ;; use md5 instead of sxhash
+                        ;; this function will not be called so frequently, so hash performance doesn't matter.
+                        (or suffix ""))))
+      (with-temp-file path)
+      path))
+  (advice-add 'org-babel-temp-stable-file :override #'my/org-babel-temp-stable-file-fixed)
+
   ;; https://github.com/gmoutso/dotemacs/blob/master/lisp/tanglerc.el
   ;; tangle functions org version 9.4
   ;;
@@ -1126,7 +1143,7 @@ Note sure why this was written: all languages must be the same in org file."
 
           ;; cleanup duplicates
           (setq tags (seq-uniq tags))
-          
+
           ;; update tags if changed
           (when (or (seq-difference tags original-tags)
                     (seq-difference original-tags tags))
@@ -1245,7 +1262,7 @@ Note sure why this was written: all languages must be the same in org file."
         ("]" org-journal-next-entry "Next")
         ("sf" org-journal-search-forever "Future")
         ("sm" org-journal-search-month "Month"))))))
-         
+
 (use-package japanese-holidays
   :defer t
   :after calendar
@@ -1409,7 +1426,7 @@ Note sure why this was written: all languages must be the same in org file."
 
 (use-package treesit-auto
   :custom
-  (treesit-auto-install t)
+  (treesit-auto-install 'prompt)
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
