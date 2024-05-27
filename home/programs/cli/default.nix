@@ -1,4 +1,4 @@
-{pkgs, ...}: 
+{pkgs, lib, ...}:
 let dptrp1py = pkgs.python3Packages.buildPythonPackage rec {
   pname = "dpt-rp1-py";
   version = "0.1.16";
@@ -24,7 +24,8 @@ let dptrp1py = pkgs.python3Packages.buildPythonPackage rec {
     setuptools
   ];
   doCheck = false;
-}; in {
+};
+in lib.mkMerge [{
   programs = {
     yazi.enable = true;
     gpg.enable = true;
@@ -42,10 +43,21 @@ let dptrp1py = pkgs.python3Packages.buildPythonPackage rec {
     fd.enable = true;
   };
   services.gpg-agent = {
-    enable = true;
+    enable = pkgs.stdenv.isLinux;
     pinentryPackage = pkgs.pinentry-tty;
   };
   home.packages = [
     dptrp1py
   ];
 }
+
+(lib.mkIf pkgs.stdenv.isDarwin {
+    home.file.".gnupg/gpg-agent.conf".text = ''
+      pinentry-program ${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac
+    '';
+    home.packages = [
+      pkgs.gnupg
+      pkgs.pinentry_mac
+    ];
+  })
+]

@@ -57,12 +57,6 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  i18n.inputMethod = {
-    enabled = "fcitx5";
-    fcitx5.addons = [pkgs.fcitx5-skk-qt pkgs.fcitx5-gtk pkgs.libsForQt5.fcitx5-qt];
-  };
-  services.dbus.packages = [config.i18n.inputMethod.package];
-
   # Configure keymap in X11
   services.xserver = {
     layout = "us";
