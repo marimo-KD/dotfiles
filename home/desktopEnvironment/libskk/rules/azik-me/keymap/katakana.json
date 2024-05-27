@@ -1,0 +1,12 @@
+{
+    "include": [
+        "common",
+        "default/katakana"
+    ],
+    "define": {
+        "keymap": {
+          "q": "set-input-mode-hiragana",
+          "Q": "start-preedit"
+        }
+    }
+}
