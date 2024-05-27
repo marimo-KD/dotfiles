@@ -47,7 +47,6 @@
     (load "~/.emacs.d/agenda-files.el"))
   (setq line-spacing 0.3)
   ;; indent
-  (setq tab-always-indent 'complete)
   (setq-default indent-tabs-mode nil)
   (setq-default tab-width 2)
   ;; performance
@@ -655,8 +654,12 @@
   (corfu-quit-no-match t)
   (corfu-quit-at-boundary nil)
   (corfu-scroll-margin 2)
+  (tab-always-indent 'complete)
   :bind (:map corfu-map
-              ("RET" . nil))
+              ("TAB" . corfu-insert)
+              ("<tab>" . corfu-insert)
+              ("RET" . nil)
+              ("<return>" . nil))
   :init
   (global-corfu-mode 1))
 

@@ -33,6 +33,17 @@
       flavour = "frappe";
     };
   };
+  i18n.inputMethod = {
+    enabled = "fcitx5";
+    fcitx5.addons = with pkgs; [
+      fcitx5-skk
+      fcitx5-gtk
+    ];
+  };
+  home.file.".config/libskk" = {
+    source = ./libskk;
+    recursive = true;
+  };
   home.packages = with pkgs; [
     simple-scan # scanner
     grim # screenshot

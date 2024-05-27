@@ -5,7 +5,8 @@
     ],
     "define": {
         "keymap": {
-            "q": "set-input-mode-katakana",
+          "q": "set-input-mode-katakana",
+          "Q": "start-preedit"
         }
     }
 }

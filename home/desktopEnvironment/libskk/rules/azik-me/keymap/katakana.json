@@ -5,7 +5,8 @@
     ],
     "define": {
         "keymap": {
-            "q": "set-input-mode-hiragana",
+          "q": "set-input-mode-hiragana",
+          "Q": "start-preedit"
         }
     }
 }
