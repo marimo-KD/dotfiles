@@ -738,6 +738,7 @@
   (org-preview-latex-default-process 'dvisvgm)
   (org-preview-latex-image-directory "~/Org/resources/ltximg/")
   (org-id-method 'ts)
+  (org-todo-keywords '((sequence "TODO(t)" "WIP(w!)" "|" "DONE(d!)" "CANCELED(c)")))
   :init
   (with-eval-after-load 'major-mode-hydra
     (major-mode-hydra-define org-mode
@@ -1025,7 +1026,7 @@ Note sure why this was written: all languages must be the same in org file."
   :ensure nil
   :defer t
   :custom
-  (org-agenda-span 'day)
+  (org-agenda-span 'week)
   (org-log-done 'time))
 
 (use-package ox-latex
@@ -1209,17 +1210,6 @@ Note sure why this was written: all languages must be the same in org file."
   (consult-org-roam-buffer-after-buffers t)
   :config
   (consult-org-roam-mode t))
-
-(use-package org-capture
-  :ensure nil
-  :defer t
-  :after org
-  :custom
-  (org-capture-templates
-   '(("n" "Notes" entry (file+headline "~/Org/notes.org" "Notes")
-      "* %U\n%?")
-     ("t" "Todo" entry (file+headline "~/Org/todo.org" "Todos")
-      "* TODO %?\n %i\n %a"))))
 
 (use-package org-journal
   :defer t
