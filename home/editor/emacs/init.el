@@ -697,8 +697,14 @@
   :init
   (setq default-input-method "japanese-skk")
   ;; disable system im
-  (setq pgtk-use-im-context-on-new-connection nil)
-  (pgtk-use-im-context nil)
+  (when (equal window-system 'pgtk)
+    (setq pgtk-use-im-context-on-new-connection nil)
+    (pgtk-use-im-context nil))
+  (when (equal window-system 'mac)
+    (add-hook 'focus-in-hook
+              '(lambda ()
+                 (when (foundp 'mac-auto-ascii-setup-input-source)
+                   (mac-auto-ascii-setup-input-source)))))
   (setq skk-user-directory "~/SKK")
   (setq skk-large-jisyo "~/SKK/SKK-JISYO.L")
   (setq skk-jisyo (cons "~/SKK/skk-jisyo" 'utf-8))
