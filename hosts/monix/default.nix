@@ -241,13 +241,6 @@
   services.flatpak.enable = true;
 
   services.dbus.enable = true;
-  xdg = {
-    portal = {
-      enable = true;
-      extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-hyprland ];
-      config.common.default = "*";
-    };
-  };
   security.polkit.enable = true;
 
   virtualisation = {

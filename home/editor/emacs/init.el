@@ -45,6 +45,10 @@
   (setq native-comp-async-report-warnings-errors 'silent)
   (when (file-exists-p "~/.emacs.d/agenda-files.el")
     (load "~/.emacs.d/agenda-files.el"))
+  (add-hook 'kill-emacs-hook
+            (lambda ()
+              (require 'save-sexp)
+              (save-sexp-save-setq "~/.emacs.d/agenda-files.el" 'org-agenda-files)))
   (setq line-spacing 0.3)
   ;; indent
   (setq-default indent-tabs-mode nil)
@@ -91,6 +95,23 @@
   :config
   (unless (server-running-p)
     (server-start)))
+
+(use-package filechooser
+  :if (equal system-type 'gnu/linux)
+  :custom
+  (filechooser-use-popup-interface t)
+  (filechooser-choose-files #'filechooser-with-dired)
+  :init
+  (with-eval-after-load 'vertico
+    (defun +filechooser-multiple-vertico-tab ()
+      (interactive)
+      (vertico-insert)
+      (unless (file-directory-p (minibuffer-contents))
+        (filechooser-multiple-continue)))
+    (define-key filechooser-multiple-selection-map
+                (kbd "TAB") #'+filechooser-multiple-vertico-tab))
+  (with-eval-after-load 'server
+    (start-process "restart-portal" nil "systemctl" "--user" "restart" "xdg-desktop-portal.service")))
 
 (use-package pixel-scroll
   :ensure nil
@@ -139,6 +160,8 @@
 
 (use-package autorevert
   :ensure nil
+  :custom
+  (auto-revert-avoid-polling t)
   :init (global-auto-revert-mode 1))
 
 (use-package subword
@@ -169,18 +192,29 @@
   :config
   (load-theme 'ef-melissa-light t))
 
-(use-package doom-modeline
-  :custom
-  (doom-modeline-support-imenu t)
-  (doom-modeline-icon t)
-  (doom-modeline-buffer-name t)
-  (doom-modeline-minor-modes nil)
-  (doom-modeline-height 26)
-  :hook (after-init . doom-modeline-mode)
+(use-package hide-mode-line
   :config
-  (doom-modeline-def-modeline 'main
-    '(bar workspace-name window-number modals matches follow buffer-info remote-host buffer-position word-count)
-    '(compilation misc-info github debug lsp input-method buffer-encoding major-mode process vcs check)))
+  (global-hide-mode-line-mode 1))
+
+(use-package nano-modeline
+  :after meow
+  :custom
+  (nano-modeline-padding '(0.25 . 0.3))
+  :config
+  (defun nano-modeline-meow-state ()
+    (propertize (meow-indicator)
+                'face (nano-modeline-face 'primary)))
+  (defun my/nano-modeline-generic-mode (&optional default)
+    "Generic Nano modeline"
+    (funcall nano-modeline-position
+             '((nano-modeline-meow-state)
+               (nano-modeline-buffer-status) " "
+               (nano-modeline-buffer-name) " "
+               (nano-modeline-git-info))
+             '((nano-modeline-cursor-position)
+               (nano-modeline-window-dedicated))
+             default))
+  (my/nano-modeline-generic-mode t))
 
 (use-package perfect-margin
   :custom
@@ -230,7 +264,7 @@
   (highlight-indent-guides-character 124)
   (highlight-indent-guides-responsive 'top)
   :hook
-  (prog-mode . highlight-indent-guides-mode))
+  ((prog-mode yaml-mode) . highlight-indent-guides-mode))
 
 (use-package aggressive-indent
   :defer t
@@ -253,34 +287,6 @@
   :defer t
   :custom
   (vundo-glyph-alist vundo-unicode-symbols))
-(use-package origami
-  :vc (:fetcher github :repo "elp-revive/origami.el")
-  :defer t
-  :commands (origami-hydra/body)
-  :init
-  (with-eval-after-load 'pretty-hydra
-    (pretty-hydra-define origami-hydra
-      (:separator "-" :quit-key "q" :title "Origami")
-      ("Node"
-       (("o" origami-open-node "Open")
-        ("c" origami-close-node "Close")
-        ("s" origami-show-node "Show")
-        ("t" origami-toggle-node "Toggle")
-        ("S" origami-forward-toggle-node "Forward toggle")
-        ("r" origami-recursively-toggle-node "Recursively toggle"))
-       "All"
-       (("O" origami-open-all-nodes "Open")
-        ("C" origami-close-all-nodes "Close")
-        ("T" origami-toggle-all-nodes "Toggle"))
-       "Move"
-       (("n" origami-next-fold "Next")
-        ("p" origami-previous-fold "Prev"))
-       "Un/Redo"
-       (("u" origami-undo "Undo")
-        ("U" origami-redo "Redo")
-        ("x" origami-reset "Reset")))))
-  :config
-  (global-origami-mode t))
 
 (use-package expreg :defer t)
 
@@ -360,6 +366,24 @@
         (goto-char end)
         (insert close))
       (goto-char start)))
+
+  (defun meow-surround-delete ()
+    (interactive)
+    (let* ((ch (meow-thing-prompt "Delete thing: "))
+           (inner (meow--parse-inner-of-thing-char ch))
+           (outer (meow--parse-bounds-of-thing-char ch)))
+      (delete-region (cdr inner) (cdr outer))
+      (kill-region (car inner) (cdr inner))
+      (delete-region (car outer) (car inner))))
+
+  (defun meow-surround-squeeze ()
+    (interactive)
+    (let* ((ch (meow-thing-prompt "Delete thing: "))
+           (inner (meow--parse-inner-of-thing-char ch))
+           (outer (meow--parse-bounds-of-thing-char ch)))
+      (delete-region (cdr inner) (cdr outer))
+
+      (delete-region (car outer) (car inner))))
 
   (meow-motion-overwrite-define-key
    '("j" . meow-next)
@@ -453,10 +477,10 @@
    '(">" . indent-rigidly-right-to-tab-stop)
 
    '("pe" . insert-pair-region)
-   '("pd" . delete-pair)
+   '("pd" . meow-surround-delete)
+   '("pr" . meow-surround-squeeze)
 
    ;; command
-   '("," . origami-hydra/body)
    '(";" . main-hydra/body)
    '("." . embark-act)
    '("m" . major-mode-hydra)
@@ -476,7 +500,7 @@
 (use-package hydra :defer t)
 
 (use-package major-mode-hydra
-  :commands (major-mode-hydra origami-hydra/body main-hydra/body avy-hydra/body)
+  :commands (major-mode-hydra main-hydra/body avy-hydra/body)
   :config
   (pretty-hydra-define main-hydra (:separator "=" :title "Main" :foreign-keys warn :quit-key "q" :exit t)
     ("File"
@@ -486,8 +510,7 @@
       ("r" find-recentf "Recent")
       ("s" save-buffer "Save file"))
      "Edit"
-     (("z" origami-hydra/body "Origami")
-      ("u" vundo "Visual Undo"))
+     (("u" vundo "Visual Undo"))
      "Code"
      (("l" eglot-hydra/body "LSP")
       ("h" eldoc-box-help-at-point "ElDoc")
@@ -499,7 +522,7 @@
      "Tool"
      (("j" major-mode-hydras/org-mode/body "Org")
       ("n" org-capture "Org-capture")
-      ("a" org-agenda "Agenda")
+      ("a" my/org-agenda "Agenda")
       ("v" vterm "Terminal")
       ("m" major-mode-hydra "Major Mode Hydra")
       ("g" magit-status "Magit!")
@@ -738,7 +761,7 @@
   (org-preview-latex-default-process 'dvisvgm)
   (org-preview-latex-image-directory "~/Org/resources/ltximg/")
   (org-id-method 'ts)
-  (org-todo-keywords '((sequence "TODO(t)" "WIP(w!)" "|" "DONE(d!)" "CANCELED(c)")))
+  (org-todo-keywords '((sequence "TODO(t)" "INPROGRESS(p!)" "WAIT(w)" "SOMEDAY(s)" "|" "DONE(d!)" "CANCELED(c)")))
   :init
   (with-eval-after-load 'major-mode-hydra
     (major-mode-hydra-define org-mode
@@ -1029,6 +1052,49 @@ Note sure why this was written: all languages must be the same in org file."
   (org-agenda-span 'week)
   (org-log-done 'time))
 
+(use-package org-ql
+  :defer t
+  :commands (org-ql-view my/org-agenda my/org-todo-list)
+  :config
+  (defun my/org-agenda ()
+    (interactive)
+    (org-ql-search (org-agenda-files)
+      '(or (and (not (done))
+                (or (scheduled :to +7)
+                    (deadline auto)))
+           (todo "INPROGRESS" "SOMEDAY" "WAIT")
+           (habit))
+      :title "Agenda for this week"
+      :sort '(todo date priority)
+      :super-groups '((:name "Overdue"
+                             :deadline past)
+                      (:name "Today's TODO"
+                             :scheduled today
+                             :time-grid t)
+                      (:name "Habit"
+                             :habit t)
+                      (:name "In progress"
+                             :todo "INPROGRESS")
+                      (:name "Deadline is coming"
+                             :deadline future)
+                      (:name "Schedule for this week"
+                             :scheduled future)
+                      (:todo ("WAIT" "SOMEDAY")))))
+  (defun my/org-todo-list ()
+    (interactive)
+    (org-ql-search (org-agenda-files)
+      '(and (not (done))
+            (todo))
+      :title "Todo List"
+      :sort '(todo date)
+      :super-groups '((:name "Overdue"
+                             :deadline past))))
+  (with-eval-after-load 'org-roam
+    (advice-add 'my/org-agenda :before #'vulpea-agenda-files-update)
+    (advice-add 'my/org-todo-list :before #'vulpea-agenda-files-update)))
+
+(use-package org-super-agenda :defer t)
+
 (use-package ox-latex
   :ensure nil
   :after org
@@ -1174,9 +1240,7 @@ Note sure why this was written: all languages must be the same in org file."
 
   (defun vulpea-agenda-files-update (&rest _)
     "Update the value of `org-agenda-files'."
-    (setq org-agenda-files (vulpea-project-files))
-    (require 'save-sexp)
-    (save-sexp-save-setq "~/.emacs.d/agenda-files.el" 'org-agenda-files))
+    (setq org-agenda-files (vulpea-project-files)))
 
   (add-hook 'find-file-hook #'vulpea-project-update-tag)
   (add-hook 'before-save-hook #'vulpea-project-update-tag)
@@ -1424,6 +1488,13 @@ Note sure why this was written: all languages must be the same in org file."
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 
+(use-package treesit-fold
+  :disabled
+  :vc (:fetcher github :repo "emacs-tree-sitter/treesit-fold")
+  :config
+  (global-treesit-fold-mode 1)
+  (global-treesit-fold-indicators-mode 1))
+
 ;; PDF
 (use-package pdf-tools
   :ensure nil ;; installed by Nix
@@ -1469,6 +1540,11 @@ Note sure why this was written: all languages must be the same in org file."
 ;; Gnuplot
 (use-package gnuplot
   :mode ("\\.gp\\'" . gnuplot-mode))
+
+;; SATySFi
+(use-package satysfi
+  :vc (:fetcher github :repo "gfngfn/satysfi.el")
+  :defer t)
 
 ;; Enable magic file name and GC
 (setq file-name-handler-alist my-saved-file-name-handler-alist)
