@@ -21,6 +21,9 @@
       };
     };
   };
+  systemd.user.settings.DefaultEnvironment = {
+    PATH = "/run/current-system/sw/bin";
+  };
   gtk = {
     enable = true;
     catppuccin = {

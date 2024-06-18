@@ -9,5 +9,9 @@
       enable = true;
       settings.add_newline = true;
     };
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
   };
 }

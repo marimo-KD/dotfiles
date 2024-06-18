@@ -17,17 +17,6 @@
       inputs.xremap.nixosModules.default
     ];
 
-  hardware.opengl.enable = true;
-  hardware.opentabletdriver.enable = true;
-  hardware.sane = {
-    enable = true;
-    brscan4 = {
-      enable = true;
-      netDevices = {};
-    };
-  };
-  hardware.bluetooth.enable = true;
-
   # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -184,6 +173,13 @@
     allowedUDPPorts = [config.services.tailscale.port];
   };
 
+  services.syncthing = {
+    enable = true;
+    user = "marimo";
+    dataDir = "/home/marimo/Sync";
+    configDir = "/home/marimo/.config/syncthing";
+  };
+
   # networking.wireguard.interfaces = {
   #   wg0 = {
   #     ips = [ "10.0.101.102/32" "fd34::101::102/128"];
@@ -202,19 +198,17 @@
   services.xremap = {
     userName = "marimo";
     serviceMode = "system";
-    config = {
-      modmap = [
-        {
-          name = "SandS";
-          remap = {
-            Space = {
-              alone = "Space";
-              held = "Shift_L";
-            };
+    config.modmap = [
+      {
+        name = "SandS";
+        remap = {
+          Space = {
+            alone = "Space";
+            held = "Shift_L";
           };
-        }
-      ];
-    };
+        };
+      }
+    ];
   };
 
   # support printers
@@ -238,17 +232,21 @@
   programs.noisetorch.enable = true;
   musnix.enable = true;
 
-  services.flatpak.enable = true;
-
   services.dbus.enable = true;
   security.polkit.enable = true;
 
   virtualisation = {
     docker = {
       enable = true;
+      daemon.settings = {
+        dns = ["8.8.8.8" "8.8.4.4"];
+      };
       rootless = {
         enable = true;
         setSocketVariable = true;
+        daemon.settings = {
+          dns = ["8.8.8.8" "8.8.4.4"];
+        };
       };
     };
     waydroid.enable = true;

@@ -41,4 +41,15 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+  hardware.opengl.enable = true;
+  hardware.opentabletdriver.enable = true;
+  hardware.sane = {
+    enable = true;
+    brscan4 = {
+      enable = true;
+      netDevices = {};
+    };
+  };
+  hardware.bluetooth.enable = true;
 }
