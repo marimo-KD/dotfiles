@@ -101,15 +101,15 @@
   :custom
   (filechooser-use-popup-interface t)
   (filechooser-choose-files #'filechooser-with-dired)
-  :init
-  (with-eval-after-load 'vertico
-    (defun +filechooser-multiple-vertico-tab ()
-      (interactive)
-      (vertico-insert)
-      (unless (file-directory-p (minibuffer-contents))
-        (filechooser-multiple-continue)))
-    (define-key filechooser-multiple-selection-map
-                (kbd "TAB") #'+filechooser-multiple-vertico-tab))
+  (use-dialog-box nil)
+  :init  (with-eval-after-load 'vertico
+           (defun +filechooser-multiple-vertico-tab ()
+             (interactive)
+             (vertico-insert)
+             (unless (file-directory-p (minibuffer-contents))
+               (filechooser-multiple-continue)))
+           (define-key filechooser-multiple-selection-map
+                       (kbd "TAB") #'+filechooser-multiple-vertico-tab))
   (with-eval-after-load 'server
     (start-process "restart-portal" nil "systemctl" "--user" "restart" "xdg-desktop-portal.service")))
 
@@ -253,9 +253,6 @@
   :after corfu
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
-
-(use-package nerd-icons-dired
-  :hook (dired-mode . nerd-icons-dired-mode))
 
 (use-package highlight-indent-guides
   :defer t
@@ -507,7 +504,7 @@
      (("f" find-file "Find file")
       ("d" find-dired "Find directory")
       ("b" consult-buffer "Buffer")
-      ("r" find-recentf "Recent")
+      ("r" recentf "Recent")
       ("s" save-buffer "Save file"))
      "Edit"
      (("u" vundo "Visual Undo"))
@@ -544,6 +541,7 @@
 
 (use-package hydra-posframe
   :vc (:fetcher github :repo "Ladicle/hydra-posframe")
+  :if (display-graphic-p)
   :init
   (hydra-posframe-mode)
   :custom
@@ -601,6 +599,7 @@
 
 (use-package vertico-posframe
   :vc (:fetcher github :repo "tumashu/vertico-posframe")
+  :if (display-graphic-p)
   :init
   (vertico-posframe-mode 1)
   :custom
@@ -753,6 +752,7 @@
   (find-file . (lambda nil (skk-latin-mode 1))))
 
 (use-package ddskk-posframe
+  :if (display-graphic-p)
   :init
   (ddskk-posframe-mode 1))
 
@@ -1015,13 +1015,10 @@ Note sure why this was written: all languages must be the same in org file."
       (org-babel-detangle))
     (org-babel-tangle-jump-to-org)))
 
-(use-package org-indent
-  :ensure nil
-  :after org
-  :disabled
-  :hook (org-mode . org-indent-mode))
-
 (use-package ob-async :after org)
+
+(use-package org-nix-shell
+  :hook (org-mode . org-nix-shell-mode))
 
 (use-package org-tempo :ensure nil :after org)
 
@@ -1037,7 +1034,7 @@ Note sure why this was written: all languages must be the same in org file."
 (use-package org-noter
   :after (:any org pdf-view)
   :custom
-  (org-noter-notes-window-location 'vertical-split)
+  (org-noter-notes-window-location 'horizontal-split)
   (org-noter-always-create-frame nil)
   :config
   (org-noter-enable-org-roam-integration))
@@ -1169,6 +1166,7 @@ Note sure why this was written: all languages must be the same in org file."
   (org-roam-directory "~/Org/roam")
   (org-roam-index-file "~/Org/roam/index.org")
   (org-roam-completion-functions '())
+  (org-roam-verbose nil)
   (org-roam-node-display-template
    (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   (org-roam-capture-templates
@@ -1281,17 +1279,25 @@ Note sure why this was written: all languages must be the same in org file."
   :config
   (consult-org-roam-mode t))
 
-(use-package org-journal
-  :defer t
-  :bind
-  (nil :map calendar-mode-map
-       ("C-j n" . org-journal-new-date-entry)
-       ("C-j r" . org-journal-read-entry)
-       ("C-j d" . org-journal-display-entry))
+;; bibliography
+(use-package citar
   :custom
-  (org-journal-dir "~/Org/journal")
-  (org-journal-date-format "%A, %d %B %Y")
-  (org-journal-file-type 'daily))
+  (citar-bibliography '("~/bib/references.bib"))
+  (org-cite-global-bibliography citer-bibliography)
+  (org-cite-insert-processor 'citar)
+  (org-cite-follow-processor 'citar)
+  (org-cite-activate-processor 'citar)
+  :hook
+  (LaTeX-mode . citar-capf-setup)
+  (org-mode . citar-capf-setup))
+
+(use-package citar-embark
+  :after citar embark
+  :no-require
+  :config
+  (citar-embark-mode))
+
+;; calendar
 
 (use-package calendar
   :ensure nil
@@ -1476,10 +1482,40 @@ Note sure why this was written: all languages must be the same in org file."
          ("C-c p" . flymake-goto-prev-error)))
 
 ;; dired
+(use-package dired
+  :ensure nil
+  :defer t
+  :custom
+  (dired-mouse-drag-files t)
+  (mouse-drag-and-drop-region-cross-program t))
+
 (use-package async
   :defer t
   :init
   (with-eval-after-load 'dired (dired-async-mode 1)))
+
+(use-package dirvish
+  :custom
+  (dirvish-attributes
+   '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size))
+  (dirvish-use-header-line t)
+  (dirvish-use-mode-line nil)
+  (dirvish-preview-dispatchers '(gif pdf))
+  (dirvish-quick-access-entries
+   '(("h" "~/" "Home")
+     ("d" "~/Downloads/" "Downloads")))
+  (mouse-1-click-follows-link nil)
+  :bind
+  (:map dirvish-mode-map
+        ("<mouse-1>" . dirvish-subtree-toggle-or-open)
+        ("<mouse-2>" . dired-mouse-file-file-other-window)
+        ("<mouse-3>" . dired-mouse-find-file))
+  :init
+  (dirvish-override-dired-mode)
+  :config
+  (when (equal system-type 'darwin)
+    (setq insert-directory-program "gls")))
+
 
 ;; treesitter
 (use-package treesit
@@ -1550,7 +1586,16 @@ Note sure why this was written: all languages must be the same in org file."
 ;; SATySFi
 (use-package satysfi
   :vc (:fetcher github :repo "gfngfn/satysfi.el")
-  :defer t)
+  :mode
+  (("\\.saty$" . satysfi-mode)
+   ("\\.satyh$" . satysfi-mode)
+   ("\\.satyg$" . satysfi-mode)))
+
+(use-package satysfi-ts-mode
+  :vc (:fetcher github :repo "Kyure-A/satysfi-ts-mode")
+  :defer t
+  :init
+  (add-to-list major-mode-remap-alist '(satysfi-mode . satysfi-ts-mode)))
 
 ;; Enable magic file name and GC
 (setq file-name-handler-alist my-saved-file-name-handler-alist)
