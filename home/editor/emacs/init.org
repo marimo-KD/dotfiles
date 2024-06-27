@@ -1,0 +1,5 @@
+#+title: My Emacs Config
+#+author: marimo
+
+* Home-managerで管理する
+[[https://apribase.net/2024/06/13/emacs-home-manager-init-org/]]

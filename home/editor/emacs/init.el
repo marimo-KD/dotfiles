@@ -155,7 +155,7 @@
 
 (use-package lin
   :custom
-  (lin-face 'lin-red)
+  (lin-face 'lin-blue)
   :config (lin-global-mode))
 
 (use-package autorevert
@@ -671,22 +671,25 @@
 (use-package corfu
   :custom
   (corfu-auto t)
+  (corfu-auto-prefix 2)
   (corfu-cycle t)
   (corfu-preselect 'prompt)
   (corfu-quit-no-match t)
   (corfu-quit-at-boundary nil)
   (corfu-scroll-margin 2)
   (tab-always-indent 'complete)
-  :bind (:map corfu-map
-              ("TAB" . corfu-insert)
-              ("<tab>" . corfu-insert)
-              ("RET" . nil)
-              ("<return>" . nil))
+  :bind
+  (:map corfu-map
+        ("TAB" . corfu-next)
+        ([tab] . corfu-next)
+        ("S-TAB" . corfu-previous)
+        ([backtab] . corfu-previous))
   :init
   (global-corfu-mode 1))
 
 (use-package corfu-popupinfo
   :ensure nil
+  :after corfu
   :hook (corfu-mode . corfu-popupinfo-mode))
 
 (use-package corfu-terminal
@@ -703,15 +706,21 @@
   (add-to-list 'completion-at-point-functions #'cape-keyword))
 
 ;; snippet
-(use-package yasnippet
+(use-package tempel
   :init
-  (yas-global-mode 1))
+  (defun tempel-setup-capf ()
+    (setq-local completion-at-point-functions
+                (cons #'tempel-complete
+                      completion-at-point-functions)))
+  (add-hook 'conf-mode-hook #'tempel-setup-capf 90)
+  (add-hook 'prog-mode-hook #'tempel-setup-capf 90)
+  (add-hook 'org-mode-hook #'tempel-setup-capf 90)
+  (add-hook 'text-mode-hook #'tempel-setup-capf 90))
 
-(use-package yasnippet-capf
-  :vc (:fetcher github :repo "elken/yasnippet-capf")
-  :after cape
+(use-package eglot-tempel
+  :after eglot tempel
   :config
-  (add-to-list 'completion-at-point-functions #'yasnippet-capf))
+  (eglot-tempel-mode))
 
 ;; skk
 (use-package ddskk
@@ -765,7 +774,42 @@
   (org-mouse-1-follows-link t)
   (org-directory "~/Org")
   (org-preview-latex-default-process 'dvisvgm)
-  (org-preview-latex-image-directory "~/Org/resources/ltximg/")
+  (org-preview-latex-image-directory (file-name-concat org-directory "resources/ltximg"))
+  (org-format-latex-header ;; the header for processing latex fragments
+   "\\documentclass{article}
+\\usepackage[usenames]{color}
+[DEFAULT-PACKAGES]
+[PACKAGES]
+% --- edit ---
+\\usepackage{physics2}
+\\usepackage{diffcoeff}
+\\usephysicsmodule{ab, ab.braket}
+% vector analysis
+\\DeclareMathOperator{\\grad}{\\nabla}
+\\DeclareMathOperator{\\divergence}{\\nabla\\cdot}
+\\let\\divisionsymbol\\div
+\\renewcommand{\\div}{\\divergence}
+\\DeclareMathOperator{\\rot}{\\nabla\\times}
+%
+\\renewcommand{\\Re}{\\operatorname{Re}}
+\\renewcommand{\\Im}{\\operatorname{Im}}
+\\newcommand{\\Tr}{\\operatorname{Tr}}
+\\newcommand{\\rank}{\\operatorname{rank}}
+% --- end ---
+\\pagestyle{empty}             % do not remove
+% The settings below are copied from fullpage.sty
+\\setlength{\\textwidth}{\\paperwidth}
+\\addtolength{\\textwidth}{-3cm}
+\\setlength{\\oddsidemargin}{1.5cm}
+\\addtolength{\\oddsidemargin}{-2.54cm}
+\\setlength{\\evensidemargin}{\\oddsidemargin}
+\\setlength{\\textheight}{\\paperheight}
+\\addtolength{\\textheight}{-\\headheight}
+\\addtolength{\\textheight}{-\\headsep}
+\\addtolength{\\textheight}{-\\footskip}
+\\addtolength{\\textheight}{-3cm}
+\\setlength{\\topmargin}{1.5cm}
+\\addtolength{\\topmargin}{-2.54cm}")
   (org-id-method 'ts)
   (org-todo-keywords '((sequence "TODO(t)" "INPROGRESS(p!)" "WAIT(w)" "SOMEDAY(s)" "|" "DONE(d!)" "CANCELED(c)")))
   :init
@@ -837,6 +881,7 @@
         (gnuplot . gnuplot)
         (julia . julia-vterm)
         (julia-vterm . julia-vterm)
+        (ocaml . ocaml)
         (python . python)
         (shell . shell)
         (sh . shell)
@@ -893,9 +938,9 @@
     (advice-add #'org-babel-execute-src-block :around
                 #'my-org-babel-execute-src-block)
     (defun my-org-babel-execute-src-block (original-fun
-                                           &optional arg info params)
+                                           &optional arg info params executor-type)
       (my-org-require-lang (nth 0 info))
-      (funcall original-fun arg info params))
+      (funcall original-fun arg info params executor-type))
 
     ;; (match-string)の値を直接langとして渡しているので。
     (advice-add #'org-babel-enter-header-arg-w-completion :around
@@ -1015,12 +1060,8 @@ Note sure why this was written: all languages must be the same in org file."
       (org-babel-detangle))
     (org-babel-tangle-jump-to-org)))
 
-(use-package ob-async :after org)
-
 (use-package org-nix-shell
   :hook (org-mode . org-nix-shell-mode))
-
-(use-package org-tempo :ensure nil :after org)
 
 (use-package org-src
   :ensure nil
@@ -1105,7 +1146,7 @@ Note sure why this was written: all languages must be the same in org file."
   :config
   (setq org-latex-pdf-process '("latexmk -f -pdfdvi -gg -output-directory=%o %f"))
   (setq org-export-in-background t)
-  (setq org-file-apps '(("pdf" . "evince %s")))
+  (setq org-file-apps '(("pdf" . emacs)))
   (setq org-latex-default-class "jlreq")
   (add-to-list 'org-latex-classes
                '("jlreq"
@@ -1121,7 +1162,8 @@ Note sure why this was written: all languages must be the same in org file."
   \\usepackage{graphicx}
   \\usepackage{hyperref}
   \\hypersetup{pdfencoding=auto,colorlinks=true}
-\\fi"
+\\fi
+[PACKAGES]"
                  ("\\section{%s}" . "\\section*{%s}")
                  ("\\subsection{%s}" . "\\subsection*{%s}")
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
@@ -1154,9 +1196,9 @@ Note sure why this was written: all languages must be the same in org file."
 
 (use-package org-modern-indent
   :vc (:fetcher github :repo "jdtsmith/org-modern-indent")
-  :disabled
-  :defer t
-  :init
+  :custom
+  (org-startup-indented t)
+  :config
   (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
 
 (use-package org-roam
@@ -1282,11 +1324,12 @@ Note sure why this was written: all languages must be the same in org file."
 ;; bibliography
 (use-package citar
   :custom
-  (citar-bibliography '("~/bib/references.bib"))
-  (org-cite-global-bibliography citer-bibliography)
+  (org-cite-global-bibliography '("~/Zotero/reference.bib"))
+  (citar-bibliography org-cite-global-bibliography)
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)
+  (citar-open-entry-function #'citar-open-entry-in-zotero)
   :hook
   (LaTeX-mode . citar-capf-setup)
   (org-mode . citar-capf-setup))
@@ -1351,13 +1394,13 @@ Note sure why this was written: all languages must be the same in org file."
   (eglot-sync-connect nil)
   :hook
   (eglot-managed-mode . my/eglot-capf)
-  ((c-ts-mode c++-ts-mode rust-ts-mode) . eglot-ensure)
+  ((c-ts-mode c++-ts-mode rust-ts-mode tuareg-mode) . eglot-ensure)
   :config
   (defun my/eglot-capf ()
     (setq-local completion-at-point-functions
                 (list (cape-capf-super
+                       #'tempel-complete
                        #'eglot-completion-at-point
-                       #'yasnippet-capf
                        #'cape-file))))
   ;; (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
   (add-to-list 'eglot-server-programs '(c++-mode . ("clangd")))
@@ -1595,7 +1638,14 @@ Note sure why this was written: all languages must be the same in org file."
   :vc (:fetcher github :repo "Kyure-A/satysfi-ts-mode")
   :defer t
   :init
-  (add-to-list major-mode-remap-alist '(satysfi-mode . satysfi-ts-mode)))
+  (add-to-list 'major-mode-remap-alist '(satysfi-mode . satysfi-ts-mode)))
+
+;; TeX
+(use-package auctex :defer t)
+
+(use-package cdlatex
+  :defer t
+  :hook (org-mode . org-cdlatex-mode))
 
 ;; Enable magic file name and GC
 (setq file-name-handler-alist my-saved-file-name-handler-alist)
