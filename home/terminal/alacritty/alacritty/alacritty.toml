@@ -11,3 +11,9 @@ option_as_alt = "Both"
 [font]
 normal = {family = "PlemolJP Console NF", style = "Text"}
 size = 14
+
+[keyboard]
+bindings = [
+{ key = "¥", chars = "\\"},
+{ key = "¥", mods = "Alt", chars = "\\"},
+]
