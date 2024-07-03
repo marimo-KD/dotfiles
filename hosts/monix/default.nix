@@ -47,9 +47,9 @@
   };
 
   # Configure keymap in X11
-  services.xserver = {
+  services.xserver.xkb = {
     layout = "us";
-    xkbVariant = "";
+    variant = "";
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -113,24 +113,25 @@
   fonts = {
     packages = with pkgs; [
       noto-fonts
-      noto-fonts-cjk-serif
-      noto-fonts-cjk-sans
       noto-fonts-emoji
       source-han-sans
       source-han-mono
       source-han-serif
-      (nerdfonts.override { fonts = ["Iosevka" "NerdFontsSymbolsOnly"]; })
-      plemoljp
+      (nerdfonts.override { fonts = [
+                              "Iosevka"
+                              "NerdFontsSymbolsOnly"
+                              "JetBrainsMono"
+                            ]; })
       plemoljp-nf
+      udev-gothic
       ibm-plex
       ipaexfont
-      iosevka
     ];
     fontDir.enable = true;
     fontconfig = {
       defaultFonts = {
-        serif = ["Noto Serif CJK JP" "Noto Color Emoji"];
-        sansSerif = ["Noto Sans CJK JP" "Noto Color Emoji"];
+        serif = ["Source Han Serif" "Noto Color Emoji"];
+        sansSerif = ["Source Han Sans" "Noto Color Emoji"];
         monospace = ["IBM Plex Mono" "Noto Color Emoji"];
         emoji = ["Noto Color Emoji"];
       };
@@ -219,8 +220,6 @@
     openFirewall = true;
   };
 
-  sound.enable = true;
-  hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;

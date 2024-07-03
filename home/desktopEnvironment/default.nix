@@ -28,27 +28,18 @@
     enable = true;
     catppuccin = {
       enable = true;
-      flavour = "frappe";
-      accent = "pink";
       size = "standard";
       tweaks = [ "normal" ];
-      cursor = {
-        enable = true;
-        flavour = "frappe";
-        accent = "pink";
-      };
       icon = {
         enable = true;
-        flavour = "frappe";
-        accent = "pink";
       };
     };
   };
+  catppuccin.pointerCursor.enable = true;
   services.mako = {
     enable = true;
     catppuccin = {
       enable = true;
-      flavour = "frappe";
     };
   };
   i18n.inputMethod = {

@@ -46,12 +46,6 @@
         pkgs = import nixpkgs {
           system = "x86_64-linux";
           config.allowUnfree = true;
-          overlays = [
-            (import inputs.rust-overlay) inputs.neovim-nightly-overlay.overlay
-            (final: prev: {
-              zjstatus = inputs.zjstatus.packages.${prev.system}.default;
-            })
-          ];
         };
         extraSpecialArgs = {
           inherit inputs;
@@ -60,8 +54,12 @@
           ./home/linux
           inputs.catppuccin.homeManagerModules.catppuccin
           {
-            catppuccin.flavour = "frappe";
+            catppuccin.flavor = "frappe";
             catppuccin.accent = "pink";
+            nixpkgs.overlays = [
+              (import inputs.rust-overlay) 
+              inputs.neovim-nightly-overlay.overlays.default
+            ];
           }
         ];
       };
@@ -71,7 +69,7 @@
           config.allowUnfree = true;
           overlays = [
             (import inputs.rust-overlay)
-            inputs.neovim-nightly-overlay.overlay
+            inputs.neovim-nightly-overlay.overlays.default
             inputs.nixpkgs-firefox-darwin.overlay
             (final: prev: {
               zjstatus = inputs.zjstatus.packages.${prev.system}.default;

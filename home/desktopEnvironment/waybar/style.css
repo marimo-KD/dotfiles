@@ -1,10 +1,10 @@
 @import "catppuccin.css";
-@define-color accent @pink
+@define-color accent @pink;
 
 * {
     border:        none;
     border-radius: 0px;
-    font-family:   Iosevka Nerd Font Mono, Noto Sans Mono CJK JP;
+    font-family:   Symbols Nerd Font Mono, Noto Sans Mono CJK JP;
     font-size:     16px;
     font-style:    normal;
     min-height: 0;
@@ -32,6 +32,12 @@ tooltip {
     color: lighter(@accent);
 }
 
+menu label,
+tooltip label {
+  font-size: 14px;
+  color: lighter(@accent);
+}
+
 #tray>.needs-attention {
   animation-name: blink-active;
   animation-duration: 1s;
@@ -54,6 +60,20 @@ tooltip {
   border-radius: 4px;
   background: alpha(@base, 0.4);
   color: lighter(@accent);
+}
+
+#gcpu,
+#memory,
+#disk,
+#together,
+#submap,
+#connection,
+#tray,
+#audio,
+#sound {
+  border-radius: 4px;
+  margin: 2px 2px 4px 2px;
+  background: alpha(darker(@accent), 0.3);
 }
 
 #workspaces {

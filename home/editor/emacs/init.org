@@ -1,5 +1,781 @@
 #+title: My Emacs Config
 #+author: marimo
+#+STARTUP: fold
 
-* Home-managerで管理する
+* 設定方針
+** TODO Home-managerで管理する
 [[https://apribase.net/2024/06/13/emacs-home-manager-init-org/]]
+
+** CANCELED Leafに移行？
+CLOSED: [2024-07-03 Wed 06:02]
+[[https://github.com/conao3/leaf.el]]
+
+** TODO zk-phi/setupの活用
+コンパイル時計算を使う!
+[[https://github.com/zk-phi/setup]]
+
+** TODO コンパイルを使った高速化
+[[https://github.com/nilcons/emacs-use-package-fast]]
+load-pathをコンパイル時に解決することで、
+package.elをロードしないようにして高速化する。
+
+したがって、実際に設定するには、
+1. パッケージをインストールするために直接生のinit.elを実行する
+2. インストールできたらコンパイル
+となる
+
+コンパイルしたら実行時にはleafもpackageもロードされない
+
+** TODO Dashboardをやめる
+Dashboardを使うとOrgを読むので起動が遅い
+なんならstartupも消しちゃうか
+#+begin_src emacs-lisp
+(setq inhibit-startup-screen t)
+#+end_src
+
+* early-init.el
+:PROPERTIES:
+:header-args: :tangle early-init.el :noweb yes
+:END:
+** UI
+#+begin_src emacs-lisp
+(push '(menu-bar-lines . 0) default-frame-alist)
+(push '(tool-bar-lines . 0) default-frame-alist)
+(push '(vertical-scroll-bars . nil) default-frame-alist)
+#+end_src
+
+** GCをとめる
+#+begin_src emacs-lisp
+(setq gc-cons-threshold most-positive-fixnum)
+#+end_src
+
+** backupとかlockとか
+#+begin_src emacs-lisp
+(setq make-backup-files nil)
+(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/backup/" t)))
+(setq auto-save-timeout 10)
+(setq auto-save-interval 100)
+(setq auto-save-list-file-prefix nil)
+(setq create-lockfiles nil)
+#+end_src
+
+** startupの諸々をとめる
+#+begin_src emacs-lisp
+(setq inhibit-startup-message t)
+(setq inhibit-startup-buffer-menu t)
+(setq inhibit-startup-screen t)
+#+end_src
+
+** X Resourcesをよまない
+#+begin_src emacs-lisp
+(setq inhibit-x-resources t)
+#+end_src
+
+** customizeでinit.elにかきこまない
+#+begin_src emacs-lisp
+(setq custom-file (locate-user-emacs-file "custom.el"))
+(when (file-exists-p (expand-file-name custom-file))
+  (load-file (expand-file-name custom-file)))
+#+end_src
+
+** package.elをとめる
+#+begin_src emacs-lisp
+(setq package-enable-at-startup nil)
+#+end_src
+
+** footer
+#+begin_src emacs-lisp
+(provide 'early-init)
+#+end_src
+* init.el
+:PROPERTIES:
+:header-args: :tangle init.el :noweb yes
+:END:
+** Header
+#+begin_src emacs-lisp
+;;; -*- lexical-binding: t -*-
+#+end_src
+
+** setup.el
+#+begin_src emacs-lisp
+(eval-when-compile
+  (require 'setup)
+  (setq setup-silent t
+        setup-delay-interval 0.5
+        setup-disable-magic-file-name t))
+(setup-initialize)
+#+end_src
+
+** package.el
+#+begin_src emacs-lisp
+(eval-and-compile
+  (setq package-archives '(("org" . "https://orgmode.org/elpa/")
+                          ("melpa" . "https://melpa.org/packages/")
+                          ("gnu" . "https://elpa.gnu.org/packages/"))
+        package-install-upgrade-built-in t
+        package-native-compile t)
+  (mapc #'(lambda (add) (add-to-list 'load-path add))
+        (eval-when-compile
+          (require 'package)
+          (package-initialize)
+          (let ((package-user-dir-real (file-truename package-user-dir)))
+            (nreverse (apply #'nconc
+                             (mapcar #'(lambda (path)
+                                         (if (string-prefix-p package-user-dir-real path)
+                                             (list path)
+                                           nil))
+                                     load-path)))))))
+#+end_src
+
+*** ensure
+- インタプリタで実行されるとき
+- コンパイル時
+にだけインストールする。
+#+begin_src emacs-lisp
+(eval-when-compile
+  (defmacro ensure (pkg)
+    (unless (package-installed-p pkg)
+      `(package-install ,pkg)))
+  (defmacro ensure-vc (arg)
+    (unless (package-installed-p (car arg))
+      `(package-install ,arg))))
+#+end_src
+
+** 標準の設定
+*** パフォーマンスに関する設定
+#+begin_src emacs-lisp
+(setq process-adaptive-read-buffering t)
+(setq blink-matching-paren nil)
+(setq vc-handled-backends '(Git))
+(setq auto-mode-case-fold nil)
+(setq-default bidi-display-reordering 'left-to-right)
+(setq bidi-inhibit-bpa t)
+(setq-default cursor-in-non-selected-windows nil)
+(setq highlight-nonselected-windows nil)
+(setq fast-but-imprecise-scrolling t)
+(setq idle-update-delay 1.0)
+(setq redisplay-skip-fontification-on-input t)
+(setq inhibit-compacting-font-caches t)
+#+end_src
+
+*** 行間の幅
+#+begin_src emacs-lisp
+(setq line-spacing 0.3)
+#+end_src
+
+*** Mac固有の設定
+#+begin_src emacs-lisp
+(!when (equal window-system 'mac)
+  (setq mac-option-modifier 'meta
+        mac-command-modifier 'super)
+  (mac-auto-ascii-mode 1))
+#+end_src
+*** その他
+#+begin_src emacs-lisp
+(setq completion-cycle-threshold 3
+      use-short-answers t)
+#+end_src
+** フォント設定
+#+begin_src emacs-lisp
+(defun my/set-font (size)
+  (let* ((asciifont "UDEV Gothic 35JPDOC")
+         (asciipropo "IBM Plex Sans JP")
+         (jpfont "UDEV Gothic 35JPDOC")
+         (h (* size 10))
+         (fontspec (font-spec :family asciifont))
+         (jp-fontspec (font-spec :family jpfont)))
+    (set-face-attribute 'default nil :family asciifont :height h)
+    (set-face-attribute 'fixed-pitch nil :family asciifont :height h)
+    (set-face-attribute 'variable-pitch nil :family asciipropo :height h)
+    (set-fontset-font t 'japanese-jisx0213.2004-1 jp-fontspec)
+    (set-fontset-font t 'japanese-jisx0213-2 jp-fontspec)
+    (set-fontset-font t 'katakana-jisx0201 jp-fontspec)
+    (set-fontset-font t '(#x0080 . #x024F) fontspec)
+    (set-fontset-font t '(#x0370 . #x03FF) fontspec)))
+(if (display-graphic-p)
+    (my/set-font 12))
+#+end_src
+
+** server
+#+begin_src emacs-lisp
+(setup "server"
+  (unless (server-running-p)
+    (server-start)))
+#+end_src
+
+** whitespace
+#+begin_src emacs-lisp
+(setup "whitespace"
+  (setq whitespace-style '(face
+                           trailing
+                           tabs
+                           spaces
+                           empty
+                           space-mark
+                           tab-mark)
+        whitespace-space-regexp "\\(\u3000+\\)"
+        whitespace-trailing-regexp "\\([ \u00A0]+\\)$"
+        whitespace-action '(auto-cleanup))
+  (global-whitespace-mode 1))
+#+end_src
+
+** autorevert
+#+begin_src emacs-lisp
+(setup "autorevert"
+  (setq auto-revert-avoid-polling t)
+  (global-auto-revert-mode 1))
+#+end_src
+
+** subword
+#+begin_src emacs-lisp
+(setup-lazy '(subword-mode) "subword"
+  :prepare (setup-hook 'prog-mode-hook #'subword-mode))
+#+end_src
+
+** tramp
+#+begin_src emacs-lisp
+(setup-after "tramp"
+  (setq tramp-default-method "scpx")
+  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin")
+  (add-to-list 'tramp-remote-path "/run/wrappers/bin"))
+#+end_src
+** comp
+#+begin_src emacs-lisp
+(setup-after "comp"
+  (setq native-comp-async-report-warnings-errors 'silent))
+#+end_src
+** Fancy UI
+*** Theme
+ef-themesをつかう
+#+begin_src emacs-lisp
+(ensure 'ef-themes)
+(setup "ef-themes"
+  (setq ef-themes-mixed-fonts nil
+        ef-themes-variable-pitch-ui nil)
+  (load-theme 'ef-melissa-light t))
+#+end_src
+
+*** Modeline, Headerline
+nano-modelineでheaderのみ設定
+modelineは消す
+#+begin_src emacs-lisp
+(ensure 'nano-modeline)
+(setup "nano-modeline"
+  (setq nano-modeline-padding '(0.25 . 0.3)
+        mode-line-format nil)
+  (setup-after "meow"
+    (defun nano-modeline-meow-state ()
+      (propertize (meow-indicator)
+                  'face (nano-modeline-face 'primary)))
+    (defun my/nano-modeline-generic-mode (&optional default)
+      "Generic Nano modeline"
+      (funcall nano-modeline-position
+               '((nano-modeline-meow-state)
+                 (nano-modeline-buffer-status) " "
+                 (nano-modeline-buffer-name) " "
+                 (nano-modeline-git-info))
+               '((nano-modeline-cursor-position)
+                 (nano-modeline-window-dedicated))
+               default))
+    (my/nano-modeline-generic-mode t)))
+#+end_src
+
+*** perfect-margin
+#+begin_src emacs-lisp
+(ensure 'perfect-margin)
+(setup "perfect-margin"
+  (setq perfect-margin-ignore-filters nil)
+  (perfect-margin-mode 1))
+#+end_src
+
+*** Icon
+nerd-iconsを採用
+#+begin_src emacs-lisp
+(ensure 'nerd-icons)
+(setup-after "nerd-icons"
+  (ignore-errors (nerd-icons-set-font)))
+#+end_src
+
+#+begin_src emacs-lisp
+(ensure 'nerd-icons-completion)
+(setup-after "marginalia"
+  (setup "nerd-icons-completion"
+    (nerd-icons-completion-mode)
+    (setup-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)))
+#+end_src
+*** pixel-scroll
+#+begin_src emacs-lisp
+(setup "pixel-scroll"
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))
+        mouse-wheel-progressive-speed nil
+        mouse-wheel-follow-mouse t
+        pixel-scroll-precision-large-scroll-height 40.0
+        scroll-step 1)
+  (pixel-scroll-precision-mode 1))
+#+end_src
+
+*** Parenthesis
+#+begin_src emacs-lisp
+(ensure 'rainbow-delimiters)
+(setup-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+#+end_src
+*** highlight line
+#+begin_src emacs-lisp
+(ensure 'lin)
+(!-
+ (setup "lin"
+   (setq lin-face 'lin-blue)
+   (lin-global-mode)))
+#+end_src
+** インデント
+*** タブの挙動
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+#+end_src
+
+*** highlight-indent-guides
+#+begin_src emacs-lisp
+(ensure 'highlight-indent-guides)
+(setup-lazy '(highlight-indent-guides-mode) "highlight-indent-guides"
+  (setq highlight-indent-guides-method 'bitmap
+        highlight-indent-guides-character 124
+        highlight-indent-guides-responsive 'top))
+(setup-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+(setup-hook 'yaml-mode-hook 'highlight-indent-guides-mode)
+#+end_src
+
+*** aggressive-indent
+#+begin_src emacs-lisp
+(ensure 'aggressive-indent)
+(setup-hook 'emacs-lisp-mode 'aggressive-indent-mode)
+#+end_src
+
+*** electric-indent
+#+begin_src emacs-lisp
+(setup-hook 'prog-mode-hook 'electric-indent-mode)
+
+#+end_src
+** Minibuffer Completion
+*** vertico, marginalia
+vertico-mode
+#+begin_src emacs-lisp
+(ensure 'vertico)
+(ensure 'marginalia)
+(setup-lazy '(vertico--advice) "vertico"
+  :prepare (progn
+             (advice-add 'completing-read-default :around 'vertico--advice)
+             (advice-add 'completing-read-multiple :around 'vertico--advice))
+  (setq vertico-cycle t)
+
+  (setup "orderless")
+  (setup "savehist")
+  (setup "marginalia" (marginalia-mode))
+  (setup-keybinds vertico-map
+    "<backspace>" '("vertico-directory" vertico-directory-delete-char))
+
+  (defvar +vertico-current-arrow t)
+  (cl-defmethod vertico--format-candidate :around
+    (cand prefix suffix index start &context ((and +vertico-current-arrow
+                                                   (not (bound-and-true-p vertico-flat-mode)))
+                                              (eql t)))
+    (setq cand (cl-call-next-method cand prefix suffix index start))
+    (if (bound-and-true-p vertico-grid-mode)
+        (if (= vertico--index index)
+            (concat (nerd-icons-faicon "nf-fa-hand_o_right") " " cand)
+          (concat #("_" 0 1 (display " ")) cand))
+      (if (= vertico--index index)
+          (concat " " (nerd-icons-faicon "nf-fa-hand_o_right") " " cand)
+        (concat "    " cand)))))
+#+end_src
+
+*** vertico-repeat
+#+begin_src emacs-lisp
+(setup-lazy '(vertico-repeat-save) "vertico-repeat"
+  :prepare (setup-hook 'minibuffer-setup-hook
+             (vertico-repeat-save)))
+#+end_src
+
+*** vertico-posframe
+#+begin_src emacs-lisp :tangle no
+(ensure-vc '(vertico-posframe
+             :url "https://github.com/tumashu/vertico-posframe"))
+(when (display-graphic-p)
+  (setup "vertico-posframe"
+    (setq vertico-posframe-parameters
+          '((left-fringe . 5)
+            (right-fringe . 5)
+            (alpha-background . 90)))
+    (vertico-posframe-mode 1)))
+#+end_src
+
+** Consult
+#+begin_src emacs-lisp
+(ensure 'consult)
+(setup-lazy
+  '(consult-recent-file
+    consult-outline
+    consult-line
+    consult-buffer
+    consult-imenu
+    consult-yank-pop)
+  "consult"
+  (setq consult-preview-key 'any))
+#+end_src
+
+** embark
+#+begin_src emacs-lisp
+(ensure 'embark)
+(ensure 'embark-consult)
+(setup-lazy
+  '(embark-act
+    embark-dwim
+    embark-bindings)
+  "embark"
+  :prepare (setup-keybinds nil
+             "C-." 'embark-act
+             "M-." 'embark-dwim
+             "C-h B" 'embark-bindings)
+  (setup-after "consult"
+    (setup "embark-consult"
+      (setup-hook 'embark-collect-mode-hook
+        'consult-preview-at-point-mode))))
+#+end_src
+
+** Orderless
+#+begin_src emacs-lisp
+(ensure 'orderless)
+(setup-after "orderless"
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+
+** 入力補助
+*** Corfu
+#+begin_src emacs-lisp
+(ensure 'corfu)
+(ensure 'corfu-terminal)
+(ensure 'cape)
+(ensure 'nerd-icons-corfu)
+(!-
+ (setup "corfu"
+   (setup "orderless")
+   (setq corfu-auto t
+         corfu-auto-prefix 2
+         corfu-cycle t
+         corfu-preselect 'prompt
+         corfu-quit-no-match t
+         corfu-quit-at-boundary nil
+         corfu-scroll-margin 2
+         tab-always-indent 'complete)
+
+   (unless (display-graphic-p)
+     (setup "corfu-terminal"
+       (corfu-terminal-mode 1)))
+
+   (setup "corfu-popupinfo"
+     (setup-hook 'corfu-mode-hook #'corfu-popupinfo-mode))
+
+   (setup "nerd-icons-corfu"
+     (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
+   (setup "cape"
+     (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+     (add-to-list 'completion-at-point-functions #'cape-file)
+     (add-to-list 'completion-at-point-functions #'cape-keyword))
+
+   (global-corfu-mode 1)
+
+   (setup-keybinds corfu-map
+     "<tab>" 'corfu-next
+     "<backtab>" 'corfu-prev
+     "<remap> <next-line>" nil
+     "<remap> <prev-line>" nil)))
+#+end_src
+
+*** tempel
+#+begin_src emacs-lisp
+(ensure 'tempel)
+(setup-lazy '(tempel-complete
+              tempel-expand
+              tempel-setup-capf)
+  "tempel"
+  (setup-after "eglot"
+    (setup "eglot-tempel"))
+  (defun tempel-setup-capf ()
+    (setq-local completion-at-point-functions
+                (cons #'tempel-complete
+                      completion-at-point-functions)))
+  (add-hook 'conf-mode-hook #'tempel-setup-capf 90)
+  (add-hook 'prog-mode-hook #'tempel-setup-capf 90)
+  (add-hook 'org-mode-hook #'tempel-setup-capf 90)
+  (add-hook 'text-mode-hook #'tempel-setup-capf 90))
+#+end_src
+
+**** eglot-tempel
+#+begin_src emacs-lisp
+(ensure 'tempel)
+(setup-after "eglot-tempel"
+  (eglot-tempel-mode))
+#+end_src
+** 編集補助
+*** Undo/Redo
+#+begin_src emacs-lisp
+(ensure 'undo-fu)
+(ensure 'vundo)
+(setup-after "vundo"
+  (setq vundo-glyph-alist vundo-unicode-symbols))
+#+end_src
+
+*** Region
+#+begin_src emacs-lisp
+(ensure 'expreg)
+#+end_src
+*** meow
+#+begin_src emacs-lisp
+(ensure 'meow)
+(setup "meow"
+  (setq meow-cursor-type-insert '(bar . 3)
+        meow-use-cursor-position-hack t
+        meow-selection-command-fallback
+        '((meow-change . meow-change-char)
+          (meow-kill . meow-delete)
+          (meow-cancel-selection . keyboard-quit)
+          (meow-pop-selection . meow-pop-grab)
+          (meow-beacon-change . meow-beacon-change-char)))
+  <<meow-thing-register>>
+  <<meow-surround>>
+  <<meow-setup>>
+  (meow-global-mode)
+  )
+#+end_src
+
+**** thingsの追加
+#+name: meow-thing-register
+#+begin_src emacs-lisp :tangle no
+(setq meow-char-thing-table
+      '((?\( . round)
+        (?\[ . square)
+        (?\{ . curly)
+        (?\< . angle)
+        (?` . backquote)
+        (?\' . quote)
+        (?\" . wquote)
+        (?s . line)
+        (?b . buffer)
+        (?g . string)
+        (?p . paragraph)))
+
+(meow-thing-register 'angle
+                     '(pair ("<") (">"))
+                     '(pair ("<") (">")))
+(meow-thing-register 'quote
+                     '(pair ("'") ("'"))
+                     '(pair ("'") ("'")))
+(meow-thing-register 'wquote
+                     '(pair ("\"") ("\""))
+                     '(pair ("\"") ("\"")))
+(meow-thing-register 'backquote
+                     '(pair ("`") ("`"))
+                     '(pair ("`") ("`")))
+(meow-thing-register 'org-md-block
+                   '(regexp "^[ \\|\t]*\\(#\\+begin_\\|```\\)[^\n]*\n" "^[ \\|\t]*\\(#\\+end_[^\n]*\\|```\\)$")
+                   '(regexp "^[ \\|\t]*\\(#\\+begin_\\|```\\)[^\n]*\n" "^[ \\|\t]*\\(#\\+end_[^\n]*\\|```\\)$")
+                   )
+(meow-thing-register 'inline-math
+                     '(pair ("\\(") ("\\)"))
+                     '(pair ("\\(") ("\\)")))
+(meow-thing-register 'display-math
+                     '(pair ("\\[") ("\\]"))
+                     '(pair ("\\[") ("\\]")))
+
+
+(setup-hook 'org-mode-hook
+  (setq-local meow-char-thing-table
+              (cons meow-char-thing-table
+                    '(?o . org-md-block))))
+(setup-hook 'markdown-mode-hook
+  (setq-local meow-char-thing-table
+              (cons meow-char-thing-table
+                    '(?o . org-md-block))))
+#+end_src
+
+#+begin_src emacs-lisp
+(ensure 'meow-tree-sitter)
+(setup "meow-tree-sitter"
+  (meow-tree-sitter-register-defaults))
+#+end_src
+
+**** surround
+#+name: meow-surround
+#+begin_src emacs-lisp :tangle no
+(add-to-list 'insert-pair-alist '(?$ "\\(" "\\)"))
+
+(defun insert-pair-region (start end char)
+  (interactive
+   (list (region-beginning) (region-end)
+         (read-char "Wrapping Char (command): ")))
+  (let* ((pair (or (assoc char insert-pair-alist)
+                   (rassoc (list char) insert-pair-alist)))
+         (open (cond ((and pair (nth 2 pair)) (nth 1 pair))
+                     (pair (nth 0 pair))
+                     (t char)))
+         (close (cond ((and pair (nth 2 pair)) (nth 2 pair))
+                      (pair (nth 1 pair))
+                      (t char))))
+    (save-excursion
+      (goto-char start)
+      (setq start (point-marker))
+      (goto-char end)
+      (setq end (point-marker))
+      (goto-char start)
+      (insert open)
+      (goto-char end)
+      (insert close))
+    (goto-char start)))
+
+(defun meow-surround-squeeze ()
+  (interactive)
+  (let* ((ch (meow-thing-prompt "Delete thing: "))
+         (inner (meow--parse-inner-of-thing-char ch))
+         (outer (meow--parse-bounds-of-thing-char ch)))
+    (delete-region (cdr inner) (cdr outer))
+    (kill-region (car inner) (cdr inner))
+    (delete-region (car outer) (car inner))))
+#+end_src
+
+**** キーバインド
+#+name: meow-setup
+#+begin_src emacs-lisp :tangle no
+(defun meow-setup ()
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+  (meow-motion-overwrite-define-key
+   '("j" . meow-next)
+   '("k" . meow-prev)
+   '(";" . main-hydra/body)
+   '("<escape>" . ignore))
+  (meow-leader-define-key
+   ;; SPC j/k will run the original command in MOTION state.
+   '("j" . "H-j")
+   '("k" . "H-k")
+   ;; Use SPC (0-9) for digit arguments.
+   '("1" . meow-digit-argument)
+   '("2" . meow-digit-argument)
+   '("3" . meow-digit-argument)
+   '("4" . meow-digit-argument)
+   '("5" . meow-digit-argument)
+   '("6" . meow-digit-argument)
+   '("7" . meow-digit-argument)
+   '("8" . meow-digit-argument)
+   '("9" . meow-digit-argument)
+   '("0" . meow-digit-argument)
+   '("/" . meow-keypad-describe-key)
+   '("?" . meow-cheatsheet))
+  (meow-normal-define-key
+   '("0" . meow-expand-0)
+   '("9" . meow-expand-9)
+   '("8" . meow-expand-8)
+   '("7" . meow-expand-7)
+   '("6" . meow-expand-6)
+   '("5" . meow-expand-5)
+   '("4" . meow-expand-4)
+   '("3" . meow-expand-3)
+   '("2" . meow-expand-2)
+   '("1" . meow-expand-1)
+   '("-" . meow-reverse)
+
+   ;; basic
+   '("h" . meow-left)
+   '("j" . meow-next)
+   '("k" . meow-prev)
+   '("l" . meow-right)
+
+   '("H" . meow-left-expand)
+   '("J" . meow-next-expand)
+   '("K" . meow-prev-expand)
+   '("L" . meow-right-expand)
+
+   '("i" . meow-insert)
+   '("I" . meow-open-above)
+   '("a" . meow-append)
+   '("A" . meow-open-below)
+   '("q" . meow-quit)
+
+   ;; selection
+   '("v" . meow-line)
+   '("V" . set-mark-command)
+
+   '("o" . expreg-expand)
+   '("m" . meow-join)
+
+   '("e" . meow-next-word)
+   '("E" . meow-next-symbol)
+   '("b" . meow-back-word)
+   '("B" . meow-back-symbol)
+   '("w" . meow-mark-word)
+   '("W" . meow-mark-symbol)
+
+   '("," . meow-inner-of-thing)
+   '("." . meow-bounds-of-thing)
+   '("<" . meow-beginning-of-thing)
+   '(">" . meow-end-of-thing)
+
+   '("g" . meow-grab)
+   '("G" . meow-cancel-selection)
+
+   '("t" . meow-find)
+   '("T" . meow-till)
+
+   ;; editing
+   '("d" . meow-kill)
+   '("c" . meow-change)
+   '("v" . meow-yank)
+   '("V" . consult-yank-pop)
+
+   '("r" . meow-replace)
+   '("R" . meow-swap-grab)
+
+   '("p" . meow-yank)
+   '("P" . consult-yank-pop)
+   '("y" . meow-save)
+   '("Y" . meow-save-clipboard)
+
+   '("u" . undo-fu-only-undo)
+   '("U" . undo-fu-only-redo)
+
+   '("=" . indent-region)
+
+   '("se" . insert-pair-region)
+   '("sd" . meow-surround-squeeze)
+
+   ;; command
+   '("/" . consult-line)
+   '(";" . main-hydra/body)
+   '("ss" . major-mode-hydra)
+   '("n" . vertico-repeat)
+   '("f" . avy-goto-word-1)
+   '("F" . avy-hydra/body)
+   ;; ignore escape
+   '("<escape>" . ignore)))
+(meow-setup)
+#+end_src
+** キーバインドおたすけ
+*** which-key
+#+begin_src emacs-lisp
+(ensure 'which-key)
+(!-
+ (setup "which-key"
+   (setq which-key-idle-delay 0.5
+         which-key-show-early-on-C-h t)))
+#+end_src
+*** Hydra
+#+begin_src emacs-lisp
+(ensure 'hydra)
+(ensure 'major-mode-hydra)
+#+end_src
+
+** Footer
+#+begin_src emacs-lisp
+(provide 'init)
+#+end_src

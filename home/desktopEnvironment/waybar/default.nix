@@ -57,13 +57,13 @@
           tooltip-format = "{volume}% {icon} | {desc}";
           format-muted = "󰖁";
           format-icons = {
-            headphones = "󰋌";
+            headphone = "󰋌";
             handsfree = "󰋌";
             headset = "󰋌";
             phone = "";
             portable = "";
             car = " ";
-            DEFAULT_SINK = [
+            default = [
               "󰕿"
               "󰖀"
               "󰕾"

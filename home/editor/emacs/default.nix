@@ -12,6 +12,10 @@
     extraPackages = (epkgs: [
       epkgs.vterm
       epkgs.pdf-tools
+      (pkgs.callPackage ./setup.nix {
+        inherit (pkgs) fetchFromGitHub;
+        inherit (epkgs) trivialBuild;
+      })
     ]);
   };
   home.file.".emacs.d/init.el".source = ./init.el;

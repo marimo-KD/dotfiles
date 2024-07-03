@@ -12,7 +12,6 @@
     ];
   };
   programs.home-manager.enable = true;
-  catppuccin.flavour = "frappe";
   imports = [
     ../editor
     ../desktopEnvironment
