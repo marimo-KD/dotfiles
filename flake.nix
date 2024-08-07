@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager = {
@@ -17,7 +18,7 @@
     catppuccin.url = "github:catppuccin/nix";
   };
 
-  outputs = inputs@{self, nixpkgs, nix-darwin, home-manager, ...} : {
+  outputs = inputs@{self, nixpkgs, nixpkgs-stable, nix-darwin, home-manager, ...} : {
     nixosConfigurations = {
       monix = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -25,6 +26,13 @@
           inherit inputs;
         };
         modules = [
+          ({...}: {
+            nixpkgs.overlays = [
+              (final: prev: {
+                wireplumber = nixpkgs-stable.legacyPackages.${prev.system}.wireplumber;
+              })
+            ];
+          })
           inputs.musnix.nixosModules.musnix
           ./hosts/monix
         ];

@@ -13,11 +13,11 @@
       extraPortals = [
         pkgs.xdg-desktop-portal-hyprland
         pkgs.xdg-desktop-portal-gtk
-        (import ./emacs-portal.nix { inherit pkgs; })
+        # (import ./emacs-portal.nix { inherit pkgs; })
       ];
       config.common = {
         default = ["gtk"];
-        "org.freedesktop.impl.portal.FileChooser" = "emacs";
+        # "org.freedesktop.impl.portal.FileChooser" = "emacs";
       };
     };
   };
