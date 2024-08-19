@@ -47,7 +47,8 @@ in {
       ddskk-posframe
       org-nix-shell
       org-roam
-      vulpea
+      org-roam-ql
+      org-roam-ql-ql
       org-modern
       org-superstar
       org-ql

@@ -1407,6 +1407,7 @@ LaTeXのExportまわりの設定
 #+end_src
 *** Org-roam
 https://jethrokuan.github.io/org-roam-guide/
+https://magnus.therning.org/2021-07-23-keeping-todo-items-in-org-roam-v2.html
 #+begin_src emacs-lisp
 (ensure 'org-roam)
 (setup-lazy '(org-roam-node-find
@@ -1419,26 +1420,26 @@ https://jethrokuan.github.io/org-roam-guide/
         org-roam-completion-functions '()
         org-roam-verbose nil
         org-roam-node-display-template
-          (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag))
+        (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag))
         org-roam-capture-templates
-          '(("m" "main" plain
-             "%?"
-             :if-new (file+head "main/%<%Y%m%d%H%M%S>-${slug}.org"
-                                "#+title: ${title}\n")
-             :immediate-finish t
-             :unnarrowed t)
-            ("r" "reference" plain "%?"
-             :if-new
-             (file+head "reference/%<%Y%m%d%H%M%S>-${title}.org"
-                        "#+title: ${title}\n")
-             :immediate-finish t
-             :unnarrowed t)
-            ("a" "article" plain "%?"
-             :if-new
-             (file+head "article/%<%Y%m%d%H%M%S>-${title}.org"
-                        "#+title: ${title}\n#+filetags: :article:\n")
-             :immediate-finish t
-             :unnarrowed t)))
+        '(("m" "main" plain
+           "%?"
+           :if-new (file+head "main/%<%Y%m%d%H%M%S>-${slug}.org"
+                              "#+title: ${title}\n")
+           :immediate-finish t
+           :unnarrowed t)
+          ("r" "reference" plain "%?"
+           :if-new
+           (file+head "reference/%<%Y%m%d%H%M%S>-${title}.org"
+                      "#+title: ${title}\n")
+           :immediate-finish t
+           :unnarrowed t)
+          ("a" "article" plain "%?"
+           :if-new
+           (file+head "article/%<%Y%m%d%H%M%S>-${title}.org"
+                      "#+title: ${title}\n#+filetags: :article:\n")
+           :immediate-finish t
+           :unnarrowed t)))
   (cl-defmethod org-roam-node-type ((node org-roam-node))
     "Return the TYPE of NODE."
     (condition-case nil
@@ -1447,13 +1448,52 @@ https://jethrokuan.github.io/org-roam-guide/
           (file-name-directory
            (file-relative-name (org-roam-node-file node) org-roam-directory))))
       (error "")))
+  ;; Update tags for TODO
+  (defun my/roam-get-filetags ()
+    (split-string (or (org-roam-get-keyword "filetags") "")))
+
+  (defun my/roam-add-filetag (tag)
+    (let* ((new-tags (cons tag (my/roam-get-filetags)))
+           (new-tags-str (combine-and-quote-strings new-tags)))
+      (org-roam-set-keyword "filetags" new-tags-str)))
+
+  (defun my/roam-del-filetag (tag)
+    (let* ((new-tags (seq-difference (my/roam-get-filetags) `(,tag)))
+           (new-tags-str (combine-and-quote-strings new-tags)))
+      (org-roam-set-keyword "filetags" new-tags-str)))
+
+  (defun my/roam-todo-p ()
+    "Return non-nil if current buffer has any TODO entry.
+     TODO entries marked as done are ignored, meaning the this
+     function returns nil if current buffer contains only completed
+     tasks."
+    (org-element-map
+        (org-element-parse-buffer 'headline)
+        'headline
+      (lambda (h)
+        (eq (org-element-property :todo-type h)
+            'todo))
+      nil 'first-match))
+
+  (defun my/roam-update-todo-tag ()
+    "Update TODO tag in the current buffer."
+    (when (and (not (active-minibuffer-window))
+               (org-roam-file-p))
+      (org-with-point-at 1
+        (let* ((tags (my/roam-get-filetags))
+               (is-todo (my/roam-todo-p)))
+          (cond ((and is-todo (not (seq-contains-p tags "TODO")))
+                 (my/roam-add-filetag "TODO"))
+                ((and (not is-todo) (seq-contains-p tags "TODO"))
+                 (my/roam-del-filetag "TODO")))))))
+  (add-hook 'find-file-hook #'my/roam-update-todo-tag)
+  (add-hook 'before-save-hook #'my/roam-update-todo-tag)
   (org-roam-db-autosync-mode t))
 #+end_src
 
 **** vulpea
 どうやらvulpeaがらみでdbの同期が死んだ
-とりあえず使うのをやめてみる
-そうすると次のやつも使えないことになるので
+使うのをやめる
 #+begin_src emacs-lisp :tangle no
 (ensure 'vulpea)
 (setup-lazy '(vulpea-db-autosync-mode) "vulpea"
@@ -1462,6 +1502,7 @@ https://jethrokuan.github.io/org-roam-guide/
 
 org-roamのファイルからTODOがあるやつだけ抜き出してagenda-filesにする
 https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
+別にvulpea依存無くせそう
 #+begin_src emacs-lisp :tangle no
 (setup-lazy '(vulpea-agenda-files-update) "vulpea"
   (setup "vulpea-buffer")
@@ -1533,8 +1574,20 @@ https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
 
 #+end_src
 
-**** TODO org-roam-ql
-vulpeaのせいでroamが死ぬっぽいので別の策としてorg-roam-qlを使ってみる
+**** org-roam-ql
+#+begin_src emacs-lisp
+(ensure 'org-roam-ql)
+(ensure 'org-roam-ql-ql)
+(setup-lazy '(my/roam-update-agenda-files
+              org-roam-ql-search
+              org-roam-ql-nodes
+              org-roam-ql-agenda-block
+              org-roam-ql-nodes-files)
+  "org-roam-ql"
+  :prepare (advice-add 'org-agenda :before #'my/roam-update-agenda-files)
+  (defun my/roam-update-agenda-files ()
+    (setq org-agenda-files (org-roam-ql-nodes-files '(tags "TODO")))))
+#+end_src
 
 *** Org-modern
 使ってたけど、あんまり使い勝手がよくないかもなのでやめてorg-bulletだけつかう
@@ -1574,9 +1627,7 @@ org-bulletはもう古くて、superstarをつかうらしい
 #+begin_src emacs-lisp
 (setup-after "org-agenda"
   (setq org-agenda-span 'week
-        org-log-done 'time)
-  (setup-after "org"
-    (advice-add 'org-agenda :before #'vulpea-agenda-files-update)))
+        org-log-done 'time))
 #+end_src
 
 基本Org-qlを使う はやいので
