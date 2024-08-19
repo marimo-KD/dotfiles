@@ -26,14 +26,14 @@
   };
   gtk = {
     enable = true;
-    catppuccin = {
-      enable = true;
-      size = "standard";
-      tweaks = [ "normal" ];
-      icon = {
-        enable = true;
-      };
-    };
+    # catppuccin = {
+    #   enable = true;
+    #   size = "standard";
+    #   tweaks = [ "normal" ];
+    #   icon = {
+    #     enable = true;
+    #   };
+    # };
   };
   catppuccin.pointerCursor.enable = true;
   services.mako = {
@@ -59,12 +59,12 @@
     mako # notification
     pavucontrol # pipewire control gui
     slurp # screenshot
-    swaybg # background
+    # swaybg # background
     wl-clipboard # clipboard
     xdg-utils
-    # zathura # pdf viewer
+    zathura # pdf viewer
     # apvlv # pdf viewer
-    evince # pdf viewer
-    rnote # stylus note taking
+    # evince # pdf viewer
+    # rnote # stylus note taking
   ];
 }

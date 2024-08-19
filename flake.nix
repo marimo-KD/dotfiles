@@ -26,13 +26,6 @@
           inherit inputs;
         };
         modules = [
-          ({...}: {
-            nixpkgs.overlays = [
-              (final: prev: {
-                wireplumber = nixpkgs-stable.legacyPackages.${prev.system}.wireplumber;
-              })
-            ];
-          })
           inputs.musnix.nixosModules.musnix
           ./hosts/monix
         ];
