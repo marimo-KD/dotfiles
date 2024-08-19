@@ -91,7 +91,7 @@
           ./home/darwin
           inputs.catppuccin.homeManagerModules.catppuccin
           {
-            catppuccin.flavour = "frappe";
+            catppuccin.flavor = "frappe";
             catppuccin.accent = "pink";
           }
         ];

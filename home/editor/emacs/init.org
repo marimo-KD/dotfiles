@@ -132,6 +132,8 @@ load-pathが結構大きいのでワンチャン効果があるかもしれな�
 #+end_src
 
 ** setup.el
+コンパイル環境のチェックが入るとNixでコンパイルした時怒られが発生するので止める
+
 #+begin_src emacs-lisp
 (eval-when-compile
   (require 'cl-lib)
@@ -258,6 +260,7 @@ load-pathが結構大きいのでワンチャン効果があるかもしれな�
 #+end_src
 
 ** tramp
+NixOSのためにpathを追加する
 #+begin_src emacs-lisp
 (setup-after "tramp"
   (setq tramp-default-method "scpx")
