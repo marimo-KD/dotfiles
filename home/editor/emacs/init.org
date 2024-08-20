@@ -1137,10 +1137,7 @@ LaTeX数式のプレビューのときのヘッダー
 (setup-after "ob"
   (add-to-list 'org-babel-default-header-args
                '(:output-dir . (lambda () (org-attach-dir nil t))))
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((gnuplot . t)
-     (C . t)))
+  <<babel-lazy-loading-2>>
   <<babel-tangle>>
   <<babel-fix-hash>>
   )
@@ -1250,6 +1247,60 @@ https://misohena.jp/blog/2022-08-16-reduce-org-mode-startup-time-org-babel.html
   (apply original-fun args))
 #+end_src
 
+**** COMMENT Org-babelの遅延ロードその2
+doom-emacsからパクってくる
+#+name: babel-lazy-loading-2
+#+begin_src emacs-lisp :tangle no
+(defvar my/org-babel-languages-alist
+  '((c . C)
+    (cpp . C)
+    (C++ . C)
+    (elisp . emacs-lisp)
+    (sh . shell)
+    (bash . shell)))
+
+(defun my/org-babel-lazy-load (lang &optional async)
+  (cl-check-type lang (or symbol null))
+  (unless (cdr (assq lang org-babel-load-languages))
+    (when async
+      ;; ob-async has its own agenda for lazy loading packages (in the child
+      ;; process), so we only need to make sure it's loaded.
+      (require 'ob-async nil t))
+    (prog1 (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
+               (require (intern (format "ob-%s" lang)) nil t)
+               (require lang nil t))
+      (add-to-list 'org-babel-load-languages (cons lang t)))))
+
+(defun my/org-export-lazy-load-library-h (&optional element)
+  "Lazy load a babel package when a block is executed during exporting."
+  (my/org-babel-lazy-load-library-a (org-babel-get-src-block-info nil element)))
+
+(advice-add #'org-babel-exp-src-block :before #'my/org-export-lazy-load-library-h)
+
+(defun my/org-src-lazy-load-library-a (lang)
+  "Lazy load a babel package to ensure syntax highlighting."
+  (or (cdr (assoc lang org-src-lang-modes))
+      (my/org-babel-lazy-load lang)))
+
+(advice-add #'org-src--get-lang-mode :before #'my/org-src-lazy-load-library-a)
+
+;; This also works for tangling
+(defun my/org--babel-lazy-load-library-a (info)
+  "Load babel libraries lazily when babel blocks are executed."
+  (let* ((lang (nth 0 info))
+         (lang (cond ((symbolp lang) lang)
+                     ((stringp lang) (intern lang))))
+         (lang (or (cdr (assq lang +org-babel-mode-alist))
+                   lang)))
+    (my/org-babel-lazy-load
+     lang (and (not (assq :sync (nth 2 info)))
+               (assq :async (nth 2 info))))
+    t))
+
+(advice-add #'org-babel-confirm-evaluate :after-while #'my/org-babel-lazy-load-library-a)
+
+(advice-add #'org-babel-do-load-languages :override #'ignore)
+#+end_src
 **** Tangle/Detangleで対応する箇所を行き来できるように
 https://github.com/gmoutso/dotemacs/blob/master/lisp/tanglerc.el
 
@@ -2025,8 +2076,12 @@ GrammarはNixでインストールされるのでtreesit-autoは御役御免
 *** Gnuplot
 #+begin_src emacs-lisp
 (ensure 'gnuplot-mode)
-(setup-lazy '(gnuplot-mode) "gnuplot-mode"
-  :prepare (add-to-list 'auto-mode-alist '("\\.plt\\'" . gnuplot-mode)))
+(setup-lazy '(gnuplot-mode) "gnuplot"
+  :prepare
+  (progn
+    (add-to-list 'auto-mode-alist '("\\.plt\\'" . gnuplot-mode))
+    (add-to-list 'auto-mode-alist '("\\.gp\\'" . gnuplot-mode)))
+  (setup "gnuplot-context"))
 #+end_src
 
 *** SATySFi
