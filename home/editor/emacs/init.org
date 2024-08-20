@@ -16,7 +16,11 @@ CLOSED: [2024-07-03 Wed 06:02]
 コンパイル時計算を使う!
 [[https://github.com/zk-phi/setup]]
 
-** TODO zk-phi/setupの改善
+** DONE zk-phi/setupの改善
+CLOSED: [2024-08-20 Tue 17:29]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2024-08-20 Tue 17:29]
+:END:
 init.el内のrequireを全部パスを解決したloadに変換してくれているが、
 これだとelnを読んでくれていない
 setup--locate-libraryがやってるので、こいつを書きかえればいい
@@ -26,7 +30,6 @@ comp-el-to-eln-filenameが良さそうか？
 自前でnative-comp-eln-load-pathとcomp-native-version-dirを使って読むしかないかも
 comp-lookup-elnとlocate-libraryを組み合わせればよさそう
 comp-lookup-elnは.elじゃないとだめっぽいのでlocate-libraryでとってきたやつが.elcならcを消す
-
 
 ** DONE コンパイルを使った高速化
 - State "DONE"       from "TODO"       [2024-07-18 Thu 10:24]
@@ -141,7 +144,14 @@ load-pathが結構大きいのでワンチャン効果があるかもしれな�
         ;; setup-use-load-history-tracker t
         setup-delay-interval 0.5
         setup-disable-magic-file-name t)
-  (defmacro setup--checkenv ()))
+  (defmacro setup--checkenv ())
+  (defun my/setup--locate-library (file)
+    (unless (member file setup--simulated-absent-libraries)
+      (or (let ((el-file (locate-library (concat file ".el"))))
+            (when el-file
+              (comp-lookup-eln el-file)))
+          (locate-library file))))
+  (advice-add #'setup--locate-library :override #'my/setup--locate-library))
 (setup-initialize)
 #+end_src
 
