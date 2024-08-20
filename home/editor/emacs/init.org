@@ -317,7 +317,7 @@ ligature.elでworkaroundする
 ef-themesをつかう
 #+begin_src emacs-lisp
 (ensure 'ef-themes)
-(setup "ef-themes"
+(setup "ef-themes-autoloads"
   (setq ef-themes-mixed-fonts nil
         ef-themes-variable-pitch-ui nil)
   (load-theme 'ef-melissa-light t))
@@ -1939,11 +1939,13 @@ dirvish.elのdirvish-override-dired-modeを引っぱってきて遅延ロード�
 なんかキラーアプリらしいけどうまく使えてない
 #+begin_src emacs-lisp
 (ensure 'magit)
+(setup-lazy '(magit) "magit")
 #+end_src
 
 *** auto-commit
 今はOrgのリポジトリでだけ使っている
-#+begin_src emacs-lisp
+もう使ってない
+#+begin_src emacs-lisp :tangle no
 (ensure 'git-auto-commit-mode)
 (setup-after "git-auto-commit-mode"
   (setq gac-automatically-add-new-files-p t)
