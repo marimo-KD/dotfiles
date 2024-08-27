@@ -375,7 +375,7 @@ nerd-iconsを採用
     (nerd-icons-completion-mode)
     (setup-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)))
 #+end_src
-*** pixel-scroll
+*** pixeL-scroll
 #+begin_src emacs-lisp
 (!-
  (setup "pixel-scroll"
@@ -467,7 +467,8 @@ vertico-mode
              (advice-add 'completing-read-multiple :around 'vertico--advice))
   (setq vertico-cycle t)
 
-  (setup "orderless")
+  ;;(setup "orderless")
+  (setup "hotfuzz")
   (setup "savehist")
   (setup "marginalia" (marginalia-mode))
 
@@ -555,7 +556,20 @@ vertico-mode
 (setup-after "orderless"
   (setq completion-styles '(orderless basic)
         completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion)))))
+        completion-category-overrides '((file (styles partial-completion))
+                                        (eglot (styles orderless))
+                                        (eglot-capf (styles orderless)))))
+#+end_src
+
+** Hotfuzz
+#+begin_src emacs-lisp
+(ensure 'hotfuzz)
+(setup-after "hotfuzz"
+  (setq completion-styles '(hotfuzz)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion))
+                                        (eglot (styles hotfuzz))
+                                        (eglot-capf (styles hotfuzz)))))
 #+end_src
 
 ** 入力補助
@@ -567,15 +581,16 @@ vertico-mode
 (ensure 'nerd-icons-corfu)
 (!-
  (setup "corfu"
-   (setup "orderless")
+   ;; (setup "orderless")
+   (setup "hotfuzz")
    (setq corfu-auto t
          corfu-auto-prefix 2
          corfu-cycle t
          corfu-preselect 'prompt
          corfu-quit-no-match t
-         corfu-quit-at-boundary nil
+         corfu-quit-at-boundary t
          corfu-scroll-margin 2
-         tab-always-indent 'complete)
+         tab-always-indent t)
 
    (unless (display-graphic-p)
      (defvar corfu-terminal-mode nil)
@@ -589,11 +604,12 @@ vertico-mode
      (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
    (setup "cape"
-     (setup "cape-keyword"
-       (setq-default completion-at-point-functions
-                     '(cape-dabbrev
-                       cape-file
-                       cape-keyword))))
+     (setup "cape-keyword")
+     (setq cape-dabbrev-check-other-buffers #'cape--buffers-major-mode)
+     (setq-default completion-at-point-functions
+                   '(cape-dabbrev
+                     cape-file
+                     cape-keyword)))
 
    (global-corfu-mode 1)
 
@@ -621,11 +637,12 @@ vertico-mode
         (setq-local completion-at-point-functions
                     (cons #'tempel-complete
                           completion-at-point-functions))))
-    (add-hook 'after-change-major-mode-hook #'tempel-setup-capf 90)
-    )
+    (add-hook 'after-change-major-mode-hook #'tempel-setup-capf 90))
+  (setup-keybinds tempel-map
+    "<tab>" 'tempel-next
+    "<backtab>" 'tempel-previous)
   (setup-after "eglot"
-    (setup "eglot-tempel"))
-  )
+    (setup "eglot-tempel")))
 #+end_src
 
 **** eglot-tempel
@@ -648,6 +665,7 @@ vertico-mode
 *** Region
 #+begin_src emacs-lisp
 (ensure 'expreg)
+(setup-lazy '(expreg-expand) "expreg")
 #+end_src
 *** meow
 #+begin_src emacs-lisp
@@ -967,6 +985,7 @@ vertico-mode
       ("n" org-roam-node-find "Roam node"))
      "Tool"
      (("u" vundo "Undo Tree")
+      ("g" magit "Magit")
       ("v" vterm "Terminal")
       ("m" major-mode-hydra "Major Hydra"))))
   (setup-expecting "avy"
@@ -1825,10 +1844,7 @@ Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせ�
                        #'tempel-complete
                        #'eglot-completion-at-point
                        #'cape-file))))
-  (setup-hook 'eglot-managed-mode-hook 'my/eglot-capf)
-  (setup-after "orderless"
-    (setq completion-category-overrides '((eglot (styles orderless))
-                                          (eglot-capf (styles orderless))))))
+  (setup-hook 'eglot-managed-mode-hook 'my/eglot-capf))
 
 #+end_src
 

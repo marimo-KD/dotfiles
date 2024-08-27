@@ -28,6 +28,7 @@ in {
       embark
       embark-consult
       orderless
+      hotfuzz
       corfu
       corfu-terminal
       cape
