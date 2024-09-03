@@ -968,6 +968,7 @@ vertico-mode
      "Tool"
      (("u" vundo "Undo Tree")
       ("v" vterm "Terminal")
+      ("g" magit "Magit")
       ("m" major-mode-hydra "Major Hydra"))))
   (setup-expecting "avy"
     (pretty-hydra-define avy-hydra
@@ -1006,7 +1007,9 @@ vertico-mode
               avy-goto-line
               avy-resume) "avy")
 #+end_src
-*** Ace-window
+*** TODO Ace-window
+https://karthinks.com/software/emacs-window-management-almanac
+これ見て良い感じにしたい
 #+begin_src emacs-lisp
 (ensure 'ace-window)
 (setup-lazy '(ace-window) "ace-window"
