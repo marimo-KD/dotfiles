@@ -1093,6 +1093,9 @@ https://karthinks.com/software/emacs-window-management-almanac
   (setq skk-dcomp-multiple-activate t)
   (setq skk-azik-keyboard-type 'us101)
   (setq skk-use-azik t)
+  (setq skk-azik-keyboard-type (!cond
+                                ((equal window-system 'pgtk) 'us101)
+                                (t 'jp106)))
   (setq skk-rom-kana-rule-list
         '(("q" nil skk-toggle-characters)
           ("!" nil skk-purge-from-jisyo)
