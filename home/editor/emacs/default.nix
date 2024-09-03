@@ -28,7 +28,9 @@ in {
       embark
       embark-consult
       orderless
-      hotfuzz
+      prescient
+      corfu-prescient
+      # hotfuzz
       corfu
       corfu-terminal
       cape

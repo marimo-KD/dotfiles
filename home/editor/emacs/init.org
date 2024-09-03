@@ -59,6 +59,9 @@ https://misohena.jp/blog/2022-12-26-fast-locate-library-on-nt-emacs.html
 この辺を参考にrequireを高速化する？
 Nixでelispをインストールするとsite-lispに全部入って、subdirs.elでload-pathに追加される
 load-pathが結構大きいのでワンチャン効果があるかもしれない
+** LaTeXの入力高速化を考える
+https://karthinks.com/software/latex-input-for-impatient-scholars/
+https://www.reddit.com/r/emacs/comments/g8ecpj/comment/foo64ge/
 
 * early-init.el
 :PROPERTIES:
@@ -467,8 +470,8 @@ vertico-mode
              (advice-add 'completing-read-multiple :around 'vertico--advice))
   (setq vertico-cycle t)
 
-  ;;(setup "orderless")
-  (setup "hotfuzz")
+  (setup "orderless")
+  ;;(setup "hotfuzz")
   (setup "savehist")
   (setup "marginalia" (marginalia-mode))
 
@@ -572,6 +575,14 @@ vertico-mode
                                         (eglot-capf (styles hotfuzz)))))
 #+end_src
 
+** Prescient
+#+begin_src emacs-lisp
+(ensure 'prescient)
+(ensure 'corfu-prescient)
+(setup-after "precient"
+  (prescient-persist-mode t))
+#+end_src
+
 ** 入力補助
 *** Corfu
 #+begin_src emacs-lisp
@@ -581,8 +592,8 @@ vertico-mode
 (ensure 'nerd-icons-corfu)
 (!-
  (setup "corfu"
-   ;; (setup "orderless")
-   (setup "hotfuzz")
+   (setup "orderless")
+   ;;(setup "hotfuzz")
    (setq corfu-auto t
          corfu-auto-prefix 2
          corfu-cycle t
@@ -591,6 +602,10 @@ vertico-mode
          corfu-quit-at-boundary t
          corfu-scroll-margin 2
          tab-always-indent t)
+
+   (setup "corfu-prescient"
+     (setq corfu-prescient-enable-filtering nil)
+     (corfu-prescient-mode t))
 
    (unless (display-graphic-p)
      (defvar corfu-terminal-mode nil)
