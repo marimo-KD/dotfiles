@@ -56,7 +56,7 @@
   users.users.marimo = {
     isNormalUser = true;
     description = "marimo";
-    extraGroups = [ "audio" "networkmanager" "wheel" "scanner" "lp" "libvirtd"];
+    extraGroups = [ "audio" "networkmanager" "wheel" "scanner" "lp" "libvirtd" "gamemode"];
     packages = with pkgs; [];
   };
 
@@ -90,7 +90,14 @@
     };
     gamemode = {
       enable = true;
+      enableRenice = true;
       settings = {
+        general = {
+          renice = 10;
+          inhibit_screensaver = 0;
+          disable_splitlock = 1;
+          softrealtime = "auto";
+        };
         gpu = {
           #apply_gpu_optimisations = 0;
           apply_gpu_optimisations = "accept-responsibility";
