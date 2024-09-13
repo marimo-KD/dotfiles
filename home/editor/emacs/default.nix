@@ -1,6 +1,5 @@
 {pkgs, config, ...}: let
-  init-el = import ./init-el.nix {inherit pkgs;
-                                  emacs = config.programs.emacs.finalPackage; };
+  init-el = pkgs.callPackage ./init-el.nix { emacs = config.programs.emacs.finalPackage; };
   fetchFromGitHub = pkgs.fetchFromGitHub;
 in {
   programs.emacs = {
@@ -46,6 +45,7 @@ in {
       major-mode-hydra
       avy
       ace-window
+      migemo
       ddskk
       ddskk-posframe
       org-nix-shell
@@ -196,6 +196,16 @@ in {
           hash = "sha256-7NY0Au5GUJnHXEw7VAmVrHb587+nwcnvFmrubE0I1lA=";
         };
       })
+      (trivialBuild {
+        pname = "org-src-context";
+        version = "2024-02-20";
+        src = fetchFromGitHub {
+          owner = "karthink";
+          repo = "org-src-context";
+          rev = "625fc800950ed16dbf77c666e5129087b2315e2a";
+          hash = "sha256-znfBXCWpooZTOMuP4ap2wjUsSpaz41NS2h9YSdgZacQ=";
+        };
+      })
       (pkgs.callPackage ./setup.nix {
         inherit (pkgs) fetchFromGitHub;
         inherit (epkgs) trivialBuild;
@@ -206,6 +216,7 @@ in {
   home.file.".emacs.d/init.elc".source = "${init-el}/share/emacs/init.elc";
   home.file.".emacs.d/early-init.el".source = "${init-el}/share/emacs/early-init.el";
   home.packages = with pkgs; [
+    cmigemo
     emacs-lsp-booster
     graphviz
     sqlite

@@ -54,6 +54,8 @@ Dashboardを使うとOrgを読むので起動が遅い
 
 ** Window Almanac
 https://qiita.com/ayatakesi/items/8e5824c5622c59c6946c
+https://karthinks.com/software/emacs-window-management-almanac
+
 ** CANCELED Load-pathのコンパイル時解決
 https://misohena.jp/blog/2022-12-26-fast-locate-library-on-nt-emacs.html
 この辺を参考にrequireを高速化する？
@@ -62,6 +64,14 @@ load-pathが結構大きいのでワンチャン効果があるかもしれな�
 ** LaTeXの入力高速化を考える
 https://karthinks.com/software/latex-input-for-impatient-scholars/
 https://www.reddit.com/r/emacs/comments/g8ecpj/comment/foo64ge/
+** Avyをもっと
+単に移動するだけでなく
+あとはmigemoも付けないとね
+https://emacs-jp.github.io/tips/avy-can-do-anything
+
+** Embarkを使えるようにする
+Embarkをとりあえず叩くぐらいまで手に馴染ませる
+https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
 
 * early-init.el
 :PROPERTIES:
@@ -557,11 +567,24 @@ vertico-mode
 #+begin_src emacs-lisp
 (ensure 'orderless)
 (setup-after "orderless"
+  (defun orderless-migemo (component)
+    (setup "migemo")
+    (let ((pattern (migemo-get-pattern component)))
+      (condition-case nil
+          (progn (string-match-p pattern "") pattern)
+        (invalid-regexp nil))))
+
+  (orderless-define-completion-style orderless-migemo-style
+    (orderless-matching-styles '(orderless-literal
+                                 orderless-regexp
+                                 orderless-migemo)))
+
   (setq completion-styles '(orderless basic)
         completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion))
+        completion-category-overrides '((file (styles orderless-migemo-style))
                                         (eglot (styles orderless))
-                                        (eglot-capf (styles orderless)))))
+                                        (eglot-capf (styles orderless))
+                                        (org-roam-node (styles orderless-migemo-style)))))
 #+end_src
 
 ** Hotfuzz
@@ -954,7 +977,7 @@ vertico-mode
    '(";" . main-hydra/body)
    '("ss" . major-mode-hydra)
    '("n" . vertico-repeat)
-   '("f" . avy-goto-char-timer)
+   '("f" . avy-goto-migemo-char-timer)
    '("F" . avy-hydra/body)
    ;; ignore escape
    '("<escape>" . ignore)))
@@ -980,10 +1003,6 @@ vertico-mode
               org-hydra/body)
   "hydra"
   (setup "major-mode-hydra")
-  (defun my/ace-window-always-dispatch ()
-    (interactive)
-    (let ((aw-dispatch-always t))
-      (call-interactively 'ace-window)))
   (pretty-hydra-define main-hydra
     (:separator "=" :title "Main" :foreign-keys warn :quit-key "q" :exit t)
     ("File"
@@ -993,7 +1012,7 @@ vertico-mode
      "Window"
      (("b" consult-buffer "Buffer")
       ("d" delete-other-windows "Only")
-      ("w" my/ace-window-always-dispatch "Ace Window"))
+      ("w" ace-window "Ace Window"))
      "Org"
      (("o" org-hydra/body "Org")
       ("a" my/org-agenda "Agenda")
@@ -1039,7 +1058,30 @@ vertico-mode
               avy-goto-word-1
               avy-goto-word-0
               avy-goto-line
-              avy-resume) "avy")
+              avy-resume
+              avy-goto-migemo-char-timer)
+  "avy"
+  (defun avy-goto-migemo-char-timer (&optional arg)
+    (interactive "P")
+    (setup "migemo")
+    (let ((avy-all-windows (if arg
+                               (not avy-all-windows)
+                             avy-all-windows)))
+      (avy-with avy-goto-migemo-char-timer
+        (setq avy--old-cands (avy--read-candidates #'migemo-get-pattern))
+        (avy-process avy--old-cands))))
+  (add-to-list 'avy-styles-alist '(avy-goto-migemo-char-timer . pre))
+  (defun avy-action-embark (pt)
+    (setup "embark")
+    (unwind-protect
+        (save-excursion
+          (goto-char pt)
+          (embark-act))
+      (select-window
+       (cdr (ring-ref avy-ring 0))))
+    t)
+  (setf (alist-get ?. avy-dispatch-alist) 'avy-action-embark)
+  )
 #+end_src
 *** TODO Ace-window
 https://karthinks.com/software/emacs-window-management-almanac
@@ -1047,9 +1089,21 @@ https://karthinks.com/software/emacs-window-management-almanac
 #+begin_src emacs-lisp
 (ensure 'ace-window)
 (setup-lazy '(ace-window) "ace-window"
-  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
+        aw-dispatch-always t))
 #+end_src
-
+** migemo
+#+begin_src emacs-lisp
+(ensure 'migemo)
+(setup-after "migemo"
+  (setq migemo-command "cmigemo"
+        migemo-options '("-q" "--emacs")
+        migemo-dictionary "@cmigemo@/share/migemo/utf-8/migemo-dict"
+        migemo-user-dictionary nil
+        migemo-regex-dictionary nil
+        migemo-coding-system 'utf-8-unix)
+  (migemo-init))
+#+end_src
 ** SKK
 #+begin_src emacs-lisp
 (ensure 'ddskk)
@@ -1264,6 +1318,14 @@ LaTeX数式のプレビューのときのヘッダー
         org-src-tab-acts-natively t
         org-src-preserve-indentation t
         org-edit-src-content-indentation 0))
+#+end_src
+**** org-src-context
+org-srcでLSPを使えるようにする
+#+begin_src emacs-lisp
+(ensure-vc '(org-src-context :url "https://github.com/karthink/org-src-context"))
+(setup-after "org-src"
+  (setup "org-src-context"
+    (org-src-context-mode t)))
 #+end_src
 *** Babel
 :fileで出力する先のデフォルトを設定

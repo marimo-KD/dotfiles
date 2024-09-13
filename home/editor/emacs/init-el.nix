@@ -1,15 +1,20 @@
-{pkgs, emacs, ...}:
-pkgs.stdenv.mkDerivation {
+{lib, pkgs, emacs, ...}:
+pkgs.stdenv.mkDerivation rec {
   name = "emacs-init-el";
-  src = ./.;
+  src = lib.cleanSource ./.;
   buildInputs = [emacs];
+  substituted-init-org = pkgs.substituteAll {
+    src = ./init.org;
+    cmigemo = pkgs.cmigemo;
+  };
   buildPhase = ''
+    cp ${substituted-init-org} ./init-sub.org
     emacs -Q --batch --eval \
       "(progn
          (setq debug-on-error t)
          (setq vc-handled-backends nil)
          (require 'ob-tangle)
-         (org-babel-tangle-file \"./init.org\"))";
+         (org-babel-tangle-file \"./init-sub.org\"))";
     emacs -Q --batch -f batch-byte-compile init.el;
     emacs -Q --batch -f batch-byte-compile early-init.el;
   '';
