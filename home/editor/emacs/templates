@@ -1,0 +1,30 @@
+org-mode
+(caption "#+caption: ")
+(begin "#+begin_" (s name) n> r> n "#+end_" name)
+(quote "#+begin_quote" n> r> n "#+end_quote")
+(src "#+begin_src" q n r n "#+end_src")
+(inlsrc "src_" p "{" q "}")
+(elisp "#+begin_src emacs-lisp" q n r n "#+end_src")
+
+latex-mode org-mode ;; environments available in both modes
+(align "\\begin{align}" r> n> "\\end{align}")
+(gather "\\begin{gather}" r> n> "\\end{gather}")
+(mk "\\( " q " \\)" )
+(dm "\\[ " q " \\]" )
+
+latex-mode org-mode :when (texmathp) ;; require texmathp.el (in auctex)
+(fr "\\frac{" p "}{" q "}")
+(sr "\\sqrt{" q "}")
+(int "\\int^{" p "}_{" q "} ")
+(d "\\dl{" q "}")
+(set "\\{ " q "\\}")
+(xx "\times")
+(:= "\coloneq")
+(~~ "\approx")
+(<= "\leq")
+(>= "\geq")
+(<< "\ll")
+(>> "\gg")
+
+emacs-lisp-mode
+(fun "(defun " p " (" p ")\n  \"" p "\"" n> r> ")")
