@@ -619,12 +619,14 @@ vertico-mode
    ;;(setup "hotfuzz")
    (setq corfu-auto t
          corfu-auto-prefix 2
+         corfu-auto-delay 0.1
          corfu-cycle t
          corfu-preselect 'prompt
          corfu-quit-no-match t
          corfu-quit-at-boundary t
          corfu-scroll-margin 2
-         tab-always-indent t)
+         tab-always-indent 'complete
+         tab-first-completion nil)
 
    (setup "corfu-prescient"
      (setq corfu-prescient-enable-filtering nil)
@@ -673,7 +675,7 @@ vertico-mode
                 (derived-mode-p 'prog-mode)
                 (derived-mode-p 'text-mode))
         (setq-local completion-at-point-functions
-                    (cons #'tempel-complete
+                    (cons #'tempel-expand
                           completion-at-point-functions))))
     (add-hook 'after-change-major-mode-hook #'tempel-setup-capf 90))
   (setup-keybinds tempel-map
@@ -1270,6 +1272,7 @@ https://karthinks.com/software/emacs-window-management-almanac
                     "|" "DONE(d!)" "CANCELED(c)"))
         org-log-into-drawer t
         org-log-done 'time)
+  (org-cdlatex-mode t)
   )
 #+end_src
 
@@ -1311,6 +1314,7 @@ LaTeX数式のプレビューのときのヘッダー
 \\setlength{\\topmargin}{1.5cm}
 \\addtolength{\\topmargin}{-2.54cm}
 #+end_src
+
 *** src block
 #+begin_src emacs-lisp
 (setup-after "org-src"
@@ -1327,6 +1331,7 @@ org-srcでLSPを使えるようにする
   (setup "org-src-context"
     (org-src-context-mode t)))
 #+end_src
+
 *** Babel
 :fileで出力する先のデフォルトを設定
 をしていたんだけど、org-attachにしてしまうことにした!<2024-08-04 Sun>
@@ -1976,6 +1981,7 @@ Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせ�
    (setq citar-bibliography org-cite-global-bibliography
          citar-open-entry-function #'citar-open-entry-in-zotero))
 #+end_src
+
 ** Calendar
 #+begin_src emacs-lisp
 (ensure "japanese-holidays")
@@ -2293,12 +2299,15 @@ satysfi-ts-modeをつかいます
              (add-to-list 'auto-mode-alist '("\\.satyg$" . satysfi-ts-mode))))
 #+end_src
 
-*** TeX
+*** LaTeX
 ほとんどcdlatexがめあて
+Tempelで展開するので、cdlatexのTabでのコマンドの展開は消す
 #+begin_src emacs-lisp
 (ensure 'auctex)
 (ensure 'cdlatex)
 (setup-lazy '(texmathp) "texmathp")
+(setup-after "cdlatex"
+  (setq cdlatex-command-alist-comb nil))
 #+end_src
 ** Footer
 *** provide

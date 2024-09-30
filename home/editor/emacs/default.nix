@@ -215,6 +215,7 @@ in {
   home.file.".emacs.d/init.el".source = "${init-el}/share/emacs/init.el";
   home.file.".emacs.d/init.elc".source = "${init-el}/share/emacs/init.elc";
   home.file.".emacs.d/early-init.el".source = "${init-el}/share/emacs/early-init.el";
+  home.file.".emacs.d/templates".source = ./templates;
   home.packages = with pkgs; [
     cmigemo
     emacs-lsp-booster
