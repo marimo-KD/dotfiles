@@ -56,8 +56,11 @@ in {
       org-superstar
       org-ql
       org-noter
+      org-appear
+      org-fragtog
       citar
       japanese-holidays
+      eldoc-box
       eglot
       vterm
       nerd-icons-dired
@@ -73,7 +76,7 @@ in {
       julia-vterm
       ob-julia-vterm
       nushell-mode
-      nix-mode
+      nix-ts-mode
       gnuplot
       auctex
       cdlatex

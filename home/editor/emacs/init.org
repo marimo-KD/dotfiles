@@ -1260,6 +1260,12 @@ https://karthinks.com/software/emacs-window-management-almanac
   (setq org-return-follows-link t
         org-mouse-1-follows-link t
         org-directory "~/Org"
+        org-startup-indented t
+        org-pretty-entities t
+        org-use-sub-superscripts "{}"
+        org-hide-emphasis-markers t
+        org-startup-with-inline-images t
+        org-image-actual-width '(300)
         org-preview-latex-default-process 'dvisvgm
         org-preview-latex-image-directory
         (file-name-concat org-directory "resources/ltximg")
@@ -1271,9 +1277,8 @@ https://karthinks.com/software/emacs-window-management-almanac
         '((sequence "TODO(t)" "INPROGRESS(p!)" "WAIT(w)" "SOMEDAY(s)"
                     "|" "DONE(d!)" "CANCELED(c)"))
         org-log-into-drawer t
-        org-log-done 'time)
-  (org-cdlatex-mode t)
-  )
+        org-log-done 'time))
+(setup-hook 'org-mode-hook 'org-cdlatex-mode)
 #+end_src
 
 LaTeX数式のプレビューのときのヘッダー
@@ -1321,7 +1326,8 @@ LaTeX数式のプレビューのときのヘッダー
   (setq org-src-fontify-natively t
         org-src-tab-acts-natively t
         org-src-preserve-indentation t
-        org-edit-src-content-indentation 0))
+        org-edit-src-content-indentation 0)
+  (add-to-list 'org-src-lang-modes '("typst" . typst-ts)))
 #+end_src
 **** org-src-context
 org-srcでLSPを使えるようにする
@@ -1982,6 +1988,23 @@ Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせ�
          citar-open-entry-function #'citar-open-entry-in-zotero))
 #+end_src
 
+*** org-appear
+#+begin_src emacs-lisp
+(ensure 'org-appear)
+(setup-lazy '(org-appear-mode) "org-appear"
+  :prepare (setup-hook 'org-mode-hook 'org-appear-mode)
+  (setq org-appear-autoemphasis t
+        org-appear-autolinks t
+        org-appear-autosubmarkers t
+        org-appear-inside-latex t))
+#+end_src
+
+*** org-fragtog
+#+begin_src emacs-lisp
+(ensure 'org-fragtog)
+(setup-lazy '(org-fragtog-mode) "org-fragtog"
+  :prepare (setup-hook 'org-mode-hook 'org-fragtog-mode))
+#+end_src
 ** Calendar
 #+begin_src emacs-lisp
 (ensure "japanese-holidays")
@@ -2065,6 +2088,18 @@ boosterを使うので意味ないはずだけど一応
     "C-c n" 'flymake-goto-next-error
     "C-c p" 'flymake-goto-prev-error))
 #+end_src
+
+** Eldoc
+*** eldoc-box
+#+begin_src emacs-lisp
+(ensure 'eldoc-box)
+(setup-lazy '(eldoc-box-hover-mode
+              eldoc-box-hover-at-point-mode
+              eldoc-box-help-at-point)
+  "eldoc-box"
+  :prepare (setup-hook 'eldoc-mode-hook 'eldoc-box-hover-mode))
+#+end_src
+
 ** Terminal
 今はvtermを使っている
 misttyが結構良さそうで検討中
@@ -2272,9 +2307,9 @@ GrammarはNixでインストールされるのでtreesit-autoは御役御免
 
 *** Nix
 #+begin_src emacs-lisp
-(ensure 'nix-mode)
-(setup-lazy '(nix-mode) "nix-mode"
-  :prepare (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-mode)))
+(ensure 'nix-ts-mode)
+(setup-lazy '(nix-ts-mode) "nix-ts-mode"
+  :prepare (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode)))
 #+end_src
 
 *** Gnuplot
@@ -2307,8 +2342,17 @@ Tempelで展開するので、cdlatexのTabでのコマンドの展開は消す
 (ensure 'cdlatex)
 (setup-lazy '(texmathp) "texmathp")
 (setup-after "cdlatex"
-  (setq cdlatex-command-alist-comb nil))
+  (setq cdlatex-command-alist-comb nil)
+  (add-to-list 'cdlatex-tab-hook 'tempel-expand))
 #+end_src
+
+*** Typst
+#+begin_src emacs-lisp
+(ensure 'typst-ts-mode)
+(setup-lazy '(typst-ts-mode) "typst-ts-mode"
+  :prepare (add-to-list 'auto-mode-alist '("\\.typ$" . typst-ts-mode)))
+#+end_src
+
 ** Footer
 *** provide
 #+begin_src emacs-lisp
