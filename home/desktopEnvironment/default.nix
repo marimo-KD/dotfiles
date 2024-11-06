@@ -4,23 +4,8 @@
     #./sway
     ./waybar
     ./wofi
+    ./gnome
   ];
-  xdg = {
-    enable = true;
-    portal = {
-      enable = true;
-      xdgOpenUsePortal = true;
-      extraPortals = [
-        pkgs.xdg-desktop-portal-hyprland
-        pkgs.xdg-desktop-portal-gtk
-        # (import ./emacs-portal.nix { inherit pkgs; })
-      ];
-      config.common = {
-        default = ["gtk"];
-        # "org.freedesktop.impl.portal.FileChooser" = "emacs";
-      };
-    };
-  };
   systemd.user.settings.DefaultEnvironment = {
     PATH = "/run/current-system/sw/bin";
   };
@@ -35,7 +20,7 @@
     #   };
     # };
   };
-  catppuccin.pointerCursor.enable = true;
+    catppuccin.pointerCursor.enable = true;
   services.mako = {
     enable = true;
     catppuccin = {
@@ -62,9 +47,9 @@
     # swaybg # background
     wl-clipboard # clipboard
     xdg-utils
-    zathura # pdf viewer
+    # zathura # pdf viewer
     # apvlv # pdf viewer
-    # evince # pdf viewer
+    evince # pdf viewer
     # rnote # stylus note taking
   ];
 }

@@ -20,7 +20,12 @@
   # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxKernel.packages.linux_xanmod;
+  boot.kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_latest;
+
+  zramSwap = {
+    enable = true;
+    memoryPercent = 200;
+  };
 
   networking.hostName = "monix"; # Define your hostname.
 
@@ -47,10 +52,46 @@
   };
 
   # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
+  services.xserver = {
+    enable = true;
+    desktopManager.gnome.enable = true;
+    displayManager.gdm = {
+      enable = true;
+      wayland = true;
+    };
+    videoDrivers = ["amdgpu"];
+    xkb = {
+      layout = "us";
+      variant = "";
+    };
   };
+
+  services.gnome = {
+    core-utilities.enable = false;
+  };
+
+  environment.gnome.excludePackages = (with pkgs; [
+    gnome-photos
+    gnome-tour
+    gnome-text-editor
+    cheese # webcam tool
+    gnome-music
+    gnome-terminal
+    epiphany # web browser
+    geary # email reader
+    evince # document viewer
+    gnome-characters
+    totem # video player
+    tali # poker game
+    iagno # go game
+    hitori # sudoku game
+    atomix # puzzle game
+    gnome-calculator
+    yelp # help viewer
+    gnome-maps
+    gnome-weather
+    gnome-contacts
+  ]);
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.marimo = {
@@ -59,11 +100,6 @@
     extraGroups = [ "audio" "networkmanager" "wheel" "scanner" "lp" "libvirtd" "gamemode"];
     packages = with pkgs; [];
   };
-
-  environment.systemPackages = with pkgs; [
-    curl
-    lm_sensors
-  ];
 
   nixpkgs.config.packageOverrides = pkgs: {
     steam = pkgs.steam.override {
@@ -188,21 +224,6 @@
     configDir = "/home/marimo/.config/syncthing";
   };
 
-  # networking.wireguard.interfaces = {
-  #   wg0 = {
-  #     ips = [ "10.0.101.102/32" "fd34::101::102/128"];
-  #     listenPort = 51820;
-  #     peers = [
-  #       {
-  #         publicKey = "BxaOPypP4bSCdYBw+TfhEXPbg6DiIuhmRxtbWGbDEmo=";
-  #         allowedIPs = ["192.168.200.0/24" "192.168.220.0/24" "10.0.0.36/32" "fd34::10:0:0:36/128"];
-  #         endpoint = "kmc.gr.jp:51820";
-  #         persistentKeepalive = 25;
-  #       }
-  #     ];
-  #   };
-  # };
-
   services.xremap = {
     userName = "marimo";
     serviceMode = "system";
@@ -270,8 +291,6 @@
     settings = {
       auto-optimise-store = true;
       experimental-features = ["nix-command" "flakes"];
-      substituters = ["https://hyprland.cachix.org"];
-      trusted-public-keys = ["hyprland.cachix.org-1:a7pqxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
     };
     gc = {
       automatic = true;
