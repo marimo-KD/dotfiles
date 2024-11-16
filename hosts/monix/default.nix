@@ -18,9 +18,19 @@
     ];
 
   # Bootloader
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_latest;
+  boot = {
+    loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+    };
+    kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_latest;
+    extraModulePackages = with config.boot.kernelPackages; [
+      v4l2loopback # for OBS virtual camera
+    ];
+    extraModprobeConfig = ''
+      options v4l2loopback devices=1 video_nr=1 card_label="OBS Cam" exclusive_caps=1
+    '';
+  };
 
   zramSwap = {
     enable = true;
@@ -51,53 +61,40 @@
     LC_TIME = "en_US.UTF-8";
   };
 
+  i18n.inputMethod = {
+    enabled = "fcitx5";
+    fcitx5 = {
+      addons = with pkgs; [
+        fcitx5-gtk
+        fcitx5-mozc
+      ];
+      waylandFrontend = true;
+    };
+  };
+
+  environment.systemPackages = with pkgs; [
+    mozcdic-ut-neologd
+    mozcdic-ut-edict2
+    mozcdic-ut-jawiki
+  ];
+
   # Configure keymap in X11
   services.xserver = {
-    enable = true;
-    desktopManager.gnome.enable = true;
-    displayManager.gdm = {
-      enable = true;
-      wayland = true;
-    };
-    videoDrivers = ["amdgpu"];
     xkb = {
       layout = "us";
       variant = "";
     };
   };
 
-  services.gnome = {
-    core-utilities.enable = false;
+  programs.hyprland = {
+    enable = true;
   };
-
-  environment.gnome.excludePackages = (with pkgs; [
-    gnome-photos
-    gnome-tour
-    gnome-text-editor
-    cheese # webcam tool
-    gnome-music
-    gnome-terminal
-    epiphany # web browser
-    geary # email reader
-    evince # document viewer
-    gnome-characters
-    totem # video player
-    tali # poker game
-    iagno # go game
-    hitori # sudoku game
-    atomix # puzzle game
-    gnome-calculator
-    yelp # help viewer
-    gnome-maps
-    gnome-weather
-    gnome-contacts
-  ]);
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.marimo = {
     isNormalUser = true;
     description = "marimo";
-    extraGroups = [ "audio" "networkmanager" "wheel" "scanner" "lp" "libvirtd" "gamemode"];
+    extraGroups = [ "audio" "input" "networkmanager" "wheel" "scanner" "lp" "libvirtd" "gamemode"];
     packages = with pkgs; [];
   };
 

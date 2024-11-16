@@ -3,6 +3,9 @@
     username = "marimo";
     homeDirectory = "/home/${username}";
     stateVersion = "23.11";
+    sessionVariables = {
+      WINEFSYNC = 1;
+    };
   };
   i18n.inputMethod = {
     enabled = "fcitx5";

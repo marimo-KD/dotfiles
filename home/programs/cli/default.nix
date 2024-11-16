@@ -51,11 +51,9 @@ in lib.mkMerge [{
     zoxide.enable = true;
     bat = {
       enable = true;
-      catppuccin.enable = false;
     };
     fzf = {
       enable = true;
-      catppuccin.enable = false;
     };
     ripgrep.enable = true;
     fd.enable = true;

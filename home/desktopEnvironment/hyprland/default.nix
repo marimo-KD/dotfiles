@@ -2,7 +2,7 @@
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
-    catppuccin.enable = true;
+    systemd.enable = true;
     settings = {
       input = {
         kb_layout = "us";
@@ -10,18 +10,16 @@
         follow_mouse = 2;
       };
       general = {
-        gaps_in = 4;
+        gaps_in = 2;
         gaps_out = 5;
-        border_size = 2;
+        border_size = 0;
         no_border_on_floating = false;
         layout = "dwindle";
-        sensitivity = 1.0;
       };
       cursor = {
         no_warps = true;
       };
       dwindle = {
-        no_gaps_when_only = 0;
         preserve_split = true;
       };
       animations = {
@@ -47,10 +45,11 @@
       bind = [
         "$mainMod, Return, exec, $term"
         "$mainMod SHIFT, Q, killactive"
-        "$mainMod SHIFT, E, exit"
+        "$mainMod SHIFT, E, exec, wlogout"
         "$mainMod, f, fullscreen"
         "$mainMod, Space, togglefloating"
         "$mainMod, d, exec, wofi --show drun"
+        "$mainMod, x, exec, pkill -SIGUSR1 waybar"
         "$mainMod, s, togglesplit"
 
         "$mainMod, h, movefocus, l"
@@ -87,17 +86,15 @@
 
         "$mainMod, mouse_down, workspace, e+1"
         "$mainMod, mouse_up, workspace, e-1"
-
-        ",F12,togglespecialworkspace"
       ];
       bindm = [
         "$mainMod, mouse:272, movewindow"
         "$mainMod, mouse:273, resizewindow"
       ];
       exec-once = [
-        "waybar"
         "mako"
         "fcitx5 -rd"
+        "lxqt-policykit-agent"
       ];
       windowrulev2 = [
         "float,class:^(pavucontrol)$"
@@ -127,11 +124,15 @@
     enable = true;
     settings = {
       preload = [
-        "${config.home.homeDirectory}/Pictures/wallpaper/pink.jpg"
+        "${config.home.homeDirectory}/Pictures/wallpaper/pink.png"
       ];
       wallpaper = [
-        "HDMI-A-1,/${config.home.homeDirectory}/Pictures/wallpaper/pink.jpg"
+        "HDMI-A-1,${config.home.homeDirectory}/Pictures/wallpaper/pink.png"
       ];
     };
   };
+  home.packages = with pkgs; [
+    # hyprpolkitagent # graphical polkit agent
+    lxqt.lxqt-policykit
+  ];
 }

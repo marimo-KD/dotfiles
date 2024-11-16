@@ -2,29 +2,36 @@
   programs.waybar = {
     enable = true;
     style = ./style.css;
-    catppuccin = {
+    systemd = {
       enable = true;
-      mode = "createLink";
     };
     settings = {
       mainBar = {
         layer = "top";
-        position = "left";
-        width = 30;
-        margin = "5 0 5 2";
+        position = "bottom";
+        exclusive = false;
+        passthrough = false;
+        height = 35;
+        margin-top = 5;
+        margin-bottom = 10;
         output = [ "HDMI-A-1" ];
-        # upper side
-        modules-left = [
+        modules-center = [
+          "custom/launcher"
           "hyprland/workspaces"
-          "hyprland/submap"
-        ];
-        modules-center = [];
-        modules-right = [
+          "wireplumber"
+          "network"
+          "cpu"
+          "memory"
+          "temperature"
           "tray"
-          "group/sound"
-          "group/connection"
           "clock"
+          "custom/power"
         ];
+        "custom/launcher" = {
+          format = " ";
+          on-click = "nwg-drawer";
+          on-click-right = "killall nwg-drawer";
+        };
         "hyprland/workspaces" = {
           active-only = false;
           all-outputs = true;
@@ -32,146 +39,53 @@
           on-scroll-up = "hyprctl dispatch workspace e-1";
           on-scroll-down = "hyprctl dispatch workspace e+1";
           on-click = "activate";
-          format = "{name}";
-          sort-by-number = true;
+          format = "{id}";
         };
-        "tray" = {
-          icon-size = 18;
-          spacing = 10;
-        };
-        "group/sound" = {
-          orientation = "inherit";
-          drawer = {
-            transition-duration = 500;
-            transition-left-to-right = false;
-          };
-          modules = [
-            "pulseaudio"
-            "pulseaudio#mic"
-            "pulseaudio/slider"
-          ];
-        };
-        "pulseaudio" = {
-          format = "{icon}";
-          format-bluetooth = "{icon}";
-          tooltip-format = "{volume}% {icon} | {desc}";
-          format-muted = "󰖁";
-          format-icons = {
-            headphone = "󰋌";
-            handsfree = "󰋌";
-            headset = "󰋌";
-            phone = "";
-            portable = "";
-            car = " ";
-            default = [
-              "󰕿"
-              "󰖀"
-              "󰕾"
-            ];
-          };
-          on-click = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
-          on-click-middle = "pavucontrol";
-          on-scroll-up = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+";
-          on-scroll-down = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
-          smooth-scrolling-threshold = 1;
-        };
-        "pulseaudio#mic" = {
-          format = "{format_source}";
-          format-source = "";
-          format-source-muted = "";
-          tooltip-format = "{volume}% {format_source} ";
-          on-click = "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
-          on-scroll-up = "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 1%+";
-          on-scroll-down = "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 1%-";
-        };
-        "pulseaudio/slider" = {
-          min = 0;
-          max = 110;
-          orientation = "vertical";
-        };
-        "group/connection" = {
-          orientation = "inherit";
-          modules = [
-            "group/network"
-            "group/bluetooth"
-          ];
-        };
-        "group/network" = {
-          orientation = "inherit";
-          drawer = {
-            transition-duration = 500;
-            transition-left-to-right = false;
-          };
-          modules = [
-            "network"
-            "network#speed"
-          ];
+        "wireplumber" = {
+          format = "{volume}% {icon}";
+          format-muted = "";
+          format-icons = ["" "" ""];
+          on-click = "pwvucontrol";
         };
         "network" = {
-          format = "{icon}";
-          format-icons = {
-            wifi = "󰤨";
-            ethernet = "󰈀";
-            disconnected = "󰖪";
-          };
-          format-wifi = "󰤨";
-          format-ethernet = "󰈀";
-          format-disconnected = "󰖪";
-          format-linked = "󰈁";
+          format-wifi = "{essid} ({signalStrength}%) ";
+          format-ethernet = "Connected  ";
+          tooltip-format = "{ifname} via {gwaddr} ";
+          format-linked = "{ifname} (No IP) ";
+          format-disconnected = "Disconnected ⚠";
+          format-alt = "{ifname}: {ipaddr}/{cidr}";
+        };
+        "cpu" = {
+          format = "{usage}% ";
           tooltip = false;
         };
-        "network#speed" = {
-          format = " {bandwidthDownBits} ";
-          rotate = 90;
-          interval = 5;
-          tooltip = true;
-          tooltip-format = "{ipaddr}";
-          tooltip-format-wifi = "{essid} ({signalStrength}%)   \n{ipaddr} | {frequency} MHz{icon} ";
-          tooltip-format-ethernet = "{ifname} 󰈀 \n{ipaddr} | {frequency} MHz{icon} ";
-          tooltip-format-disconnected = "Not Connected to any type of Network";
+        "memory" = {
+          format = "{}% ";
         };
-        "group/bluetooth" = {
-          orientation = "inherit";
-          drawer = {
-            transition-duration = 500;
-            transition-left-to-right = false;
+        "temperature" = {
+          format = "{temperatureC}°C {icon}";
+          format-icons = ["" "" ""];
+        };
+        "keyboard-state" = {
+          numlock = true;
+          capslock = true;
+          format = " {name} {icon}";
+          format-icons = {
+            "locked" = "";
+            "unlocked" = "";
           };
-          modules = [
-            "bluetooth"
-            "bluetooth#status"
-          ];
         };
-        "bluetooth" = {
-          format-on = "";
-          format-off = "󰂲";
-          format-disabled = "";
-          format-connected = "<b></b>";
-          tooltip-format = "{controller_alias}\t{controller_address}\n\n{num_connections} connected";
-          tooltip-format-connected = "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}";
-          tooltip-format-enumerate-connected = "{device_alias}\t{device_address}";
-          tooltip-format-enumerate-connected-battery = "{device_alias}\t{device_address}\t{device_battery_percentage}%";
-        };
-        "bluetooth#status" = {
-          format-on = "";
-          format-off = "";
-          format-disabled = "";
-          format-connected = "<b>{num_connections}<\b>";
-          format-connected-battery = "<small><b>{device_battery_percentage}%</b></small>";
-          tooltip-format = "{controller_alias}\t{controller_address}\n\n{num_connections} connected";
-          tooltip-format-connected = "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}";
-          tooltip-format-enumerate-connected = "{device_alias}\t{device_address}";
-          tooltip-format-enumerate-connected-battery = "{device_alias}\t{device_address}\t{device_battery_percentage}%";
+        "tray" = {
+          icon-size = 20;
+          spacing = 10;
         };
         "clock" = {
-          format = "{:%H\n%M}";
-          tooltip-format = "<tt><small>{calendar}</small></tt>";
-          calendar = {
-            mode = "month";
-            mode-mon-col = 3;
-            weeks-pos = "right";
-            on-scroll = 1;
-            on-click-right = "mode";
-          };
+          tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+          format-alt = "{:%Y-%m-%d}";
+        };
+        "custom/power" = {
+          format = " ";
+          on-click = "wlogout";
         };
       };
     };

@@ -58,6 +58,7 @@ in {
       org-noter
       org-appear
       org-fragtog
+      org-download
       citar
       japanese-holidays
       eldoc-box

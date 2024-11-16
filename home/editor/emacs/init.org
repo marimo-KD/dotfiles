@@ -1268,7 +1268,7 @@ https://karthinks.com/software/emacs-window-management-almanac
         org-image-actual-width '(300)
         org-preview-latex-default-process 'dvisvgm
         org-preview-latex-image-directory
-        (file-name-concat org-directory "resources/ltximg")
+        (file-name-concat org-directory "resources/ltximg/")
         org-format-latex-header
         "
 <<latex-header>>"
@@ -1277,7 +1277,7 @@ https://karthinks.com/software/emacs-window-management-almanac
         '((sequence "TODO(t)" "INPROGRESS(p!)" "WAIT(w)" "SOMEDAY(s)"
                     "|" "DONE(d!)" "CANCELED(c)"))
         org-log-into-drawer t
-        org-log-done 'time))
+        org-log-done nil))
 (setup-hook 'org-mode-hook 'org-cdlatex-mode)
 #+end_src
 
@@ -1678,6 +1678,15 @@ LaTeXのExportまわりの設定
 \\fi
 [PACKAGES]
 #+end_src
+*** Org-crypt
+#+begin_src emacs-lisp
+(setup-after "org"
+  (setup "org-crypt"
+    (org-crypt-use-before-save-magic)
+    (add-to-list 'org-tags-exclude-from-inheritance "crypt")
+    (setq org-crypt-key nil)
+    (setq-local auto-save-default nil)))
+#+end_src
 *** Org-roam
 https://jethrokuan.github.io/org-roam-guide/
 https://magnus.therning.org/2021-07-23-keeping-todo-items-in-org-roam-v2.html
@@ -2004,6 +2013,17 @@ Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせ�
 (ensure 'org-fragtog)
 (setup-lazy '(org-fragtog-mode) "org-fragtog"
   :prepare (setup-hook 'org-mode-hook 'org-fragtog-mode))
+#+end_src
+*** org-download
+#+begin_src emacs-lisp
+(ensure 'org-download)
+(setup-lazy '(org-download-enable
+              org-download-yank
+              org-download-clipboard)
+  "org-download"
+  :prepare (setup-hook 'dired-mode-hook 'org-download-enable)
+  (setq org-download-method 'attach))
+
 #+end_src
 ** Calendar
 #+begin_src emacs-lisp
