@@ -33,7 +33,8 @@
     # swaybg # background
     wl-clipboard # clipboard
     xdg-utils
-    zathura # pdf viewer
+    sioyek
+    # zathura # pdf viewer
     # apvlv # pdf viewer
     # evince # pdf viewer
     # rnote # stylus note taking

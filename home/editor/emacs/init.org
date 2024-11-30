@@ -81,6 +81,7 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t -*-
 #+end_src
+
 ** UI
 #+begin_src emacs-lisp
 (with-eval-after-load 'scroll-bar
@@ -90,6 +91,7 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
 (setq frame-inhibit-implied-resize t)
 (add-to-list 'default-frame-alist '(font . "UDEV Gothic 35LG-12"))
 #+end_src
+
 ** backupとかlockとか
 #+begin_src emacs-lisp
 (setq make-backup-files nil)
@@ -138,6 +140,7 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
 #+begin_src emacs-lisp
 (provide 'early-init)
 #+end_src
+
 * init.el
 :PROPERTIES:
 :header-args: :tangle init.el :noweb yes
@@ -149,6 +152,7 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
 
 ** setup.el
 コンパイル環境のチェックが入るとNixでコンパイルした時怒られが発生するので止める
+ちなみにzk-phi/setupのこと
 
 #+begin_src emacs-lisp
 (eval-when-compile
@@ -237,376 +241,22 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
         mac-command-modifier 'super)
   (mac-auto-ascii-mode 1))
 #+end_src
+
 *** その他
 #+begin_src emacs-lisp
 (setq completion-cycle-threshold 3
       use-short-answers t)
 #+end_src
-** server
+
+** envrc
 #+begin_src emacs-lisp
 (!-
- (setup "server"
-  (unless (server-running-p)
-    (server-start))))
-#+end_src
-
-** whitespace
-#+begin_src emacs-lisp
-(setup-lazy '(whitespace-mode) "whitespace"
-  :prepare (setup-hook 'find-file-hook 'whitespace-mode)
-  (setq whitespace-style '(face
-                           trailing
-                           tabs
-                           spaces
-                           empty
-                           space-mark
-                           tab-mark)
-        whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
-                                      (tab-mark ?\t [?\u00BB ?\t] [?\\ ?\t]))
-        whitespace-space-regexp "\\(\u3000+\\)"
-        whitespace-trailing-regexp "\\([ \u00A0]+\\)$"
-        whitespace-action '(auto-cleanup)))
-#+end_src
-
-** autorevert
-#+begin_src emacs-lisp
-(!-
- (setup "autorevert"
-   (setq auto-revert-avoid-polling t)
-   (global-auto-revert-mode 1)))
-#+end_src
-
-** subword
-#+begin_src emacs-lisp
-(setup-lazy '(subword-mode) "subword"
-  :prepare (setup-hook 'prog-mode-hook #'subword-mode))
-#+end_src
-
-** tramp
-NixOSのためにpathを追加する
-#+begin_src emacs-lisp
-(setup-after "tramp"
-  (setq tramp-default-method "scpx")
-  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin")
-  (add-to-list 'tramp-remote-path "/run/wrappers/bin"))
-#+end_src
-** comp
-#+begin_src emacs-lisp
-(setup-after "comp"
-  (setq native-comp-async-report-warnings-errors 'silent))
-#+end_src
-** Fancy UI
-*** Font
-early-init.elでdefault-frame-alistに指定してあるけど、unicodeはまだ設定されてなくて日本語が表示できないので遅延して設定する
-#+begin_src emacs-lisp
-(!-
-  (set-fontset-font
-    "fontset-startup"
-    'unicode
-    "UDEV Gothic 35LG-12"
-    nil
-    'append))
-#+end_src
-
-**** Ligatureの対応
-ligature.elでworkaroundする
-#+begin_src emacs-lisp :tangle no
-(ensure 'ligature)
-(!-
- (setup "ligature"
-   (ligature-set-ligatures 'prog-mode '("--" "---" "==" "===" "!=" "!==" "=!="
-                                        "=:=" "=/=" "<=" ">=" "&&" "&&&" "&=" "++" "+++" "***" ";;" "!!"
-                                        "??" "???" "?:" "?." "?=" "<:" ":<" ":>" ">:" "<:<" "<>" "<<<" ">>>"
-                                        "<<" ">>" "||" "-|" "_|_" "|-" "||-" "|=" "||=" "##" "###" "####"
-                                        "#{" "#[" "]#" "#(" "#?" "#_" "#_(" "#:" "#!" "#=" "^=" "<$>" "<$"
-                                        "$>" "<+>" "<+" "+>" "<*>" "<*" "*>" "</" "</>" "/>" "<!--" "<#--"
-                                        "-->" "->" "->>" "<<-" "<-" "<=<" "=<<" "<<=" "<==" "<=>" "<==>"
-                                        "==>" "=>" "=>>" ">=>" ">>=" ">>-" ">-" "-<" "-<<" ">->" "<-<" "<-|"
-                                        "<=|" "|=>" "|->" "<->" "<~~" "<~" "<~>" "~~" "~~>" "~>" "~-" "-~"
-                                        "~@" "[||]" "|]" "[|" "|}" "{|" "[<" ">]" "|>" "<|" "||>" "<||"
-                                        "|||>" "<|||" "<|>" "..." ".." ".=" "..<" ".?" "::" ":::" ":=" "::="
-                                        ":?" ":?>" "//" "///" "/*" "*/" "/=" "//=" "/==" "@_" "__" "???"
-                                        "<:<" ";;;"))
-    (global-ligature-mode t)))
-#+end_src
-*** Theme
-ef-themesをつかう
-#+begin_src emacs-lisp
-(ensure 'ef-themes)
-(setup "ef-themes-autoloads"
-  (setq ef-themes-mixed-fonts nil
-        ef-themes-variable-pitch-ui nil)
-  (load-theme 'ef-melissa-light t))
-#+end_src
-
-*** Modeline, Headerline
-nano-modelineでheaderのみ設定
-modelineは消す
-#+begin_src emacs-lisp
-(ensure 'nano-modeline)
-(setup "nano-modeline"
-  (setq nano-modeline-padding '(0.25 . 0.3))
-  (setq-default mode-line-format nil)
-  (setup-after "meow"
-    (defun nano-modeline-meow-state ()
-      (propertize (meow-indicator)
-                  'face (nano-modeline-face 'primary)))
-    (defun my/nano-modeline-generic-mode (&optional default)
-      "Generic Nano modeline"
-      (funcall nano-modeline-position
-               '((nano-modeline-meow-state)
-                 (nano-modeline-buffer-status) " "
-                 (nano-modeline-buffer-name) " "
-                 (nano-modeline-git-info))
-               '((nano-modeline-cursor-position)
-                 (nano-modeline-window-dedicated))
-               default))
-    (my/nano-modeline-generic-mode t)))
-#+end_src
-
-*** perfect-margin
-#+begin_src emacs-lisp
-(ensure 'perfect-margin)
-(!-
- (setup "perfect-margin"
-   (setq perfect-margin-ignore-filters nil)
-   (perfect-margin-mode 1)))
-#+end_src
-
-*** Icon
-nerd-iconsを採用
-#+begin_src emacs-lisp
-(ensure 'nerd-icons)
-(setup-after "nerd-icons"
-  (ignore-errors (nerd-icons-set-font)))
-#+end_src
-
-#+begin_src emacs-lisp
-(ensure 'nerd-icons-completion)
-(setup-after "marginalia"
-  (setup "nerd-icons-completion"
-    (nerd-icons-completion-mode)
-    (setup-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)))
-#+end_src
-*** pixeL-scroll
-#+begin_src emacs-lisp
-(!-
- (setup "pixel-scroll"
-  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))
-        mouse-wheel-progressive-speed nil
-        mouse-wheel-follow-mouse t
-        pixel-scroll-precision-large-scroll-height 40.0
-        scroll-step 1)
-  (pixel-scroll-precision-mode 1)))
-#+end_src
-
-*** Parenthesis
-#+begin_src emacs-lisp
-(ensure 'rainbow-delimiters)
-(setup-lazy '(rainbow-delimiters-mode) "rainbow-delimiters")
-(setup-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-#+end_src
-*** highlight line
-#+begin_src emacs-lisp
-(ensure 'lin)
-;(!-
-; (setup "lin"
-;   (setq lin-face 'lin-blue)
-;   (lin-global-mode)))
-#+end_src
-** インデント
-*** タブの挙動
-#+begin_src emacs-lisp
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 2)
-#+end_src
-
-*** highlight-indent-guides
-indent-barsにひっこし<2024-08-03 Sat>
-#+begin_src emacs-lisp :tangle no
-(ensure 'highlight-indent-guides)
-(setup-lazy '(highlight-indent-guides-mode) "highlight-indent-guides"
-  :prepare
-  (progn
-    (setup-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-    (setup-hook 'yaml-mode-hook 'highlight-indent-guides-mode))
-  (setq highlight-indent-guides-method 'bitmap
-        highlight-indent-guides-character 124
-        highlight-indent-guides-responsive 'top))
-#+end_src
-
-*** indent-bars
-#+begin_src emacs-lisp
-(ensure-vc '(indent-bars :url "https://github.com/jdtsmith/indent-bars"))
-(setup-lazy '(indent-bars-mode) "indent-bars"
-  :prepare
-  (progn
-    (setup-hook 'prog-mode-hook 'indent-bars-mode)
-    (setup-hook 'yaml-mode-hook 'indent-bars-mode))
-  (setup "indent-bars-ts")
-  (setq indent-bars-treesit-support t
-        indent-bars-treesit-ignore-blank-lines-types '("module")
-        indent-bars-color '(highlight :face-bg t :blend 0.2)
-        indent-bars-pattern "."
-        indent-bars-width-frac 0.1
-        indent-bars-pad-frac 0.1
-        indent-bars-zigzag nil
-        indent-bars-color-by-depth nil
-        indent-bars-highlight-current-depth nil
-        indent-bars-display-on-blank-lines nil))
-#+end_src
-
-*** aggressive-indent
-#+begin_src emacs-lisp
-(ensure 'aggressive-indent)
-(setup-lazy '(aggressive-indent-mode) "aggressive-indent"
-  :prepare (setup-hook 'emacs-lisp-mode-hook 'aggressive-indent-mode))
-#+end_src
-
-*** electric-indent
-#+begin_src emacs-lisp
-(setup-hook 'prog-mode-hook 'electric-indent-mode)
+ (setup "envrc"
+   (envrc-global-mode)))
 
 #+end_src
-** Minibuffer Completion
-*** vertico, marginalia
-vertico-mode
-#+begin_src emacs-lisp
-(ensure 'vertico)
-(ensure 'marginalia)
-(setup-lazy '(vertico--advice) "vertico"
-  :prepare (progn
-             (advice-add 'completing-read-default :around 'vertico--advice)
-             (advice-add 'completing-read-multiple :around 'vertico--advice))
-  (setq vertico-cycle t)
 
-  (setup "orderless")
-  ;;(setup "hotfuzz")
-  (setup "savehist")
-  (setup "marginalia" (marginalia-mode))
-
-  (defvar +vertico-current-arrow t)
-  (cl-defmethod vertico--format-candidate :around
-    (cand prefix suffix index start &context ((and +vertico-current-arrow
-                                                   (not (bound-and-true-p vertico-flat-mode)))
-                                              (eql t)))
-    (setq cand (cl-call-next-method cand prefix suffix index start))
-    (if (bound-and-true-p vertico-grid-mode)
-        (if (= vertico--index index)
-            (concat (nerd-icons-faicon "nf-fa-hand_o_right") " " cand)
-          (concat #("_" 0 1 (display " ")) cand))
-      (if (= vertico--index index)
-          (concat " " (nerd-icons-faicon "nf-fa-hand_o_right") " " cand)
-        (concat "    " cand)))))
-#+end_src
-*** vertico-directory
-#+begin_src emacs-lisp
-(setup-after "vertico"
-  (setup-lazy '(vertico-directory-delete-char
-                vertico-directory-enter
-                vertico-directory-delete-word)
-    "vertico-directory"
-    :prepare
-    (setup-keybinds vertico-map
-      "<backspace>" 'vertico-directory-delete-char)))
-#+end_src
-*** vertico-repeat
-#+begin_src emacs-lisp
-(setup-lazy '(vertico-repeat-save) "vertico-repeat"
-  :prepare (setup-hook 'minibuffer-setup-hook
-             (vertico-repeat-save)))
-#+end_src
-
-*** vertico-posframe
-#+begin_src emacs-lisp :tangle no
-(ensure-vc '(vertico-posframe
-             :url "https://github.com/tumashu/vertico-posframe"))
-(when (display-graphic-p)
-  (setup "vertico-posframe"
-    (setq vertico-posframe-parameters
-          '((left-fringe . 5)
-            (right-fringe . 5)
-            (alpha-background . 90)))
-    (vertico-posframe-mode 1)))
-#+end_src
-
-** Consult
-#+begin_src emacs-lisp
-(ensure 'consult)
-(setup-lazy
-  '(consult-recent-file
-    consult-outline
-    consult-line
-    consult-buffer
-    consult-imenu
-    consult-yank-pop)
-  "consult"
-  (setq consult-preview-key 'any))
-#+end_src
-
-** embark
-#+begin_src emacs-lisp
-(ensure 'embark)
-(ensure 'embark-consult)
-(setup-lazy
-  '(embark-act
-    embark-dwim
-    embark-bindings)
-  "embark"
-  :prepare (setup-keybinds nil
-             "C-." 'embark-act
-             "M-." 'embark-dwim
-             "C-h B" 'embark-bindings)
-  (setup-after "consult"
-    (setup "embark-consult"
-      (setup-hook 'embark-collect-mode-hook
-        'consult-preview-at-point-mode))))
-#+end_src
-
-** Orderless
-#+begin_src emacs-lisp
-(ensure 'orderless)
-(setup-after "orderless"
-  (defun orderless-migemo (component)
-    (setup "migemo")
-    (let ((pattern (migemo-get-pattern component)))
-      (condition-case nil
-          (progn (string-match-p pattern "") pattern)
-        (invalid-regexp nil))))
-
-  (orderless-define-completion-style orderless-migemo-style
-    (orderless-matching-styles '(orderless-literal
-                                 orderless-regexp
-                                 orderless-migemo)))
-
-  (setq completion-styles '(orderless basic)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles orderless-migemo-style))
-                                        (eglot (styles orderless))
-                                        (eglot-capf (styles orderless))
-                                        (org-roam-node (styles orderless-migemo-style)))))
-#+end_src
-
-** Hotfuzz
-#+begin_src emacs-lisp
-(ensure 'hotfuzz)
-(setup-after "hotfuzz"
-  (setq completion-styles '(hotfuzz)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion))
-                                        (eglot (styles hotfuzz))
-                                        (eglot-capf (styles hotfuzz)))))
-#+end_src
-
-** Prescient
-#+begin_src emacs-lisp
-(ensure 'prescient)
-(ensure 'corfu-prescient)
-(setup-after "precient"
-  (prescient-persist-mode t))
-#+end_src
-
-** 入力補助
+** コーディング
 *** Corfu
 #+begin_src emacs-lisp
 (ensure 'corfu)
@@ -691,7 +341,7 @@ vertico-mode
 (setup-after "eglot-tempel"
   (eglot-tempel-mode))
 #+end_src
-** 編集補助
+
 *** Undo/Redo
 #+begin_src emacs-lisp
 (ensure 'undo-fu)
@@ -707,6 +357,7 @@ vertico-mode
 (ensure 'expreg)
 (setup-lazy '(expreg-expand) "expreg")
 #+end_src
+
 *** meow
 #+begin_src emacs-lisp
 (ensure 'meow)
@@ -985,6 +636,595 @@ vertico-mode
    '("<escape>" . ignore)))
 (meow-setup)
 #+end_src
+
+*** Eglot
+<2024-11-26 Tue>試しにlsp-bridgeを使う
+#+begin_src emacs-lisp
+(ensure 'eglot)
+(setup-lazy '(eglot-ensure) "eglot"
+  :prepare (!foreach '(c-ts-mode
+                       c++-ts-mode
+                       rust-ts-mode
+                       tuareg-mode)
+             (setup-hook ,it 'eglot-ensure))
+  (setq eglot-autoshutdown t
+        eglot-ignored-server-capabilities '(:documentHighlightProvider
+                                            :documentOnTypeFormattingProvider)
+        eglot-events-buffer-size 0
+        eglot-sync-connect nil)
+  (dolist (server '((nix-ts-mode "nil")
+                    (typst-ts-mode "tinymist")))
+    (add-to-list 'eglot-server-programs server))
+  (defun my/eglot-capf ()
+    (setq-local completion-at-point-functions
+                (list (cape-capf-super
+                       #'tempel-complete
+                       #'eglot-completion-at-point
+                       #'cape-file))))
+  (setup-hook 'eglot-managed-mode-hook 'my/eglot-capf))
+
+#+end_src
+
+**** jsonrpc
+boosterを使うので意味ないはずだけど一応
+#+begin_src emacs-lisp
+(setup-after "jsonrpc"
+  (setq jsonrpc-default-request-timeout 3000)
+  (fset #'jsonrpc--log-event #'ignore))
+#+end_src
+
+**** eglot-booster
+#+begin_src emacs-lisp
+(ensure-vc '(eglot-booster :url "https://github.com/jdtsmith/eglot-booster"))
+(setup-after "eglot"
+  (setup "eglot-booster"
+    (eglot-booster-mode)))
+#+end_src
+
+**** eglot-x
+拡張とかを使えるように
+#+begin_src emacs-lisp
+(ensure-vc '(eglot-x :url "https://github.com/nemethf/eglot-x"))
+(setup-after "eglot"
+  (setup "eglot-x"
+    (eglot-x-setup)))
+#+end_src
+
+*** flymake
+#+begin_src emacs-lisp
+(setup-lazy '(flymake-mode) "flymake"
+  :prepare (setup-hook 'eglot-managed-mode-hook 'flymake-mode)
+  (setup-keybinds flymake-mode-map
+    "C-c n" 'flymake-goto-next-error
+    "C-c p" 'flymake-goto-prev-error))
+#+end_src
+
+*** Git
+**** magit
+なんかキラーアプリらしいけどうまく使えてない
+#+begin_src emacs-lisp
+(ensure 'magit)
+(setup-lazy '(magit) "magit")
+#+end_src
+
+**** auto-commit
+今はOrgのリポジトリでだけ使っている
+もう使ってない
+#+begin_src emacs-lisp :tangle no
+(ensure 'git-auto-commit-mode)
+(setup-after "git-auto-commit-mode"
+  (setq gac-automatically-add-new-files-p t)
+  (defun gac-pull-before-push (&rest _args)
+    (let ((current-file (buffer-file-name)))
+      (shell-command "git pull")
+      (when current-file
+        (with-current-buffer (find-buffer-visiting current-file)
+          (revert-buffer t t t)))))
+  (advice-add 'gac-push :before #'gac-pull-before-push))
+
+#+end_src
+
+*** Treesitter
+GrammarはNixでインストールされるのでtreesit-autoは御役御免
+#+begin_src emacs-lisp
+(setup-after "treesit"
+  (setq treesit-font-lock-level 4))
+(dolist (lang '((bash-mode . bash-ts-mode)
+                (c-mode . c-ts-mode)
+                (c++-mode . c++-ts-mode)
+                (csharp-mode . csharp-ts-mode)
+                (cmake-mode . cmake-ts-mode)
+                (css-mode . css-ts-mode)
+                (dockerfile-mode . dockerfile-ts-mode)
+                (python-mode . python-ts-mode)))
+  (add-to-list 'major-mode-remap-alist lang))
+(dolist (lang '(("[Dd]ockerfile\\'" . dockerfile-ts-mode)
+                ("\\.dockerfile\\'" . dockerfile-ts-mode)
+                ("\\.yaml\\'" . yaml-ts-mode)))
+  (add-to-list 'auto-mode-alist lang))
+
+#+end_src
+
+*** 言語ごとのmajor mode
+**** Rust
+#+begin_src emacs-lisp
+(ensure 'rust-mode)
+(setup-lazy '(rust-mode) "rust-mode"
+  :prepare (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+  (setq rust-mode-treesitter-derive t))
+#+end_src
+
+**** Ocaml
+#+begin_src emacs-lisp
+(ensure 'tuareg)
+(setup-lazy '(tuareg-mode
+              tuareg-opam-mode) "tuareg"
+  :prepare (progn
+             (add-to-list 'auto-mode-alist '("[./]opam_?\\'" . tuareg-opam-mode))
+             (add-to-list 'auto-mode-alist '("\\.ml[ip]?\\'" . tuareg-mode))))
+#+end_src
+
+**** Julia
+#+begin_src emacs-lisp
+(ensure 'julia-mode)
+(ensure 'julia-vterm)
+(ensure 'ob-julia-vterm)
+(setup-lazy '(julia-vterm-mode) "julia-vterm"
+  :prepare (setup-hook 'julia-mode-hook 'julia-vterm-mode))
+(setup-after "ob-julia-vterm"
+  (defalias 'org-babel-execute:julia 'org-babel-execute:julia-vterm)
+  (defalias 'org-babel-variable-assignments:julia
+    'org-babel-variable-assignments:julia-vterm))
+
+#+end_src
+
+**** Nushell
+#+begin_src emacs-lisp
+(ensure 'nushell-mode)
+(setup-lazy '(nushell-mode) "nushell-mode"
+  :prepare
+  (progn
+    (add-to-list 'auto-mode-alist '("\\.nu\\'" . nushell-mode))
+    (add-to-list 'interpreter-mode-alist '("nu" . nushell-mode))))
+#+end_src
+
+**** Nix
+#+begin_src emacs-lisp
+(ensure 'nix-ts-mode)
+(setup-lazy '(nix-ts-mode) "nix-ts-mode"
+  :prepare (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode)))
+#+end_src
+
+**** Gnuplot
+#+begin_src emacs-lisp
+(ensure 'gnuplot-mode)
+(setup-lazy '(gnuplot-mode) "gnuplot"
+  :prepare
+  (progn
+    (add-to-list 'auto-mode-alist '("\\.plt\\'" . gnuplot-mode))
+    (add-to-list 'auto-mode-alist '("\\.gp\\'" . gnuplot-mode)))
+  (setup "gnuplot-context"))
+#+end_src
+
+**** SATySFi
+satysfi-ts-modeをつかいます
+#+begin_src emacs-lisp
+(ensure-vc '(satysfi-ts-mode :url "https://github.com/Kyure-A/satysfi-ts-mode"))
+(setup-lazy '(satysfi-ts-mode) "satysfi-ts-mode"
+  :prepare (progn
+             (add-to-list 'auto-mode-alist '("\\.saty\\'" . satysfi-ts-mode))
+             (add-to-list 'auto-mode-alist '("\\.satyh\\'" . satysfi-ts-mode))
+             (add-to-list 'auto-mode-alist '("\\.satyg\\'" . satysfi-ts-mode))))
+#+end_src
+
+**** LaTeX
+ほとんどcdlatexがめあて
+Tempelで展開するので、cdlatexのTabでのコマンドの展開は消す
+#+begin_src emacs-lisp
+(ensure 'auctex)
+(ensure 'cdlatex)
+(setup-lazy '(texmathp) "texmathp")
+(setup-after "cdlatex"
+  (setq cdlatex-command-alist-comb nil)
+  (add-to-list 'cdlatex-tab-hook 'tempel-expand))
+#+end_src
+
+**** Typst
+#+begin_src emacs-lisp
+(setup-lazy '(typst-ts-mode) "typst-ts-mode"
+  :prepare (add-to-list 'auto-mode-alist '("\\.typ\\'" . typst-ts-mode))
+  (setopt typst-ts-mode-indent-offset 2))
+#+end_src
+
+*** lsp-bridge
+試したけど動きませんでした
+#+begin_src emacs-lisp :tangle no
+(!-
+ (setup "yasnippet"
+   (yas-global-mode 1))
+ (setup "lsp-bridge"
+   (setopt lsp-bridge-enable-org-babel t
+           lsp-bridge-enable-hover-diagnostic nil
+           lsp-bridge-enable-inlay-hint nil
+           lsp-bridge-enable-diagnostics nil
+           lsp-bridge-signature-show-function #'lsp-bridge-signature-show-with-frame
+           lsp-bridge-nix-lsp-server "nil")
+   (global-lsp-bridge-mode)))
+
+(setup-after "acm"
+  (setup "orderless")
+  (setopt acm-enable-icon t
+          acm-enable-preview t
+          acm-candidate-match-function 'orderless-flex
+          acm-enable-org-roam t
+          acm-enable-capf t)
+  (keymap-unset acm-mode-map "<remap> <next-line>")
+  (keymap-unset acm-mode-map "<remap> <previous-line>")
+  (setup-keybinds acm-mode-map
+    "<tab>" 'acm-select-next
+    "<backtab>" 'acm-select-prev)
+  (unless (display-graphic-p)
+    (setup "acm-terminal")))
+
+
+#+end_src
+
+** server
+#+begin_src emacs-lisp
+(!-
+ (setup "server"
+  (unless (server-running-p)
+    (server-start))))
+#+end_src
+
+** whitespace
+#+begin_src emacs-lisp
+(setup-lazy '(whitespace-mode) "whitespace"
+  :prepare (setup-hook 'find-file-hook 'whitespace-mode)
+  (setq whitespace-style '(face
+                           trailing
+                           tabs
+                           spaces
+                           empty
+                           space-mark
+                           tab-mark)
+        whitespace-display-mappings '((space-mark ?\u3000 [?\u25a1])
+                                      (tab-mark ?\t [?\u00BB ?\t] [?\\ ?\t]))
+        whitespace-space-regexp "\\(\u3000+\\)"
+        whitespace-trailing-regexp "\\([ \u00A0]+\\)$"
+        whitespace-action '(auto-cleanup)))
+#+end_src
+
+** autorevert
+#+begin_src emacs-lisp
+(!-
+ (setup "autorevert"
+   (setq auto-revert-avoid-polling t)
+   (global-auto-revert-mode 1)))
+#+end_src
+
+** subword
+#+begin_src emacs-lisp
+(setup-lazy '(subword-mode) "subword"
+  :prepare (setup-hook 'prog-mode-hook #'subword-mode))
+#+end_src
+
+** tramp
+NixOSのためにpathを追加する
+#+begin_src emacs-lisp
+(setup-after "tramp"
+  (setq tramp-default-method "scpx")
+  (add-to-list 'tramp-remote-path "/run/current-system/sw/bin")
+  (add-to-list 'tramp-remote-path "/run/wrappers/bin"))
+#+end_src
+
+** comp
+#+begin_src emacs-lisp
+(setup-after "comp"
+  (setq native-comp-async-report-warnings-errors 'silent))
+#+end_src
+
+** Fancy UI
+*** Font
+early-init.elでdefault-frame-alistに指定してあるけど、unicodeはまだ設定されてなくて日本語が表示できないので遅延して設定する
+#+begin_src emacs-lisp
+(!-
+  (set-fontset-font
+    "fontset-startup"
+    'unicode
+    "UDEV Gothic 35LG-12"
+    nil
+    'append))
+#+end_src
+
+**** Ligatureの対応
+ligature.elでworkaroundする
+#+begin_src emacs-lisp :noweb no
+(!-
+ (setup "ligature"
+   (ligature-set-ligatures 'prog-mode '("--" "---" "==" "===" "!=" "!==" "=!="
+                                        "=:=" "=/=" "<=" ">=" "&&" "&&&" "&=" "++" "+++" "***" ";;" "!!"
+                                        "??" "???" "?:" "?." "?=" "<:" ":<" ":>" ">:" "<:<" "<>" "<<<" ">>>"
+                                        "<<" ">>" "||" "-|" "_|_" "|-" "||-" "|=" "||=" "##" "###" "####"
+                                        "#{" "#[" "]#" "#(" "#?" "#_" "#_(" "#:" "#!" "#=" "^=" "<$>" "<$"
+                                        "$>" "<+>" "<+" "+>" "<*>" "<*" "*>" "</" "</>" "/>" "<!--" "<#--"
+                                        "-->" "->" "->>" "<<-" "<-" "<=<" "=<<" "<<=" "<==" "<=>" "<==>"
+                                        "==>" "=>" "=>>" ">=>" ">>=" ">>-" ">-" "-<" "-<<" ">->" "<-<" "<-|"
+                                        "<=|" "|=>" "|->" "<->" "<~~" "<~" "<~>" "~~" "~~>" "~>" "~-" "-~"
+                                        "~@" "[||]" "|]" "[|" "|}" "{|" "[<" ">]" "|>" "<|" "||>" "<||"
+                                        "|||>" "<|||" "<|>" "..." ".." ".=" "..<" ".?" "::" ":::" ":=" "::="
+                                        ":?" ":?>" "//" "///" "/*" "*/" "/=" "//=" "/==" "@_" "__" "???"
+                                        "<:<" ";;;"))
+   (global-ligature-mode t)))
+#+end_src
+
+*** Theme
+ef-themesをつかう
+#+begin_src emacs-lisp
+(ensure 'ef-themes)
+(setup "ef-themes-autoloads"
+  (setq ef-themes-mixed-fonts nil
+        ef-themes-variable-pitch-ui nil)
+  (load-theme 'ef-frost t))
+#+end_src
+
+*** Modeline, Headerline
+nano-modelineでheaderのみ設定
+modelineは消す
+#+begin_src emacs-lisp
+(ensure 'nano-modeline)
+(setup "nano-modeline"
+  (setq nano-modeline-padding '(0.25 . 0.3))
+  (setq-default mode-line-format nil)
+  (setup-after "meow"
+    (defun nano-modeline-meow-state ()
+      (propertize (meow-indicator)
+                  'face (nano-modeline-face 'primary)))
+    (defun my/nano-modeline-generic-mode (&optional default)
+      "Generic Nano modeline"
+      (funcall nano-modeline-position
+               '((nano-modeline-meow-state)
+                 (nano-modeline-buffer-status) " "
+                 (nano-modeline-buffer-name) " "
+                 (nano-modeline-git-info))
+               '((nano-modeline-cursor-position)
+                 (nano-modeline-window-dedicated))
+               default))
+    (my/nano-modeline-generic-mode t)))
+#+end_src
+
+*** perfect-margin
+#+begin_src emacs-lisp
+(ensure 'perfect-margin)
+(!-
+ (setup "perfect-margin"
+   (setq perfect-margin-ignore-filters nil)
+   (perfect-margin-mode 1)))
+#+end_src
+
+*** Icon
+nerd-iconsを採用
+#+begin_src emacs-lisp
+(ensure 'nerd-icons)
+(setup-after "nerd-icons"
+  (ignore-errors (nerd-icons-set-font)))
+#+end_src
+
+#+begin_src emacs-lisp
+(ensure 'nerd-icons-completion)
+(setup-after "marginalia"
+  (setup "nerd-icons-completion"
+    (nerd-icons-completion-mode)
+    (setup-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)))
+#+end_src
+
+*** pixel-scroll
+#+begin_src emacs-lisp
+(!-
+ (setup "pixel-scroll"
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))
+        mouse-wheel-progressive-speed nil
+        mouse-wheel-follow-mouse t
+        pixel-scroll-precision-large-scroll-height 40.0
+        scroll-step 1)
+  (pixel-scroll-precision-mode 1)))
+#+end_src
+
+*** Parenthesis
+#+begin_src emacs-lisp
+(ensure 'rainbow-delimiters)
+(setup-lazy '(rainbow-delimiters-mode) "rainbow-delimiters")
+(setup-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+#+end_src
+
+*** highlight line
+#+begin_src emacs-lisp
+(ensure 'lin)
+;(!-
+; (setup "lin"
+;   (setq lin-face 'lin-blue)
+;   (lin-global-mode)))
+#+end_src
+
+** インデント
+*** タブの挙動
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+#+end_src
+
+*** highlight-indent-guides
+indent-barsにひっこし<2024-08-03 Sat>
+#+begin_src emacs-lisp :tangle no
+(ensure 'highlight-indent-guides)
+(setup-lazy '(highlight-indent-guides-mode) "highlight-indent-guides"
+  :prepare
+  (progn
+    (setup-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+    (setup-hook 'yaml-mode-hook 'highlight-indent-guides-mode))
+  (setq highlight-indent-guides-method 'bitmap
+        highlight-indent-guides-character 124
+        highlight-indent-guides-responsive 'top))
+#+end_src
+
+*** indent-bars
+#+begin_src emacs-lisp
+(ensure 'indent-bars)
+(setup-lazy '(indent-bars-mode) "indent-bars"
+  :prepare
+  (progn
+    (setup-hook 'prog-mode-hook 'indent-bars-mode)
+    (setup-hook 'yaml-mode-hook 'indent-bars-mode))
+  (setup "indent-bars-ts")
+  (setq indent-bars-treesit-support t
+        indent-bars-treesit-ignore-blank-lines-types '("module")
+        indent-bars-color '(highlight :face-bg t :blend 0.2)
+        indent-bars-pattern "."
+        indent-bars-width-frac 0.1
+        indent-bars-pad-frac 0.1
+        indent-bars-zigzag nil
+        indent-bars-color-by-depth nil
+        indent-bars-highlight-current-depth nil
+        indent-bars-display-on-blank-lines nil))
+#+end_src
+
+*** aggressive-indent
+#+begin_src emacs-lisp
+(ensure 'aggressive-indent)
+(setup-lazy '(aggressive-indent-mode) "aggressive-indent"
+  :prepare (setup-hook 'emacs-lisp-mode-hook 'aggressive-indent-mode))
+#+end_src
+
+*** electric-indent
+#+begin_src emacs-lisp
+(setup-hook 'prog-mode-hook 'electric-indent-mode)
+#+end_src
+
+** Minibuffer Completion
+*** vertico, marginalia
+vertico-mode
+#+begin_src emacs-lisp
+(ensure 'vertico)
+(ensure 'marginalia)
+(setup-lazy '(vertico--advice) "vertico"
+  :prepare (progn
+             (advice-add 'completing-read-default :around 'vertico--advice)
+             (advice-add 'completing-read-multiple :around 'vertico--advice))
+  (setq vertico-cycle t)
+
+  (setup "orderless")
+  ;;(setup "hotfuzz")
+  (setup "savehist")
+  (setup "marginalia" (marginalia-mode))
+
+  (defvar +vertico-current-arrow t)
+  (cl-defmethod vertico--format-candidate :around
+    (cand prefix suffix index start &context ((and +vertico-current-arrow
+                                                   (not (bound-and-true-p vertico-flat-mode)))
+                                              (eql t)))
+    (setq cand (cl-call-next-method cand prefix suffix index start))
+    (if (bound-and-true-p vertico-grid-mode)
+        (if (= vertico--index index)
+            (concat (nerd-icons-faicon "nf-fa-hand_o_right") " " cand)
+          (concat #("_" 0 1 (display " ")) cand))
+      (if (= vertico--index index)
+          (concat " " (nerd-icons-faicon "nf-fa-hand_o_right") " " cand)
+        (concat "    " cand)))))
+#+end_src
+*** vertico-directory
+#+begin_src emacs-lisp
+(setup-after "vertico"
+  (setup-lazy '(vertico-directory-delete-char
+                vertico-directory-enter
+                vertico-directory-delete-word)
+    "vertico-directory"
+    :prepare
+    (setup-keybinds vertico-map
+      "<backspace>" 'vertico-directory-delete-char)))
+#+end_src
+*** vertico-repeat
+#+begin_src emacs-lisp
+(setup-lazy '(vertico-repeat-save) "vertico-repeat"
+  :prepare (setup-hook 'minibuffer-setup-hook
+             (vertico-repeat-save)))
+#+end_src
+
+** Consult
+#+begin_src emacs-lisp
+(ensure 'consult)
+(setup-lazy
+  '(consult-recent-file
+    consult-outline
+    consult-line
+    consult-buffer
+    consult-imenu
+    consult-yank-pop)
+  "consult"
+  (setq consult-preview-key 'any))
+#+end_src
+
+** embark
+#+begin_src emacs-lisp
+(ensure 'embark)
+(ensure 'embark-consult)
+(setup-lazy
+  '(embark-act
+    embark-dwim
+    embark-bindings)
+  "embark"
+  :prepare (setup-keybinds nil
+             "C-." 'embark-act
+             "M-." 'embark-dwim
+             "C-h B" 'embark-bindings)
+  (setup-after "consult"
+    (setup "embark-consult"
+      (setup-hook 'embark-collect-mode-hook
+        'consult-preview-at-point-mode))))
+#+end_src
+
+** Orderless
+#+begin_src emacs-lisp
+(ensure 'orderless)
+(setup-after "orderless"
+  (defun orderless-migemo (component)
+    (setup "migemo")
+    (let ((pattern (migemo-get-pattern component)))
+      (condition-case nil
+          (progn (string-match-p pattern "") pattern)
+        (invalid-regexp nil))))
+
+  (orderless-define-completion-style orderless-migemo-style
+    (orderless-matching-styles '(orderless-literal
+                                 orderless-regexp
+                                 orderless-migemo)))
+
+  (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles orderless-migemo-style))
+                                        (eglot (styles orderless))
+                                        (eglot-capf (styles orderless))
+                                        (org-roam-node (styles orderless-migemo-style)))))
+#+end_src
+
+** Hotfuzz
+#+begin_src emacs-lisp
+(ensure 'hotfuzz)
+(setup-after "hotfuzz"
+  (setq completion-styles '(hotfuzz)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion))
+                                        (eglot (styles hotfuzz))
+                                        (eglot-capf (styles hotfuzz)))))
+#+end_src
+
+** Prescient
+#+begin_src emacs-lisp
+(ensure 'prescient)
+(ensure 'corfu-prescient)
+(setup-after "precient"
+  (prescient-persist-mode t))
+#+end_src
+
 ** キーバインドおたすけ
 *** which-key
 #+begin_src emacs-lisp
@@ -994,11 +1234,11 @@ vertico-mode
    (setq which-key-idle-delay 0.5
          which-key-show-early-on-C-h t)))
 #+end_src
+
 *** TODO Hydra
 #+begin_src emacs-lisp
 (ensure 'hydra)
 (ensure 'major-mode-hydra)
-(ensure-vc '(hydra-posframe :url "https://github.com/Ladicle/hydra-posframe"))
 (setup-lazy '(major-mode-hydra
               main-hydra/body
               avy-hydra/body
@@ -1017,7 +1257,7 @@ vertico-mode
       ("w" ace-window "Ace Window"))
      "Org"
      (("o" org-hydra/body "Org")
-      ("a" my/org-agenda "Agenda")
+      ("a" org-agenda "Agenda")
       ("n" org-roam-node-find "Roam node"))
      "Tool"
      (("u" vundo "Undo Tree")
@@ -1085,6 +1325,7 @@ vertico-mode
   (setf (alist-get ?. avy-dispatch-alist) 'avy-action-embark)
   )
 #+end_src
+
 *** TODO Ace-window
 https://karthinks.com/software/emacs-window-management-almanac
 これ見て良い感じにしたい
@@ -1094,6 +1335,7 @@ https://karthinks.com/software/emacs-window-management-almanac
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
         aw-dispatch-always t))
 #+end_src
+
 ** migemo
 #+begin_src emacs-lisp
 (ensure 'migemo)
@@ -1106,6 +1348,7 @@ https://karthinks.com/software/emacs-window-management-almanac
         migemo-coding-system 'utf-8-unix)
   (migemo-init))
 #+end_src
+
 ** SKK
 #+begin_src emacs-lisp
 (ensure 'ddskk)
@@ -1253,6 +1496,7 @@ https://karthinks.com/software/emacs-window-management-almanac
       (add-to-list 'skk-rom-kana-rule-list rule)))
   )
 #+end_src
+
 ** Org
 *** 本体
 #+begin_src emacs-lisp
@@ -1628,6 +1872,7 @@ nix-shellの環境下でbabel-executeできるようにするやつ
 (setup-lazy '(org-nix-shell-mode) "org-nix-shell"
   :prepare (setup-hook 'org-mode-hook 'org-nix-shell-mode))
 #+end_src
+
 *** Export
 Export先のデフォルトのディレクトリを指定
 
@@ -1678,6 +1923,7 @@ LaTeXのExportまわりの設定
 \\fi
 [PACKAGES]
 #+end_src
+
 *** Org-crypt
 #+begin_src emacs-lisp
 (setup-after "org"
@@ -1687,6 +1933,7 @@ LaTeXのExportまわりの設定
     (setq org-crypt-key nil)
     (setq-local auto-save-default nil)))
 #+end_src
+
 *** Org-roam
 https://jethrokuan.github.io/org-roam-guide/
 https://magnus.therning.org/2021-07-23-keeping-todo-items-in-org-roam-v2.html
@@ -1873,7 +2120,8 @@ https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
 
 *** Org-modern
 使ってたけど、あんまり使い勝手がよくないかもなのでやめてorg-bulletだけつかう
-#+begin_src emacs-lisp :tangle no
+やっぱり戻ってきた
+#+begin_src emacs-lisp
 (ensure 'org-modern)
 (setup-lazy '(org-modern-mode
               org-modern-agenda)
@@ -1896,15 +2144,21 @@ https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
         org-agenda-current-time-string
          "◀── now ─────────────────────────────────────────────────"
          ))
+(setup-lazy '(org-modern-indent-mode)
+  "org-modern-indent"
+  :prepare (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
+
 #+end_src
+
 *** Org-superstar
 org-bulletはもう古くて、superstarをつかうらしい
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (ensure 'org-superstar)
 (setup-lazy '(org-superstar-mode)
   "org-superstar"
   :prepare (setup-hook 'org-mode-hook 'org-superstar-mode))
 #+end_src
+
 *** Agenda
 #+begin_src emacs-lisp
 (setup-after "org-agenda"
@@ -1913,7 +2167,8 @@ org-bulletはもう古くて、superstarをつかうらしい
 #+end_src
 
 基本Org-qlを使う はやいので
-#+begin_src emacs-lisp
+もうつかってません
+#+begin_src emacs-lisp :tangle no
 (ensure 'org-ql)
 (setup-lazy '(org-ql-view) "org-ql-view")
 (setup-lazy '(org-ql-search) "org-ql-search")
@@ -2052,62 +2307,6 @@ Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせ�
  (setup "pdf-loader"
    (pdf-loader-install)))
 #+end_src
-** LSP/Eglot
-#+begin_src emacs-lisp
-(ensure 'eglot)
-(setup-lazy '(eglot-ensure) "eglot"
-  :prepare (!foreach '(c-ts-mode
-                       c++-ts-mode
-                       rust-ts-mode
-                       tuareg-mode)
-             (setup-hook ,it 'eglot-ensure))
-  (setq eglot-autoshutdown t
-        eglot-ignored-server-capabilities '(:documentHighlightProvider
-                                            :documentOnTypeFormattingProvider)
-        eglot-events-buffer-size 0
-        eglot-sync-connect nil)
-  (defun my/eglot-capf ()
-    (setq-local completion-at-point-functions
-                (list (cape-capf-super
-                       #'tempel-complete
-                       #'eglot-completion-at-point
-                       #'cape-file))))
-  (setup-hook 'eglot-managed-mode-hook 'my/eglot-capf))
-
-#+end_src
-
-*** jsonrpc
-boosterを使うので意味ないはずだけど一応
-#+begin_src emacs-lisp
-(setup-after "jsonrpc"
-  (setq jsonrpc-default-request-timeout 3000)
-  (fset #'jsonrpc--log-event #'ignore))
-#+end_src
-
-*** eglot-booster
-#+begin_src emacs-lisp
-(ensure-vc '(eglot-booster :url "https://github.com/jdtsmith/eglot-booster"))
-(setup-after "eglot"
-  (setup "eglot-booster"
-    (eglot-booster-mode)))
-#+end_src
-
-*** eglot-x
-拡張とかを使えるように
-#+begin_src emacs-lisp
-(ensure-vc '(eglot-x :url "https://github.com/nemethf/eglot-x"))
-(setup-after "eglot"
-  (setup "eglot-x"
-    (eglot-x-setup)))
-#+end_src
-** flymake
-#+begin_src emacs-lisp
-(setup-lazy '(flymake-mode) "flymake"
-  :prepare (setup-hook 'eglot-managed-mode-hook 'flymake-mode)
-  (setup-keybinds flymake-mode-map
-    "C-c n" 'flymake-goto-next-error
-    "C-c p" 'flymake-goto-prev-error))
-#+end_src
 
 ** Eldoc
 *** eldoc-box
@@ -2158,6 +2357,7 @@ meow-vterm-enable, setupあたりを変更
     (meow-vterm-setup)))
 
 #+end_src
+
 ** Dired
 *** 本体
 #+begin_src emacs-lisp
@@ -2242,135 +2442,6 @@ dirvish.elのdirvish-override-dired-modeを引っぱってきて遅延ロード�
   (!when (equal system-type 'darwin)
     (setq insert-directory-program "gls")))
 
-#+end_src
-
-** Git
-*** magit
-なんかキラーアプリらしいけどうまく使えてない
-#+begin_src emacs-lisp
-(ensure 'magit)
-(setup-lazy '(magit) "magit")
-#+end_src
-
-*** auto-commit
-今はOrgのリポジトリでだけ使っている
-もう使ってない
-#+begin_src emacs-lisp :tangle no
-(ensure 'git-auto-commit-mode)
-(setup-after "git-auto-commit-mode"
-  (setq gac-automatically-add-new-files-p t)
-  (defun gac-pull-before-push (&rest _args)
-    (let ((current-file (buffer-file-name)))
-      (shell-command "git pull")
-      (when current-file
-        (with-current-buffer (find-buffer-visiting current-file)
-          (revert-buffer t t t)))))
-  (advice-add 'gac-push :before #'gac-pull-before-push))
-
-#+end_src
-** Treesitter
-GrammarはNixでインストールされるのでtreesit-autoは御役御免
-#+begin_src emacs-lisp
-(setup-after "treesit"
-  (setq treesit-font-lock-level 4))
-(dolist (lang '((bash-mode . bash-ts-mode)
-                (c-mode . c-ts-mode)
-                (c++-mode . c++-ts-mode)
-                (csharp-mode . csharp-ts-mode)
-                (cmake-mode . cmake-ts-mode)
-                (css-mode . css-ts-mode)
-                (dockerfile-mode . dockerfile-ts-mode)
-                (python-mode . python-ts-mode)))
-  (add-to-list 'major-mode-remap-alist lang))
-#+end_src
-** 言語ごとのmajor mode
-*** Rust
-#+begin_src emacs-lisp
-(ensure 'rust-mode)
-(setup-lazy '(rust-mode) "rust-mode"
-  :prepare (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
-  (setq rust-mode-treesitter-derive t))
-#+end_src
-
-*** Ocaml
-#+begin_src emacs-lisp
-(ensure 'tuareg)
-(setup-lazy '(tuareg-mode
-              tuareg-opam-mode) "tuareg"
-  :prepare (progn
-             (add-to-list 'auto-mode-alist '("[./]opam_?\\'" . tuareg-opam-mode))
-             (add-to-list 'auto-mode-alist '("\\.ml[ip]?\\'" . tuareg-mode))))
-#+end_src
-
-*** Julia
-#+begin_src emacs-lisp
-(ensure 'julia-mode)
-(ensure 'julia-vterm)
-(ensure 'ob-julia-vterm)
-(setup-lazy '(julia-vterm-mode) "julia-vterm"
-  :prepare (setup-hook 'julia-mode-hook 'julia-vterm-mode))
-(setup-after "ob-julia-vterm"
-  (defalias 'org-babel-execute:julia 'org-babel-execute:julia-vterm)
-  (defalias 'org-babel-variable-assignments:julia
-    'org-babel-variable-assignments:julia-vterm))
-
-#+end_src
-*** Nushell
-#+begin_src emacs-lisp
-(ensure 'nushell-mode)
-(setup-lazy '(nushell-mode) "nushell-mode"
-  :prepare
-  (progn
-    (add-to-list 'auto-mode-alist '("\\.nu\\'" . nushell-mode))
-    (add-to-list 'interpreter-mode-alist '("nu" . nushell-mode))))
-#+end_src
-
-*** Nix
-#+begin_src emacs-lisp
-(ensure 'nix-ts-mode)
-(setup-lazy '(nix-ts-mode) "nix-ts-mode"
-  :prepare (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode)))
-#+end_src
-
-*** Gnuplot
-#+begin_src emacs-lisp
-(ensure 'gnuplot-mode)
-(setup-lazy '(gnuplot-mode) "gnuplot"
-  :prepare
-  (progn
-    (add-to-list 'auto-mode-alist '("\\.plt\\'" . gnuplot-mode))
-    (add-to-list 'auto-mode-alist '("\\.gp\\'" . gnuplot-mode)))
-  (setup "gnuplot-context"))
-#+end_src
-
-*** SATySFi
-satysfi-ts-modeをつかいます
-#+begin_src emacs-lisp
-(ensure-vc '(satysfi-ts-mode :url "https://github.com/Kyure-A/satysfi-ts-mode"))
-(setup-lazy '(satysfi-ts-mode) "satysfi-ts-mode"
-  :prepare (progn
-             (add-to-list 'auto-mode-alist '("\\.saty$" . satysfi-ts-mode))
-             (add-to-list 'auto-mode-alist '("\\.satyh$" . satysfi-ts-mode))
-             (add-to-list 'auto-mode-alist '("\\.satyg$" . satysfi-ts-mode))))
-#+end_src
-
-*** LaTeX
-ほとんどcdlatexがめあて
-Tempelで展開するので、cdlatexのTabでのコマンドの展開は消す
-#+begin_src emacs-lisp
-(ensure 'auctex)
-(ensure 'cdlatex)
-(setup-lazy '(texmathp) "texmathp")
-(setup-after "cdlatex"
-  (setq cdlatex-command-alist-comb nil)
-  (add-to-list 'cdlatex-tab-hook 'tempel-expand))
-#+end_src
-
-*** Typst
-#+begin_src emacs-lisp
-(ensure 'typst-ts-mode)
-(setup-lazy '(typst-ts-mode) "typst-ts-mode"
-  :prepare (add-to-list 'auto-mode-alist '("\\.typ$" . typst-ts-mode)))
 #+end_src
 
 ** Footer

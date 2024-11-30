@@ -18,6 +18,7 @@
     # the official client has no wayland screen sharing support.
     # vesktop
     slack
+    newsflash
   ] ++ (if pkgs.stdenv.isLinux then [pkgs.zotero] else []);
   # discord
   home.file.".config/discord/settings.json".text = ''

@@ -25,24 +25,6 @@ let dptrp1py = pkgs.python3Packages.buildPythonPackage rec {
   ];
   doCheck = false;
   };
-  papis-config = ''
-[settings]
-default-library = papers
-opentool = ${if pkgs.stdenv.isLinux then "xdg-open" else "open"}
-picktool = fzf
-database-backend = whoosh
-bibtex-unicode = True
-use-git = True
-
-[tui]
-editmode = vi
-
-[papers]
-dir = ~/bib/papers
-
-[books]
-dir = ~/bib/books
-'';
 in lib.mkMerge [{
   programs = {
     yazi.enable = true;
@@ -64,9 +46,7 @@ in lib.mkMerge [{
   };
   home.packages = [
     dptrp1py
-    # pkgs.papis
   ];
-  home.file.".config/papis/config".text = papis-config;
 }
 
 (lib.mkIf pkgs.stdenv.isDarwin {

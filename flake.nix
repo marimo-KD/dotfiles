@@ -5,13 +5,20 @@
     nix-darwin.url = "github:LnL7/nix-darwin";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     xremap.url = "github:xremap/nix-flake";
     nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
-    musnix.url = "github:musnix/musnix";
+    musnix = {
+      url = "github:musnix/musnix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    emacs-overlay = {
+      url = "github:nix-community/emacs-overlay";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   outputs = inputs@{self, nixpkgs-unstable, nixpkgs, nix-darwin, home-manager, ...} : {
@@ -28,17 +35,7 @@
             home-manager.useUserPackages = true;
             home-manager.users.marimo = import ./home/linux;
             nixpkgs.overlays = [
-              (final: prev: let
-                unstable = import nixpkgs-unstable {
-                  system = final.system;
-                  config.allowUnfree = true;
-                }; in
-                {
-                  mozcdic-ut-neologd = unstable.mozcdic-ut-neologd;
-                  mozcdic-ut-jawiki = unstable.mozcdic-ut-jawiki;
-                  mozcdic-ut-edict2 = unstable.mozcdic-ut-edict2;
-                }
-              )
+              inputs.emacs-overlay.overlay
             ];
           }
           inputs.musnix.nixosModules.musnix
@@ -60,6 +57,7 @@
             home-manager.users.marimo = import ./home/darwin;
             nixpkgs.overlays = [
               inputs.nixpkgs-firefox-darwin.overlay
+              inputs.emacs-overlay.overlay
             ];
           }
           ./hosts/malus

@@ -72,12 +72,6 @@
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    mozcdic-ut-neologd
-    mozcdic-ut-edict2
-    mozcdic-ut-jawiki
-  ];
-
   # Configure keymap in X11
   services.xserver = {
     xkb = {
@@ -88,6 +82,10 @@
 
   programs.hyprland = {
     enable = true;
+  };
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -140,7 +138,9 @@
       };
     };
     gamescope = { enable = true; };
-    git = { enable = true; };
+    git = {
+      enable = true;
+    };
     neovim = {
       enable = true;
       defaultEditor = true;

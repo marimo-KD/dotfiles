@@ -1,6 +1,7 @@
 {pkgs, config, ...}: let
   init-el = pkgs.callPackage ./init-el.nix { emacs = config.programs.emacs.finalPackage; };
   fetchFromGitHub = pkgs.fetchFromGitHub;
+  fetchgit = pkgs.fetchgit;
 in {
   programs.emacs = {
     enable = true;
@@ -17,6 +18,7 @@ in {
       ef-themes
       nano-modeline
       perfect-margin
+      indent-bars
       nerd-icons
       nerd-icons-completion
       rainbow-delimiters
@@ -40,6 +42,7 @@ in {
       vundo
       expreg
       meow
+      meow-tree-sitter
       which-key
       hydra
       major-mode-hydra
@@ -63,6 +66,9 @@ in {
       japanese-holidays
       eldoc-box
       eglot
+      lsp-bridge
+      yasnippet
+      acm-terminal
       vterm
       nerd-icons-dired
       diredfl
@@ -71,6 +77,7 @@ in {
       dired-collapse
       magit
       treesit-grammars.with-all-grammars
+      envrc
       rust-mode
       tuareg
       julia-mode
@@ -78,60 +85,20 @@ in {
       ob-julia-vterm
       nushell-mode
       nix-ts-mode
+      markdown-mode
       gnuplot
       auctex
       cdlatex
       pdf-tools
     ] ++ [
       (trivialBuild {
-        pname = "vertico-posframe";
-        version = "2024-02-02";
-        src = fetchFromGitHub {
-          owner = "tumashu";
-          repo = "vertico-posframe";
-          rev = "2e0e09e5bbd6ec576ddbe566ab122575ef051fab";
-          hash = "sha256-xBntlulKZizYn6qLXuQR9hhWfuW48cqRAEneA8J0qh0=";
-        };
-        buildInputs = [
-          epkgs.vertico
-          epkgs.posframe
-        ];
-      })
-      (trivialBuild {
-        pname = "hydra-posframe";
-        version = "2023-07-17";
-        src = fetchFromGitHub {
-          owner = "Ladicle";
-          repo = "hydra-posframe";
-          rev = "142a04dd588af6c725e331863c3ca7bd5dda13ec";
-          hash = "sha256-9nVBnpaWZIYNDvS2WWBED0HsIRIv4AR4as6wEe463tI=";
-        };
-        buildInputs = [
-          epkgs.hydra
-          epkgs.posframe
-        ];
-      })
-      (trivialBuild {
-        pname = "indent-bars";
-        version = "2024-07-27";
-        src = fetchFromGitHub {
-          owner = "jdtsmith";
-          repo = "indent-bars";
-          rev = "a86f8eca12d62a4318a60b27f2a5a68231ca9f11";
-          hash = "sha256-XCowediIH3hp1K85Y6eZqgrumb39/dvEjav0V1H7Bz4=";
-        };
-        buildInputs = [
-          epkgs.compat
-        ];
-      })
-      (trivialBuild {
         pname = "org-modern-indent";
-        version = "2024-03-20";
+        version = "2024-11-05";
         src = fetchFromGitHub {
           owner = "jdtsmith";
           repo = "org-modern-indent";
-          rev = "f2b859bc53107b2a1027b76dbf4aaebf14c03433";
-          hash = "sha256-vtbaa3MURnAI1ypLueuSfgAno0l51y3Owb7g+jkK6JU=";
+          rev = "37939645552668f0f79a76c9eccc5654f6a3ee6c";
+          hash = "sha256-fnaWLnXfVpPB3ggQOqLSl/ykHfrJbwdoLdFwInHmg1U=";
         };
         buildInputs = [
           epkgs.compat
@@ -139,12 +106,12 @@ in {
       })
       (trivialBuild {
         pname = "eglot-booster";
-        version = "2024-04-11";
+        version = "2024-10-29";
         src = fetchFromGitHub {
           owner = "jdtsmith";
           repo = "eglot-booster";
-          rev = "e19dd7ea81bada84c66e8bdd121408d9c0761fe6";
-          hash = "sha256-vF34ZoUUj8RENyH9OeKGSPk34G6KXZhEZozQKEcRNhs=";
+          rev = "e6daa6bcaf4aceee29c8a5a949b43eb1b89900ed";
+          hash = "sha256-PLfaXELkdX5NZcSmR1s/kgmU16ODF8bn56nfTh9g6bs=";
         };
         buildInputs = [
           epkgs.eglot
@@ -152,12 +119,12 @@ in {
       })
       (trivialBuild {
         pname = "eglot-x";
-        version = "2024-07-07";
+        version = "2024-10-23";
         src = fetchFromGitHub {
           owner = "nemethf";
           repo = "eglot-x";
-          rev = "ada0c9f32deac90038661f461966aae51707abff";
-          hash = "sha256-qZrJkGUBnSvH6w2MuIdYg/2Vb7eowAU0CqTw2LleDhM=";
+          rev = "295c0309dc836966467c95867d1593f1376507b6";
+          hash = "sha256-G/jnEQRVo6xpBaW5cBrcAD03P65stgGMhTM21pxdNvE=";
         };
         buildInputs = [
           epkgs.eglot
@@ -180,17 +147,6 @@ in {
         ];
       })
       (trivialBuild {
-        pname = "meow-tree-sitter";
-        version = "2024-07-01";
-        src = fetchFromGitHub {
-          owner = "skissue";
-          repo = "meow-tree-sitter";
-          rev = "d8dce964fac631a6d44b650a733075e14854159c";
-          hash = "sha256-XdTeUq1J/zKoYaIDbl86LYuhJZJbaLFEpz7i5CxE8js=";
-        };
-        buildInputs = [ epkgs.meow ];
-      })
-      (trivialBuild {
         pname = "satysfi-ts-mode";
         version = "2024-03-19";
         src = fetchFromGitHub {
@@ -209,6 +165,28 @@ in {
           rev = "625fc800950ed16dbf77c666e5129087b2315e2a";
           hash = "sha256-znfBXCWpooZTOMuP4ap2wjUsSpaz41NS2h9YSdgZacQ=";
         };
+      })
+      (trivialBuild {
+        pname = "typst-ts-mode";
+        version = "2024-11-21";
+        src = fetchgit {
+          url = "https://codeberg.org/meow_king/typst-ts-mode";
+          rev = "d3e44b5361ed1bbb720a38dafdb29cb8d8b6d8be";
+          hash = "sha256-fECXfTjbckgS+kEJ3dMQ7zDotqdxxBt3WFl0sEM60Aw=";
+        };
+      })
+      (trivialBuild {
+        pname = "typst-preview";
+        version = "2024-10-26";
+        src = fetchFromGitHub {
+          owner = "havarddj";
+          repo = "typst-preview.el";
+          rev = "4091dc5bbb281335ce03e4cecaae26495275f7e3";
+          hash = "sha256-AJRWw8c13C6hfwO28hXERN4cIc6cFTbNBcz2EzqqScg=";
+        };
+        buildInputs = [
+          epkgs.websocket
+        ];
       })
       (pkgs.callPackage ./setup.nix {
         inherit (pkgs) fetchFromGitHub;
