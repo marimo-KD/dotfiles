@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{pkgs, config, ...}: {
   services.hyprpaper = {
     enable = true;
     settings = {
