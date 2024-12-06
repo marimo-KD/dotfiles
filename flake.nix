@@ -33,7 +33,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.marimo = import ./home/linux;
+            home-manager.users.marimo = import ./home/linux.nix;
             nixpkgs.overlays = [
               inputs.emacs-overlay.overlay
             ];
@@ -54,7 +54,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.marimo = import ./home/darwin;
+            home-manager.users.marimo = import ./home/darwin.nix;
             nixpkgs.overlays = [
               inputs.nixpkgs-firefox-darwin.overlay
               inputs.emacs-overlay.overlay
