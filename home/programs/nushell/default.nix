@@ -5,7 +5,7 @@
       configFile.text = ''
       $env.config = {
         show_banner: false
-        key_bindings: [
+        keybindings: [
           {
             name: fuzzy_ghq
             modifier: control

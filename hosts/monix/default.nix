@@ -234,6 +234,12 @@
           };
         };
       }
+      {
+        name = "Capslock to Henkan";
+        remap = {
+          CapsLock = "Henkan";
+        };
+      }
     ];
   };
 

@@ -44,6 +44,7 @@ in {
       undo-fu
       vundo
       expreg
+      puni
       meow
       meow-tree-sitter
       which-key

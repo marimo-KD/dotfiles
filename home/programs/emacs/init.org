@@ -341,14 +341,29 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
 (ensure 'vundo)
 (setup-lazy '(undo-fu-only-undo
               undo-fu-only-redo) "undo-fu")
-(setup-after "vundo"
-  (setq vundo-glyph-alist vundo-unicode-symbols))
+(setup-lazy '(vundo) "vundo"
+  (setopt vundo-glyph-alist vundo-unicode-symbols))
 #+end_src
 
 *** Region
 #+begin_src emacs-lisp
-(ensure 'expreg)
 (setup-lazy '(expreg-expand) "expreg")
+#+end_src
+
+*** Puni
+#+begin_src emacs-lisp
+(setup-lazy
+  '(puni-mark-list-around-point
+    puni-mark-sexp-around-point
+    puni-expand-region
+    puni-wrap-round
+    puni-wrap-square
+    puni-wrap-curly
+    puni-wrap-angle
+    puni-splice
+    puni-slurp-forward
+    puni-barf-forward)
+  "puni")
 #+end_src
 
 *** Eglot
@@ -359,7 +374,8 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
   :prepare (!foreach '(c-ts-mode
                        c++-ts-mode
                        rust-ts-mode
-                       tuareg-mode)
+                       tuareg-mode
+                       nix-ts-mode)
              (setup-hook ,it 'eglot-ensure))
   (setq eglot-autoshutdown t
         eglot-ignored-server-capabilities '(:documentHighlightProvider
@@ -739,9 +755,9 @@ ligature.elでworkaroundする
 ef-themesをつかう
 #+begin_src emacs-lisp
 (setup "ef-themes-autoloads"
-  (setq ef-themes-mixed-fonts t
-        ef-themes-variable-pitch-ui nil)
-  (load-theme 'ef-frost t))
+  (setopt ef-themes-mixed-fonts t
+          ef-themes-variable-pitch-ui nil)
+  (load-theme 'ef-cyprus t))
 #+end_src
 
 *** Modeline, Headerline
@@ -749,7 +765,7 @@ nano-modelineでheaderのみ設定
 modelineは消す
 #+begin_src emacs-lisp
 (setup "nano-modeline"
-  (setq nano-modeline-padding '(0 . 0))
+  (setq nano-modeline-padding '(0.2 . 0.25))
   (setq-default mode-line-format nil)
   (setup-after "meow"
     (defun nano-modeline-meow-state ()
@@ -1032,15 +1048,15 @@ vertico-mode
 ** キーバインドおたすけ
 *** which-key
 #+begin_src emacs-lisp
-(ensure 'which-key)
 (!-
  (setup "which-key"
-   (setq which-key-idle-delay 0.5
-         which-key-show-early-on-C-h t)))
+   (setopt which-key-idle-delay 0.2
+           which-key-show-early-on-C-h t)
+   (which-key-mode)))
 #+end_src
 
-*** TODO Hydra
-#+begin_src emacs-lisp
+*** Hydra
+#+begin_src emacs-lisp :tangle no
 (ensure 'hydra)
 (ensure 'major-mode-hydra)
 (setup-lazy '(major-mode-hydra
@@ -1092,6 +1108,56 @@ vertico-mode
         ("i" org-roam-node-insert "Insert Node")
         ("t" org-roam-tag-add "Add tag")))))
   )
+#+end_src
+
+*** transient
+Hydraからtransient.elにひっこす
+#+begin_src emacs-lisp
+(setup-lazy
+  '(meow-main-menu
+    avy-menu
+    window-menu)
+  "transient"
+  (transient-define-prefix meow-main-menu ()
+    "Meow main menu"
+    [["File"
+      ("f" "Find" find-file)
+      ("r" "Recent" recentf)
+      ("s" "Save" save-buffer)]
+     ["Window"
+      ("b" "Buffer" consult-buffer)
+      ("w" "Window" window-menu)]
+     ["Utility"
+      ("u" "Undo Tree" vundo)
+      ("g" "Magit" magit)
+      ("t" "Terminal" vterm)]
+     ])
+  (transient-define-prefix avy-menu ()
+    "Avy menu"
+    [["Line"
+      ("y" "yank" avy-copy-line)
+      ("m" "move" avy-move-line)
+      ("k" "kill" avy-kill-whole-line)]
+     ["Region"
+      ("Y" "yank" avy-copy-region)
+      ("M" "move" avy-move-region)
+      ("K" "kill" avy-kill-region)]
+     ["Char"
+      ("c" "Char" avy-goto-char)
+      ("C" "Char 2" avy-goto-char-2)
+      ("t" "Timer" avy-goto-char-timer)]
+     ["Word"
+      ("w" "Word" avy-goto-word-0)
+      ("W" "Word 1" avy-goto-word-1)]
+     ["Line"
+      ("l" "Line" avy-goto-line)]])
+  (transient-define-prefix window-menu ()
+    "Window menu"
+    ["Window Menu"
+     ("d" "Delete" delete-window)
+     ("s" "Split ―" split-window-vertically)
+     ("v" "Split |" split-window-horizontally)
+     ("a" "Ace" ace-window)]))
 #+end_src
 
 *** meow
@@ -1270,7 +1336,7 @@ vertico-mode
   (meow-motion-overwrite-define-key
    '("j" . meow-next)
    '("k" . meow-prev)
-   '(";" . main-hydra/body)
+   '(";" . meow-main-menu)
    '("<escape>" . ignore))
   (meow-leader-define-key
    ;; SPC j/k will run the original command in MOTION state.
@@ -1308,10 +1374,10 @@ vertico-mode
    '("k" . meow-prev)
    '("l" . meow-right)
 
-   '("H" . meow-left-expand)
-   '("J" . meow-next-expand)
-   '("K" . meow-prev-expand)
-   '("L" . meow-right-expand)
+   '("H" . meow-beginning-of-thing)
+   '("J" . meow-page-down)
+   '("K" . meow-page-up)
+   '("L" . meow-end-of-thing)
 
    '("i" . meow-insert)
    '("I" . meow-open-above)
@@ -1320,26 +1386,36 @@ vertico-mode
    '("q" . meow-quit)
 
    ;; selection
-   '("v" . meow-line)
-   '("V" . set-mark-command)
+   '("v l" . meow-line)
+   '("v i" . meow-inner-of-thing)
+   '("v a" . meow-bounds-of-thing)
+   '("v b" . meow-block)
+   '("v c" . puni-mark-list-around-point)
+   '("v x" . puni-mark-sexp-around-point)
+   '("v s" . meow-mark-symbol)
+   '("v w" . meow-mark-word)
+   '("v v" . puni-expand-region)
+   '("v r" . rectangle-mark-mode)
 
-   '("o" . expreg-expand)
+   ;; puni
+   '(", a (" . puni-wrap-round)
+   '(", a [" . puni-wrap-square)
+   '(", a {" . puni-wrap-curly)
+   '(", a <" . puni-wrap-angle)
+   '(", a d" . puni-splice)
+   '(", s l" . puni-slurp-forward)
+   '(", b h" . puni-barf-forward)
+
    '("m" . meow-join)
 
    '("e" . meow-next-word)
    '("E" . meow-next-symbol)
    '("b" . meow-back-word)
    '("B" . meow-back-symbol)
-   '("w" . meow-mark-word)
-   '("W" . meow-mark-symbol)
-
-   '("," . meow-inner-of-thing)
-   '("." . meow-bounds-of-thing)
-   '("<" . meow-beginning-of-thing)
-   '(">" . meow-end-of-thing)
+   '("w" . expreg-expand)
 
    '("g" . meow-grab)
-   '("G" . meow-cancel-selection)
+   '("<escape>" . meow-cancel-selection)
 
    '("t" . meow-find)
    '("T" . meow-till)
@@ -1361,18 +1437,12 @@ vertico-mode
 
    '("=" . indent-region)
 
-   '("se" . insert-pair-region)
-   '("sd" . meow-surround-squeeze)
-
    ;; command
    '("/" . consult-line)
-   '(";" . main-hydra/body)
-   '("ss" . major-mode-hydra)
+   '(";" . meow-main-menu)
    '("n" . vertico-repeat)
    '("f" . avy-goto-migemo-char-timer)
-   '("F" . avy-hydra/body)
-   ;; ignore escape
-   '("<escape>" . ignore)))
+   '("F" . avy-menu)))
 (meow-setup)
 #+end_src
 
@@ -2249,11 +2319,7 @@ https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
         org-agenda-current-time-string
         "◀── now ─────────────────────────────────────────────────"
         )
-  (setopt org-modern-star 'replace)
-  (set-face-attribute 'org-level-1 nil :height 1.5)
-  (set-face-attribute 'org-level-2 nil :height 1.25)
-  (set-face-attribute 'org-level-3 nil :height 1.1)
-  (set-face-attribute 'org-document-title :height 1.75))
+  (setopt org-modern-star 'replace))
 (setup-lazy '(org-modern-indent-mode)
   "org-modern-indent"
   :prepare (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
