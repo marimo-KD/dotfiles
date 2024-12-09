@@ -45,5 +45,13 @@
     simple-scan # scanner
     wl-clipboard # clipboard
     sioyek
+    newsflash
+
+    reaper # daw
+    vital # synthesizer
+    sfizz # sampler(SFZ)
+    yabridge
+    yabridgectl
+    wineWowPackages.staging
   ];
 }

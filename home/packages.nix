@@ -32,14 +32,6 @@ in {
     typst
     gnuplot
     slack
-    newsflash
     dptrp1py
-
-    vital # synthesizer
-    sfizz # sampler(SFZ)
-    reaper # daw
-    yabridge
-    yabridgectl
-    wineWowPackages.staging
  ];
 }

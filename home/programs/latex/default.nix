@@ -17,7 +17,6 @@ in
 {
   home.packages = with pkgs; [
     tex
-    texlab
   ];
   home.file.".config/latexmk/latexmkrc".text = ''
 #!/usr/bin/env perl

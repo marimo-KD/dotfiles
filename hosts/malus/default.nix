@@ -4,6 +4,7 @@
     home = "/Users/marimo";
     shell = pkgs.bashInteractive;
   };
+  system.stateVersion = 5;
   networking = {
     hostName = "malus";
     computerName = "malus";
@@ -28,9 +29,7 @@
     overrideLocalDns = true;
   };
 
-  fonts = {
-    fontDir.enable = true;
-    fonts = with pkgs; [
+  fonts.packages = with pkgs; [
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
@@ -42,6 +41,5 @@
       plemoljp-nf
       ibm-plex
       (nerdfonts.override { fonts = [ "Iosevka" "NerdFontsSymbolsOnly"]; })
-    ];
-  };
+  ];
 }

@@ -58,6 +58,9 @@
             nixpkgs.overlays = [
               inputs.nixpkgs-firefox-darwin.overlay
               inputs.emacs-overlay.overlay
+              (final: prev: {
+                ghostscript = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.ghostscript;
+              })
             ];
           }
           ./hosts/malus
