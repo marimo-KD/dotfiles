@@ -164,6 +164,7 @@
                             ]; })
       plemoljp-nf
       udev-gothic
+      udev-gothic-nf
       ibm-plex
       ipaexfont
     ];

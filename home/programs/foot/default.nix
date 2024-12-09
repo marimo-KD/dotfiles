@@ -3,7 +3,7 @@
     enable = true;
     settings = {
       main = {
-        font = "PlemolJP Console NF:size=12";
+        font = "UDEV Gothic 35NFLG:size=12";
       };
       colors = { # catppuccin-latte
         foreground = "4c4f69"; # Text
