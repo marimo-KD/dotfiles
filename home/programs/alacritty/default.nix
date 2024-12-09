@@ -1,9 +1,27 @@
 {pkgs, ...}: {
   programs.alacritty = {
     enable = true;
-  };
-  home.file.".config/alacritty" = {
-    source = ./alacritty;
-    recursive = true;
+    settings = {
+      window = {
+        dynamic_padding = true;
+        opacity = 0.9;
+        option_as_alt = "Both";
+      };
+      font = {
+        normal = {
+          family = "UDEV Gothic 35NFLG";
+        };
+        size = 14;
+      };
+      terminal = {
+        shell = "nu";
+      };
+      keyboard = {
+        bindings = [
+          { key = "¥"; chars = "\\";}
+          { key = "¥"; mods = "Alt"; chars = "\\";}
+        ];
+      };
+    };
   };
 }

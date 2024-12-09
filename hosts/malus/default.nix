@@ -2,7 +2,7 @@
   imports = [];
   users.users.marimo = {
     home = "/Users/marimo";
-    shell = pkgs.bashInteractive;
+    shell = pkgs.zsh;
   };
   system.stateVersion = 5;
   networking = {
@@ -15,8 +15,7 @@
   nixpkgs.config.allowUnfree = true;
 
   programs.zsh.enable = true;
-  programs.bash.enable = true;
-  environment.shells = [ pkgs.bashInteractive pkgs.zsh ];
+  environment.shells = [ pkgs.zsh ];
 
   services.nix-daemon.enable = true; # multi-user install
   nix.settings = {
@@ -34,11 +33,9 @@
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
       noto-fonts-emoji
-      source-han-sans
-      source-han-serif
       source-han-mono
-      plemoljp
-      plemoljp-nf
+      udev-gothic
+      udev-gothic-nf
       ibm-plex
       (nerdfonts.override { fonts = [ "Iosevka" "NerdFontsSymbolsOnly"]; })
   ];
