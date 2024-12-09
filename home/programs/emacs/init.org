@@ -757,7 +757,7 @@ ef-themesをつかう
 (setup "ef-themes-autoloads"
   (setopt ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui nil)
-  (load-theme 'ef-cyprus t))
+  (load-theme 'ef-owl t))
 #+end_src
 
 *** Modeline, Headerline
@@ -1116,7 +1116,8 @@ Hydraからtransient.elにひっこす
 (setup-lazy
   '(meow-main-menu
     avy-menu
-    window-menu)
+    window-menu
+    lsp-menu)
   "transient"
   (transient-define-prefix meow-main-menu ()
     "Meow main menu"
@@ -1130,7 +1131,12 @@ Hydraからtransient.elにひっこす
      ["Utility"
       ("u" "Undo Tree" vundo)
       ("g" "Magit" magit)
-      ("t" "Terminal" vterm)]
+      ("t" "Terminal" vterm)
+      ("n" "Roam" org-roam-node-find)]
+     ["Org"
+      :if-mode org-mode
+      ("o" "Outline" consult-outline)
+      ("i" "Insert Node" org-roam-node-insert)]
      ])
   (transient-define-prefix avy-menu ()
     "Avy menu"
@@ -1157,7 +1163,25 @@ Hydraからtransient.elにひっこす
      ("d" "Delete" delete-window)
      ("s" "Split ―" split-window-vertically)
      ("v" "Split |" split-window-horizontally)
-     ("a" "Ace" ace-window)]))
+     ("o" "Cycle" other-window :transient t)
+     ("s" "Run on" ace-window-one-command)
+     ("p" "Ace prefix" ace-window-prefix)
+     ("a" "Ace" ace-window)])
+  (transient-define-prefix lsp-menu ()
+    "LSP Menu"
+    [["Buffer"
+      ("f" "Format" eglot-format-buffer)
+      ("a" "Action" eglot-code-actions)]
+     ["Server"
+      ("S" "Shutdown" eglot-shutdown)
+      ("M-r" "Reconnect" eglot-reconnect)]
+     ["Symbol"
+      ("d" "Declaration" eglot-find-declaration)
+      ("R" "Reference" eglot-x-find-refs)
+      ("i" "Implementation" eglot-find-implementation)
+      ("t" "Type" eglot-find-typeDefinition)
+      ("r" "Rename" eglot-rename)]])
+  )
 #+end_src
 
 *** meow
@@ -1383,7 +1407,6 @@ Hydraからtransient.elにひっこす
    '("I" . meow-open-above)
    '("a" . meow-append)
    '("A" . meow-open-below)
-   '("q" . meow-quit)
 
    ;; selection
    '("v l" . meow-line)
@@ -1441,9 +1464,28 @@ Hydraからtransient.elにひっこす
    '("/" . consult-line)
    '(";" . meow-main-menu)
    '("n" . vertico-repeat)
+   '("q" . popper-toggle)
+   '("Q" . popper-toggle-type)
+   '("`" . popper-cycle)
    '("f" . avy-goto-migemo-char-timer)
    '("F" . avy-menu)))
 (meow-setup)
+#+end_src
+
+** Popper
+#+begin_src emacs-lisp
+(!-
+ (setup "popper"
+   (setopt popper-reference-buffers
+           '("\\*Messages\\*"
+             "Output\\*$"
+             "\\*Async Shell Command\\*"
+             help-mode
+             compilation-mode
+             vterm-mode))
+   (popper-mode +1)
+   (popper-echo-mode +1)
+   ))
 #+end_src
 
 ** Avy/Ace
@@ -1482,14 +1524,37 @@ Hydraからtransient.elにひっこす
   )
 #+end_src
 
-*** TODO Ace-window
+*** Ace-window
 https://karthinks.com/software/emacs-window-management-almanac
 これ見て良い感じにしたい
 #+begin_src emacs-lisp
-(ensure 'ace-window)
-(setup-lazy '(ace-window) "ace-window"
-  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
-        aw-dispatch-always t))
+(setup-lazy '(ace-window
+              ace-window-one-command
+              ace-window-prefix)
+  "ace-window"
+  (setopt aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
+          aw-dispatch-always t)
+  (defun ace-window-one-command ()
+    (interactive)
+    (let ((win (aw-select " ACE")))
+      (when (windowp win)
+        (with-selected-window win
+          (let* ((command (key-binding
+                           (read-key-sequence
+                            (format "Run in %s..." (buffer-name)))))
+                 (this-command command))
+            (call-interactively command))))))
+  (defun ace-window-prefix ()
+    (interactive)
+    (display-buffer-override-next-command
+     (lambda (buffer _)
+       (let (window type)
+         (setq
+          window (aw-select (propertize " ACE" 'face 'mode-line-highlight))
+          type 'reuse)
+         (cons window type)))
+     nil "[ace-window]")
+    (message "Use `ace-window' to display next command buffer...")))
 #+end_src
 
 ** migemo

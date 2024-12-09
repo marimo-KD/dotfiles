@@ -52,6 +52,7 @@ in {
       major-mode-hydra
       avy
       ace-window
+      popper
       migemo
       ddskk
       ddskk-posframe
