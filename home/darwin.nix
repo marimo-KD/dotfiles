@@ -6,7 +6,6 @@
   };
   programs.home-manager.enable = true;
   services.syncthing.enable = true;
-  xdg.enable = true;
   imports = [
     ./programs/alacritty
     ./programs/bash
