@@ -1190,7 +1190,8 @@ Hydraからtransient.elにひっこす
   (!when (equal system-type 'darwin)
     (setup-hook 'meow-insert-exit-hook 'mac-ime-deactivate))
   (!when (equal system-type 'gnu/linux)
-    (setup-hook 'meow-insert-exit-hook 'fcitx--deactivate))
+    (when (display-graphic-p)
+      (setup-hook 'meow-insert-exit-hook 'fcitx--deactivate)))
   (setq meow-cursor-type-insert '(bar . 3)
         meow-use-cursor-position-hack t
         meow-selection-command-fallback
@@ -1476,6 +1477,7 @@ Hydraからtransient.elにひっこす
 #+begin_src emacs-lisp
 (!-
  (setup "popper"
+   (setup "popper-echo")
    (setopt popper-reference-buffers
            '("\\*Messages\\*"
              "Output\\*$"
@@ -1484,8 +1486,7 @@ Hydraからtransient.elにひっこす
              compilation-mode
              vterm-mode))
    (popper-mode +1)
-   (popper-echo-mode +1)
-   ))
+   (popper-echo-mode +1)))
 #+end_src
 
 ** Avy/Ace
