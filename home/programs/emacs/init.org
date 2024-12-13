@@ -230,7 +230,7 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
 
 *** Mac固有の設定
 #+begin_src emacs-lisp
-(!when (equal system-type 'darwin)
+(!when (equal window-system 'mac)
   (setq mac-option-modifier 'meta
         mac-command-modifier 'super)
   (mac-auto-ascii-mode 1))
@@ -1039,8 +1039,6 @@ vertico-mode
 
 ** Prescient
 #+begin_src emacs-lisp
-(ensure 'prescient)
-(ensure 'corfu-prescient)
 (setup-after "precient"
   (prescient-persist-mode t))
 #+end_src
@@ -1112,6 +1110,9 @@ vertico-mode
 
 *** transient
 Hydraからtransient.elにひっこす
+どうやらprefixが呼ばれた時点で全てのsuffixをloadするという挙動をするので、
+雑に呼ぶととんでもない時間がかかる
+
 #+begin_src emacs-lisp
 (setup-lazy
   '(meow-main-menu
@@ -1187,9 +1188,11 @@ Hydraからtransient.elにひっこす
 *** meow
 #+begin_src emacs-lisp
 (setup "meow"
-  (!when (equal system-type 'darwin)
+  (!when (and (equal system-type 'mac) (fboundp 'mac-select-input-source))
+    (setup-hook 'meow-insert-exit-hook (mac-select-input-source "com.google.inputmethod.Japanese.Roman")))
+  (!when (and (equal system-type 'ns) (fboundp 'mac-ime-deactivate))
     (setup-hook 'meow-insert-exit-hook 'mac-ime-deactivate))
-  (!when (equal system-type 'gnu/linux)
+  (!when (and (equal system-type 'gnu/linux) (fboundp 'fcitx--deactivate))
     (when (display-graphic-p)
       (setup-hook 'meow-insert-exit-hook 'fcitx--deactivate)))
   (setq meow-cursor-type-insert '(bar . 3)

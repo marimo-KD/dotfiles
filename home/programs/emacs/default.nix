@@ -8,8 +8,12 @@ in {
     package = (
       let myemacs = (
             if pkgs.stdenv.isDarwin
-            then pkgs.emacs-macport
-            else pkgs.emacs29-pgtk
+            then pkgs.emacs30.overrideAttrs (old: {
+	      patches = (old.patches or [ ]) ++ [
+	        ./emacs-head-inline.patch
+	      ];
+	    });
+            else pkgs.emacs30-pgtk
           );
       in myemacs
     );
