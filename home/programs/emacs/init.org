@@ -234,6 +234,10 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
   (setq mac-option-modifier 'meta
         mac-command-modifier 'super)
   (mac-auto-ascii-mode 1))
+(!when (and (memq window-system '(ns nil))
+            (fboundp 'mac-get-current-input-source))
+  (mac-input-method-mode 1))
+
 #+end_src
 
 *** その他
@@ -1188,10 +1192,11 @@ Hydraからtransient.elにひっこす
 *** meow
 #+begin_src emacs-lisp
 (setup "meow"
-  (!when (and (equal system-type 'mac) (fboundp 'mac-select-input-source))
-    (setup-hook 'meow-insert-exit-hook (mac-select-input-source "com.google.inputmethod.Japanese.Roman")))
-  (!when (and (equal system-type 'ns) (fboundp 'mac-ime-deactivate))
-    (setup-hook 'meow-insert-exit-hook 'mac-ime-deactivate))
+  (!when (equal system-type 'darwin)
+    (when (and (equal window-system 'mac) (fboundp 'mac-select-input-source))
+      (setup-hook 'meow-insert-exit-hook (mac-select-input-source "com.google.inputmethod.Japanese.Roman")))
+    (when (and (equal window-system 'ns) (fboundp 'mac-ime-deactivate))
+      (setup-hook 'meow-insert-exit-hook 'mac-ime-deactivate)))
   (!when (and (equal system-type 'gnu/linux) (fboundp 'fcitx--deactivate))
     (when (display-graphic-p)
       (setup-hook 'meow-insert-exit-hook 'fcitx--deactivate)))

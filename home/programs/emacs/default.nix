@@ -8,12 +8,12 @@ in {
     package = (
       let myemacs = (
             if pkgs.stdenv.isDarwin
-            then pkgs.emacs30.overrideAttrs (old: {
+            then pkgs.emacs29.overrideAttrs (old: {
 	      patches = (old.patches or [ ]) ++ [
-	        ./emacs-head-inline.patch
+	        ./emacs-29.1-inline.patch
 	      ];
-	    });
-            else pkgs.emacs30-pgtk
+	    })
+            else pkgs.emacs29-pgtk
           );
       in myemacs
     );
