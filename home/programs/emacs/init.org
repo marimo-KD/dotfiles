@@ -236,8 +236,13 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
   (mac-auto-ascii-mode 1))
 (!when (and (memq window-system '(ns nil))
             (fboundp 'mac-get-current-input-source))
-  (mac-input-method-mode 1))
-
+  (mac-input-method-mode 1)
+  (setopt ns-control-modifier 'control
+        ns-option-modifier 'super
+        ns-command-modifier 'meta
+        ns-right-control-modifier 'control
+        ns-right-option-modifier 'hyper
+        ns-right-command-modifier 'meta))
 #+end_src
 
 *** その他
@@ -256,17 +261,14 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
 ** コーディング
 *** Corfu
 #+begin_src emacs-lisp
-(ensure 'corfu)
-(ensure 'corfu-terminal)
-(ensure 'cape)
-(ensure 'nerd-icons-corfu)
 (!-
  (setup "corfu"
    (setup "orderless")
    ;;(setup "hotfuzz")
-   (setq corfu-auto t
+   (setopt corfu-auto t
          corfu-auto-prefix 2
          corfu-auto-delay 0.1
+         corfu-popupinfo-delay nil
          corfu-cycle t
          corfu-preselect 'prompt
          corfu-quit-no-match t
@@ -514,12 +516,11 @@ GrammarはNixでインストールされるのでtreesit-autoは御役御免
 
 **** Nushell
 #+begin_src emacs-lisp
-(ensure 'nushell-mode)
-(setup-lazy '(nushell-mode) "nushell-mode"
+(setup-lazy '(nushell-ts-mode) "nushell-ts-mode"
   :prepare
   (progn
-    (add-to-list 'auto-mode-alist '("\\.nu\\'" . nushell-mode))
-    (add-to-list 'interpreter-mode-alist '("nu" . nushell-mode))))
+    (add-to-list 'auto-mode-alist '("\\.nu\\'" . nushell-ts-mode))
+    (add-to-list 'interpreter-mode-alist '("nu" . nushell-ts-mode))))
 #+end_src
 
 **** Nix
@@ -989,8 +990,6 @@ vertico-mode
 
 ** embark
 #+begin_src emacs-lisp
-(ensure 'embark)
-(ensure 'embark-consult)
 (setup-lazy
   '(embark-act
     embark-dwim
@@ -1119,30 +1118,10 @@ Hydraからtransient.elにひっこす
 
 #+begin_src emacs-lisp
 (setup-lazy
-  '(meow-main-menu
-    avy-menu
+  '(avy-menu
     window-menu
     lsp-menu)
   "transient"
-  (transient-define-prefix meow-main-menu ()
-    "Meow main menu"
-    [["File"
-      ("f" "Find" find-file)
-      ("r" "Recent" recentf)
-      ("s" "Save" save-buffer)]
-     ["Window"
-      ("b" "Buffer" consult-buffer)
-      ("w" "Window" window-menu)]
-     ["Utility"
-      ("u" "Undo Tree" vundo)
-      ("g" "Magit" magit)
-      ("t" "Terminal" vterm)
-      ("n" "Roam" org-roam-node-find)]
-     ["Org"
-      :if-mode org-mode
-      ("o" "Outline" consult-outline)
-      ("i" "Insert Node" org-roam-node-insert)]
-     ])
   (transient-define-prefix avy-menu ()
     "Avy menu"
     [["Line"
@@ -1369,7 +1348,16 @@ Hydraからtransient.elにひっこす
   (meow-motion-overwrite-define-key
    '("j" . meow-next)
    '("k" . meow-prev)
-   '(";" . meow-main-menu)
+   ;; main menu
+   '("; f" . ("Find" . find-file))
+   '("; r" . ("Recent" . recentf))
+   '("; s" . ("Save" . save-buffer))
+   '("; b" . ("Buffer" . consult-buffer))
+   '("; w" . ("Window" . window-menu))
+   '("; u" . ("Undo Tree" . vundo))
+   '("; g" . magit)
+   '("; t" . ("Term" . vterm))
+   '("; n" . ("Find Roam" . org-roam-node-find))
    '("<escape>" . ignore))
   (meow-leader-define-key
    ;; SPC j/k will run the original command in MOTION state.
@@ -1418,25 +1406,25 @@ Hydraからtransient.elにひっこす
    '("A" . meow-open-below)
 
    ;; selection
-   '("v l" . meow-line)
-   '("v i" . meow-inner-of-thing)
-   '("v a" . meow-bounds-of-thing)
-   '("v b" . meow-block)
-   '("v c" . puni-mark-list-around-point)
-   '("v x" . puni-mark-sexp-around-point)
-   '("v s" . meow-mark-symbol)
-   '("v w" . meow-mark-word)
-   '("v v" . puni-expand-region)
-   '("v r" . rectangle-mark-mode)
+   '("v l" . ("line" . meow-line))
+   '("v i" . ("Inner things" . meow-inner-of-thing))
+   '("v a" . ("Bound things" . meow-bounds-of-thing))
+   '("v b" . ("Block" . meow-block))
+   '("v c" . ("Inner" . puni-mark-list-around-point))
+   '("v x" . ("Bound" . puni-mark-sexp-around-point))
+   '("v s" . ("Symbol" . meow-mark-symbol))
+   '("v w" . ("Word" . meow-mark-word))
+   '("v v" . ("ExpReg" . puni-expand-region))
+   '("v r" . ("Rectangle" . rectangle-mark-mode))
 
    ;; puni
-   '(", a (" . puni-wrap-round)
-   '(", a [" . puni-wrap-square)
-   '(", a {" . puni-wrap-curly)
-   '(", a <" . puni-wrap-angle)
-   '(", a d" . puni-splice)
-   '(", s l" . puni-slurp-forward)
-   '(", b h" . puni-barf-forward)
+   '(", (" . ("(a)" . puni-wrap-round))
+   '(", [" . ("[a]" . puni-wrap-square))
+   '(", {" . ("{a}" . puni-wrap-curly))
+   '(", <" . ("<a>" . puni-wrap-angle))
+   '(", d" . ("del" . puni-splice))
+   '(", l" . ("slurp" . puni-slurp-forward))
+   '(", h" . ("barf" . puni-barf-forward))
 
    '("m" . meow-join)
 
@@ -1469,9 +1457,20 @@ Hydraからtransient.elにひっこす
 
    '("=" . indent-region)
 
+   ;; main menu
+   '("; f" . ("Find" . find-file))
+   '("; r" . ("Recent" . recentf))
+   '("; s" . ("Save" . save-buffer))
+   '("; b" . ("Buffer" . consult-buffer))
+   '("; w" . ("Window" . window-menu))
+   '("; u" . ("Undo Tree" . vundo))
+   '("; g" . magit)
+   '("; t" . ("Term" . vterm))
+   '("; n" . ("Find Roam" . org-roam-node-find))
+
    ;; command
+   '("." . embark-act)
    '("/" . consult-line)
-   '(";" . meow-main-menu)
    '("n" . vertico-repeat)
    '("q" . popper-toggle)
    '("Q" . popper-toggle-type)
@@ -1591,7 +1590,7 @@ https://karthinks.com/software/emacs-window-management-almanac
 #+end_src
 
 ** SKK
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (unless (display-graphic-p)
   (!-
    (setup "ddskk-autoloads"
