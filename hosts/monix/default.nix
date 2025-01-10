@@ -82,7 +82,7 @@
 
   services.displayManager = {
     autoLogin.user = "marimo";
-    defaultSession = "";
+    defaultSession = "steam";
     sddm = {
       enable = true;
     };
