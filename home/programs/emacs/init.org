@@ -1002,7 +1002,60 @@ vertico-mode
   (setup-after "consult"
     (setup "embark-consult"
       (setup-hook 'embark-collect-mode-hook
-        'consult-preview-at-point-mode))))
+        'consult-preview-at-point-mode)))
+
+  ;; karthink "fifteen ways to use embark"
+  (eval-when-compile
+    (defmacro my/embark-ace-action (fn)
+      `(defun ,(intern (concat "my/embark-ace-" (symbol-name fn))) ()
+         (interactive)
+         (with-demoted-errors "%s"
+           (require 'ace-window)
+           (let ((aw-dispatch-always t))
+             (aw-switch-to-window (aw-select nil))
+             (call-interactively (symbol-function ',fn)))))))
+
+  (define-key embark-file-map     (kbd "o") (my/embark-ace-action find-file))
+  (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
+  (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
+
+  (defun embark-which-key-indicator ()
+    "An embark indicator that displays keymaps using which-key.
+The which-key help message will show the type and value of the
+current target followed by an ellipsis if there are further
+targets."
+    (lambda (&optional keymap targets prefix)
+      (if (null keymap)
+          (which-key--hide-popup-ignore-command)
+        (which-key--show-keymap
+         (if (eq (plist-get (car targets) :type) 'embark-become)
+             "Become"
+           (format "Act on %s '%s'%s"
+                   (plist-get (car targets) :type)
+                   (embark--truncate-target (plist-get (car targets) :target))
+                   (if (cdr targets) "…" "")))
+         (if prefix
+             (pcase (lookup-key keymap prefix 'accept-default)
+               ((and (pred keymapp) km) km)
+               (_ (key-binding prefix 'accept-default)))
+           keymap)
+         nil nil t (lambda (binding)
+                     (not (string-suffix-p "-argument" (cdr binding))))))))
+
+  (setq embark-indicators
+        '(embark-which-key-indicator
+          embark-highlight-indicator
+          embark-isearch-highlight-indicator))
+
+  (defun embark-hide-which-key-indicator (fn &rest args)
+    "Hide the which-key indicator immediately when using the completing-read prompter."
+    (which-key--hide-popup-ignore-command)
+    (let ((embark-indicators
+           (remq #'embark-which-key-indicator embark-indicators)))
+      (apply fn args)))
+
+  (advice-add #'embark-completing-read-prompter
+              :around #'embark-hide-which-key-indicator))
 #+end_src
 
 ** Orderless
@@ -1053,7 +1106,8 @@ vertico-mode
  (setup "which-key"
    (setopt which-key-idle-delay 0.2
            which-key-show-early-on-C-h t)
-   (which-key-mode)))
+   (which-key-mode)
+   (which-key-setup-side-window-right-bottom)))
 #+end_src
 
 *** Hydra
@@ -1119,8 +1173,8 @@ Hydraからtransient.elにひっこす
 #+begin_src emacs-lisp
 (setup-lazy
   '(avy-menu
-    window-menu
-    lsp-menu)
+    lsp-menu
+    major-mode-menu)
   "transient"
   (transient-define-prefix avy-menu ()
     "Avy menu"
@@ -1141,16 +1195,6 @@ Hydraからtransient.elにひっこす
       ("W" "Word 1" avy-goto-word-1)]
      ["Line"
       ("l" "Line" avy-goto-line)]])
-  (transient-define-prefix window-menu ()
-    "Window menu"
-    ["Window Menu"
-     ("d" "Delete" delete-window)
-     ("s" "Split ―" split-window-vertically)
-     ("v" "Split |" split-window-horizontally)
-     ("o" "Cycle" other-window :transient t)
-     ("s" "Run on" ace-window-one-command)
-     ("p" "Ace prefix" ace-window-prefix)
-     ("a" "Ace" ace-window)])
   (transient-define-prefix lsp-menu ()
     "LSP Menu"
     [["Buffer"
@@ -1165,6 +1209,25 @@ Hydraからtransient.elにひっこす
       ("i" "Implementation" eglot-find-implementation)
       ("t" "Type" eglot-find-typeDefinition)
       ("r" "Rename" eglot-rename)]])
+  (transient-define-prefix major-mode-menu ()
+    ["Org"
+     :if-mode (org-mode)
+     ["Outline"
+      ("n" "Next Head" outline-next-visible-heading :transient t)
+      ("p" "Prev Head" outline-previous-visible-heading :transient t)
+      ("o" "Outlines" consult-outline)]
+     ["TODOs"
+      ("t" "DONE" org-todo)
+      ("s" "Schedule" org-schedule)
+      ("d" "Deadline" org-deadline)
+      ("a" "Agenda" org-agenda)]
+     ["Babel"
+      ("e" "Eval" org-babel-confirm-evaluate)
+      ("x" "Tangle" org-babel-tangle)]
+     ["Roam"
+      ("i" "Insert Link" org-roam-node-insert)
+      ("j" "Daily Note" org-roam-dailies-goto-today)]
+     ])
   )
 #+end_src
 
@@ -1353,7 +1416,7 @@ Hydraからtransient.elにひっこす
    '("; r" . ("Recent" . recentf))
    '("; s" . ("Save" . save-buffer))
    '("; b" . ("Buffer" . consult-buffer))
-   '("; w" . ("Window" . window-menu))
+   '("; w" . ("Window" . ace-window))
    '("; u" . ("Undo Tree" . vundo))
    '("; g" . magit)
    '("; t" . ("Term" . vterm))
@@ -1462,14 +1525,18 @@ Hydraからtransient.elにひっこす
    '("; r" . ("Recent" . recentf))
    '("; s" . ("Save" . save-buffer))
    '("; b" . ("Buffer" . consult-buffer))
-   '("; w" . ("Window" . window-menu))
+   '("; w" . ("Window" . ace-window))
    '("; u" . ("Undo Tree" . vundo))
    '("; g" . magit)
    '("; t" . ("Term" . vterm))
    '("; n" . ("Find Roam" . org-roam-node-find))
+   '("; j" . ("Journal" . org-roam-dailies-capture-today))
+   '("; c" . ("Capture" . my/org-capture-fleeting))
+   '("; l" . ("LSP" . lsp-menu))
 
    ;; command
    '("." . embark-act)
+   '(":" . major-mode-menu)
    '("/" . consult-line)
    '("n" . vertico-repeat)
    '("q" . popper-toggle)
@@ -1818,8 +1885,8 @@ LaTeX数式のプレビューのときのヘッダー
 #+end_src
 **** org-src-context
 org-srcでLSPを使えるようにする
-#+begin_src emacs-lisp
-(ensure-vc '(org-src-context :url "https://github.com/karthink/org-src-context"))
+ちょっとbuggyな挙動をするので（そもそもそういうHackなので）やめる
+#+begin_src emacs-lisp :tangle no
 (setup-after "org-src"
   (setup "org-src-context"
     (org-src-context-mode t)))
@@ -2182,49 +2249,55 @@ Export先のデフォルトのディレクトリを指定
     (setq-local auto-save-default nil)))
 #+end_src
 
+*** org-capture
+#+begin_src emacs-lisp
+(setup-lazy '(org-capture
+              my/org-capture-fleeting)
+  "org-capture"
+  (setq fleeting-file (file-name-concat org-directory "inbox.org"))
+  (setq org-capture-templates
+        '(
+          ("f" "Fleeting" entry (file fleeting-file) "* %?\n")
+          ))
+  (defun my/org-capture-fleeting ()
+    (interactive)
+    (org-capture nil "f")))
+#+end_src
 *** org-roam
 https://jethrokuan.github.io/org-roam-guide/
 https://magnus.therning.org/2021-07-23-keeping-todo-items-in-org-roam-v2.html
+ディレクトリをflatにした
+とりあえずは何でも放り込むところとしてorg-roam-dailiesを使っているけど、後でRoamに整理するときに日付まで追う必要があって大変なので
+普通にorg-capture使ったほうが良いかも
+
 #+begin_src emacs-lisp
-(ensure 'org-roam)
 (setup-lazy '(org-roam-node-find
               org-roam-node-insert
               org-roam-tag-add)
   "org-roam"
   (setq org-roam-db-location "~/.emacs.d/org-roam.db"
         org-roam-directory "~/Org/roam"
-        org-roam-index-file "~/Org/roam/index.org"
         org-roam-completion-functions '()
         org-roam-verbose nil
-        org-roam-node-display-template
-        (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag))
         org-roam-capture-templates
         '(("m" "main" plain
            "%?"
-           :if-new (file+head "main/%<%Y%m%d%H%M%S>-${slug}.org"
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                               "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)
           ("r" "reference" plain "%?"
            :if-new
-           (file+head "reference/%<%Y%m%d%H%M%S>-${title}.org"
-                      "#+title: ${title}\n")
+           (file+head "%<%Y%m%d%H%M%S>-${title}.org"
+                      "#+title: ${title}\n#+filetags: :reference:\n")
            :immediate-finish t
            :unnarrowed t)
           ("a" "article" plain "%?"
            :if-new
-           (file+head "article/%<%Y%m%d%H%M%S>-${title}.org"
+           (file+head "%<%Y%m%d%H%M%S>-${title}.org"
                       "#+title: ${title}\n#+filetags: :article:\n")
            :immediate-finish t
            :unnarrowed t)))
-  (cl-defmethod org-roam-node-type ((node org-roam-node))
-    "Return the TYPE of NODE."
-    (condition-case nil
-        (file-name-nondirectory
-         (directory-file-name
-          (file-name-directory
-           (file-relative-name (org-roam-node-file node) org-roam-directory))))
-      (error "")))
   ;; Update tags for TODO
   (defun my/roam-get-filetags ()
     (split-string (or (org-roam-get-keyword "filetags") "")))
@@ -2266,6 +2339,19 @@ https://magnus.therning.org/2021-07-23-keeping-todo-items-in-org-roam-v2.html
   (add-hook 'find-file-hook #'my/roam-update-todo-tag)
   (add-hook 'before-save-hook #'my/roam-update-todo-tag)
   (org-roam-db-autosync-mode t))
+
+(setup-lazy '(org-roam-dailies-goto-date
+              org-roam-dailies-capture-date
+              org-roam-dailies-goto-today
+              org-roam-dailies-capture-today
+              org-roam-dailies-find-directory)
+  "org-roam-dailies"
+  (setopt org-roam-dailies-directory "daily/"
+          org-roam-dailies-capture-templates
+          '(("d" "default" entry
+             "* %<%I:%M %p>: %?"
+             :if-new (file+head "%<%Y-%m-%d>.org"
+                                "#+title: %<%Y-%m-%d>\n#+filetags: :daily:\n")))))
 #+end_src
 
 **** vulpea
@@ -2499,8 +2585,9 @@ Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせ�
      (setup-hook 'LaTeX-mode-hook 'citar-capf-setup)
      (setup-hook 'org-mode-hook 'citar-capf-setup)))
 (setup-after "citar"
-   (setq citar-bibliography org-cite-global-bibliography
-         citar-open-entry-function #'citar-open-entry-in-zotero))
+  (setup "citar-org")
+  (setq citar-bibliography org-cite-global-bibliography
+        citar-open-entry-function #'citar-open-entry-in-zotero))
 #+end_src
 
 *** org-appear

@@ -8,12 +8,12 @@ in {
     package = (
       let myemacs = (
             if pkgs.stdenv.isDarwin
-            then pkgs.emacs29.overrideAttrs (old: {
-	      patches = (old.patches or [ ]) ++ [
-	        ./emacs-29.1-inline.patch
-	      ];
-	    })
-            else pkgs.emacs29-pgtk
+            then pkgs.emacs-unstable.overrideAttrs (old: {
+              patches = (old.patches or [ ]) ++ [
+                ./emacs-head-inline.patch
+              ];
+            })
+            else pkgs.emacs-unstable-pgtk
           );
       in myemacs
     );
@@ -58,8 +58,8 @@ in {
       ace-window
       popper
       migemo
-      ddskk
-      ddskk-posframe
+      # ddskk
+      # ddskk-posframe
       fcitx
       org-nix-shell
       org-roam
@@ -94,7 +94,7 @@ in {
       julia-mode
       julia-vterm
       ob-julia-vterm
-      nushell-mode
+      nushell-ts-mode
       nix-ts-mode
       markdown-mode
       gnuplot

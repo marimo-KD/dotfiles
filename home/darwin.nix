@@ -1,4 +1,4 @@
-{...}: {
+{pkgs, ...}: {
   home = rec {
     username = "marimo";
     homeDirectory = "/Users/${username}";
@@ -27,5 +27,8 @@
     ./programs/zoxide
 
     ./packages.nix
+  ];
+  home.packages = with pkgs; [
+    iterm2
   ];
 }

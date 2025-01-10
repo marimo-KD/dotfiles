@@ -13,8 +13,10 @@
         };
         size = 14;
       };
-      shell = {
-        program = "nu";
+      terminal = {
+        shell = {
+          program = "nu";
+        };
       };
       keyboard = {
         bindings = [
