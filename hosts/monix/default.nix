@@ -85,6 +85,7 @@
     defaultSession = "steam";
     sddm = {
       enable = true;
+      wayland.enable = true;
     };
   };
 
