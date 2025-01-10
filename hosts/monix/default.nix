@@ -24,12 +24,12 @@
       efi.canTouchEfiVariables = true;
     };
     kernelPackages = pkgs.linuxKernel.packages.linux_xanmod_latest;
-    extraModulePackages = with config.boot.kernelPackages; [
-      v4l2loopback # for OBS virtual camera
-    ];
-    extraModprobeConfig = ''
-      options v4l2loopback devices=1 video_nr=1 card_label="OBS Cam" exclusive_caps=1
-    '';
+    #extraModulePackages = with config.boot.kernelPackages; [
+    #  v4l2loopback # for OBS virtual camera
+    #];
+    #extraModprobeConfig = ''
+    #  options v4l2loopback devices=1 video_nr=1 card_label="OBS Cam" exclusive_caps=1
+    #'';
   };
 
   zramSwap = {
@@ -80,13 +80,21 @@
     };
   };
 
-  programs.hyprland = {
-    enable = true;
+  services.displayManager = {
+    autoLogin.user = "marimo";
+    defaultSession = "";
+    sddm = {
+      enable = true;
+    };
   };
-  xdg.portal = {
-    enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-  };
+
+  #programs.hyprland = {
+  #  enable = true;
+  #};
+  #xdg.portal = {
+  #  enable = true;
+  #  extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  #};
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.marimo = {
@@ -96,28 +104,35 @@
     packages = with pkgs; [];
   };
 
-  nixpkgs.config.packageOverrides = pkgs: {
-    steam = pkgs.steam.override {
-      extraPkgs = pkgs: with pkgs; [
-        xorg.libXcursor
-        xorg.libXi
-        xorg.libXinerama
-        xorg.libXScrnSaver
-        libpng
-        libpulseaudio
-        libvorbis
-        stdenv.cc.cc.lib
-        libkrb5
-        keyutils
-      ];
-    };
-  };
+  #nixpkgs.config.packageOverrides = pkgs: {
+  #  steam = pkgs.steam.override {
+  #    extraPkgs = pkgs: with pkgs; [
+  #      xorg.libXcursor
+  #      xorg.libXi
+  #      xorg.libXinerama
+  #      xorg.libXScrnSaver
+  #      libpng
+  #      libpulseaudio
+  #      libvorbis
+  #      stdenv.cc.cc.lib
+  #      libkrb5
+  #      keyutils
+  #    ];
+  #  };
+  #};
 
   programs = {
     steam = {
       enable = true;
       remotePlay.openFirewall = true;
-      gamescopeSession.enable = true;
+      gamescopeSession = {
+        enable = true;
+        args = ["-r" "60" "-W" "1920" "-H" "1080" "-F" "fsr" "--xwayland-count" "2"];
+        env = {
+          STEAM_MULTIPLE_XWAYLANDS = "1";
+        };
+      };
+      fontPackages = with pkgs; [ source-han-sans ];
     };
     gamemode = {
       enable = true;
@@ -147,7 +162,7 @@
       viAlias = true;
       vimAlias = true;
     };
-    dconf.enable = true;
+    #dconf.enable = true;
   };
 
   fonts = {
@@ -177,24 +192,24 @@
         emoji = ["Noto Color Emoji"];
       };
       allowBitmaps = false;
-      localConf = ''
-        <?xml version="1.0"?>
-        <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
-        <fontconfig>
-          <description>Change default fonts for Steam client</description>
-          <match>
-            <test name="prgname">
-              <string>steamwebhelper</string>
-            </test>
-            <test name="family" qual="any">
-              <string>sans-serif</string>
-            </test>
-            <edit mode="prepend" name="family">
-              <string>Migu 1P</string>
-            </edit>
-          </match>
-        </fontconfig>
-      '';
+      #localConf = ''
+      #  <?xml version="1.0"?>
+      #  <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+      #  <fontconfig>
+      #    <description>Change default fonts for Steam client</description>
+      #    <match>
+      #      <test name="prgname">
+      #        <string>steamwebhelper</string>
+      #      </test>
+      #      <test name="family" qual="any">
+      #        <string>sans-serif</string>
+      #      </test>
+      #      <edit mode="prepend" name="family">
+      #        <string>Migu 1P</string>
+      #      </edit>
+      #    </match>
+      #  </fontconfig>
+      #'';
     };
   };
 
