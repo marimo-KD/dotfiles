@@ -15,7 +15,7 @@
     ./programs/discord
     ./programs/emacs
     ./programs/fd
-    ./programs/firefox
+    # ./programs/firefox
     ./programs/fzf
     ./programs/git
     ./programs/gpg

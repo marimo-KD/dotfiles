@@ -1099,7 +1099,7 @@ targets."
   (prescient-persist-mode t))
 #+end_src
 
-** キーバインドおたすけ
+** キーバインド
 *** which-key
 #+begin_src emacs-lisp
 (!-
@@ -1235,10 +1235,17 @@ Hydraからtransient.elにひっこす
 #+begin_src emacs-lisp
 (setup "meow"
   (!when (equal system-type 'darwin)
-    (when (and (equal window-system 'mac) (fboundp 'mac-select-input-source))
-      (setup-hook 'meow-insert-exit-hook (mac-select-input-source "com.google.inputmethod.Japanese.Roman")))
-    (when (and (equal window-system 'ns) (fboundp 'mac-ime-deactivate))
-      (setup-hook 'meow-insert-exit-hook 'mac-ime-deactivate)))
+    (defun my/mac-deactivate-input-method ()
+      (progn
+        (when (and (equal window-system 'mac) (fboundp 'mac-select-input-source))
+          (mac-select-input-source "com.apple.inputmethod.Kotoeri.RomajiTyping.Roman"))
+        (when (and (equal window-system 'ns) (fboundp 'mac-ime-deactivate))
+          (mac-ime-deactivate))))
+    (defun my/mac-deactivate-ime-without-insert ()
+      (when (and (frame-focus-state) (not (meow-insert-mode-p)))
+        (my/mac-deactivate-input-method)))
+    (setup-hook 'meow-insert-exit-hook 'my/mac-deactivate-input-method)
+    (add-function :after after-focus-change-function #'my/mac-deactivate-ime-without-insert))
   (!when (and (equal system-type 'gnu/linux) (fboundp 'fcitx--deactivate))
     (when (display-graphic-p)
       (setup-hook 'meow-insert-exit-hook 'fcitx--deactivate)))
