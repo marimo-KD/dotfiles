@@ -105,24 +105,7 @@
     packages = with pkgs; [];
   };
 
-  #nixpkgs.config.packageOverrides = pkgs: {
-  #  steam = pkgs.steam.override {
-  #    extraPkgs = pkgs: with pkgs; [
-  #      xorg.libXcursor
-  #      xorg.libXi
-  #      xorg.libXinerama
-  #      xorg.libXScrnSaver
-  #      libpng
-  #      libpulseaudio
-  #      libvorbis
-  #      stdenv.cc.cc.lib
-  #      libkrb5
-  #      keyutils
-  #    ];
-  #  };
-  #};
-
-  programs = {
+    programs = {
     steam = {
       enable = true;
       remotePlay.openFirewall = true;
@@ -157,13 +140,6 @@
     git = {
       enable = true;
     };
-    neovim = {
-      enable = true;
-      defaultEditor = true;
-      viAlias = true;
-      vimAlias = true;
-    };
-    #dconf.enable = true;
   };
 
   fonts = {
@@ -193,24 +169,6 @@
         emoji = ["Noto Color Emoji"];
       };
       allowBitmaps = false;
-      #localConf = ''
-      #  <?xml version="1.0"?>
-      #  <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
-      #  <fontconfig>
-      #    <description>Change default fonts for Steam client</description>
-      #    <match>
-      #      <test name="prgname">
-      #        <string>steamwebhelper</string>
-      #      </test>
-      #      <test name="family" qual="any">
-      #        <string>sans-serif</string>
-      #      </test>
-      #      <edit mode="prepend" name="family">
-      #        <string>Migu 1P</string>
-      #      </edit>
-      #    </match>
-      #  </fontconfig>
-      #'';
     };
   };
 
@@ -260,13 +218,13 @@
     ];
   };
 
-  # support printers
-  services.printing.enable = true;
-  services.avahi = {
+  # Local LLM
+  services.ollama = {
     enable = true;
-    nssmdns4 = true;
-    openFirewall = true;
+    acceleration = "rocm";
+    rocmOverrideGfx = "10.3.4";
   };
+  services.open-webui.enable = true;
 
   security.rtkit.enable = true;
   services.pipewire = {
@@ -276,8 +234,6 @@
     jack.enable = true;
     pulse.enable = true;
   };
-  programs.noisetorch.enable = true;
-  musnix.enable = true;
 
   services.dbus.enable = true;
   security.polkit.enable = true;
@@ -296,7 +252,7 @@
         };
       };
     };
-    waydroid.enable = true;
+    # waydroid.enable = true;
   };
 
   # This value determines the NixOS release from which the default
