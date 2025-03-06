@@ -82,6 +82,7 @@
 
   # Display Manager
   services.displayManager = {
+    enable = true;
     autoLogin.user = "marimo";
     defaultSession = "steam";
   };
