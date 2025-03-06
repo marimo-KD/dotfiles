@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ inputs, config, pkgs, ... }:
+{ inputs, config, pkgs, lib,... }:
 
 {
   imports =
@@ -14,7 +14,7 @@
       common-gpu-amd
       common-pc-ssd
     ]) ++ [
-      inputs.xremap.nixosModules.default
+      #inputs.xremap.nixosModules.default
     ];
 
   # Bootloader
@@ -111,7 +111,7 @@
       remotePlay.openFirewall = true;
       gamescopeSession = {
         enable = true;
-        args = ["-r" "60" "-W" "1920" "-H" "1080" "-F" "fsr" "--xwayland-count" "2"];
+        args = ["-r" "60" "-W" "1920" "-H" "1080" "--xwayland-count" "2"];
         env = {
           STEAM_MULTIPLE_XWAYLANDS = "1";
         };
@@ -196,35 +196,51 @@
     configDir = "/home/marimo/.config/syncthing";
   };
 
-  services.xremap = {
-    userName = "marimo";
-    serviceMode = "system";
-    config.modmap = [
-      {
-        name = "SandS";
-        remap = {
-          Space = {
-            alone = "Space";
-            held = "Shift_L";
-          };
-        };
-      }
-      {
-        name = "Capslock to Henkan";
-        remap = {
-          CapsLock = "Henkan";
-        };
-      }
-    ];
-  };
+  #services.xremap = {
+  #  userName = "marimo";
+  #  serviceMode = "system";
+  #  config.modmap = [
+  #    {
+  #      name = "SandS";
+  #      remap = {
+  #        Space = {
+  #          alone = "Space";
+  #          held = "Shift_L";
+  #        };
+  #      };
+  #    }
+  #    {
+  #      name = "Capslock to Henkan";
+  #      remap = {
+  #        CapsLock = "Henkan";
+  #      };
+  #    }
+  #  ];
+  #};
 
   # Local LLM
   services.ollama = {
     enable = true;
     acceleration = "rocm";
     rocmOverrideGfx = "10.3.4";
+    user = "ollama";
+    group = "ollama";
+    home = "/home/ollama/";
   };
-  services.open-webui.enable = true;
+  systemd.services.ollama.serviceConfig =
+    let
+      cfg = config.services.ollama;
+      ollamaPackage = cfg.package.override { inherit (cfg) acceleration; };
+    in
+    lib.mkForce {
+      Type = "exec";
+      ExecStart = "${lib.getExe ollamaPackage} serve";
+      WorkingDirectory = cfg.home;
+      SupplementaryGroups = [ "render" ];
+    };
+  services.open-webui = {
+    enable = true;
+  };
 
   security.rtkit.enable = true;
   services.pipewire = {

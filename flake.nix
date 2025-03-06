@@ -38,7 +38,7 @@
               inputs.emacs-overlay.overlay
             ];
           }
-          inputs.musnix.nixosModules.musnix
+          # inputs.musnix.nixosModules.musnix
           ./hosts/monix
         ];
       };
