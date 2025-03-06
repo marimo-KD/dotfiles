@@ -128,12 +128,6 @@
           disable_splitlock = 1;
           softrealtime = "auto";
         };
-        gpu = {
-          #apply_gpu_optimisations = 0;
-          apply_gpu_optimisations = "accept-responsibility";
-          gpu_device = 0;
-          amd_performance_level = "high";
-        };
       };
     };
     gamescope = { enable = true; };
@@ -146,15 +140,9 @@
     packages = with pkgs; [
       noto-fonts
       noto-fonts-emoji
-      source-han-sans
-      source-han-mono
-      source-han-serif
-      (nerdfonts.override { fonts = [
-                              "Iosevka"
-                              "NerdFontsSymbolsOnly"
-                              "JetBrainsMono"
-                            ]; })
-      plemoljp-nf
+      noto-fonts-cjk-sans
+      noto-fonts-cjk-serif
+      (nerdfonts.override { fonts = ["NerdFontsSymbolsOnly"]; })
       udev-gothic
       udev-gothic-nf
       ibm-plex
@@ -163,8 +151,8 @@
     fontDir.enable = true;
     fontconfig = {
       defaultFonts = {
-        serif = ["Source Han Serif" "Noto Color Emoji"];
-        sansSerif = ["Source Han Sans" "Noto Color Emoji"];
+        serif = ["Noto Serif CJK JP" "Noto Color Emoji"];
+        sansSerif = ["Noto Sans CJK JP" "Noto Color Emoji"];
         monospace = ["IBM Plex Mono" "Noto Color Emoji"];
         emoji = ["Noto Color Emoji"];
       };
@@ -240,6 +228,16 @@
     };
   services.open-webui = {
     enable = true;
+    host = "0.0.0.0"; # accepts all cilents, but restricted to the tailscale network by FW
+    port = "10001";
+  };
+
+  # Paperless
+  services.paperless = {
+    enable = true;
+    user = "paperless";
+    dataDir = "/home/paperless/";
+    address = "0.0.0.0"; # sams as open-webui port above
   };
 
   security.rtkit.enable = true;
