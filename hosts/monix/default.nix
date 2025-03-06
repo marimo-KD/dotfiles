@@ -62,13 +62,13 @@
   };
 
   i18n.inputMethod = {
-    enabled = "fcitx5";
+    enable = true;
+    type = "fcitx5";
     fcitx5 = {
       addons = with pkgs; [
-        fcitx5-gtk
         fcitx5-mozc
       ];
-      waylandFrontend = true;
+      #waylandFrontend = true;
     };
   };
 
@@ -105,13 +105,17 @@
     packages = with pkgs; [];
   };
 
-    programs = {
+  environment.systemPackages = with pkgs; [
+    mangohud
+  ];
+
+  programs = {
     steam = {
       enable = true;
       remotePlay.openFirewall = true;
       gamescopeSession = {
         enable = true;
-        args = ["-r" "60" "-W" "1920" "-H" "1080" "--xwayland-count" "2"];
+        args = ["-r" "60" "-W" "1920" "-H" "1080" "--mangoapp" "--xwayland-count" "2"];
         env = {
           STEAM_MULTIPLE_XWAYLANDS = "1";
         };
@@ -130,7 +134,10 @@
         };
       };
     };
-    gamescope = { enable = true; };
+    gamescope = {
+      enable = true;
+      capSysNice = true;
+    };
     git = {
       enable = true;
     };
@@ -143,7 +150,6 @@
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
       (nerdfonts.override { fonts = ["NerdFontsSymbolsOnly"]; })
-      udev-gothic
       udev-gothic-nf
       ibm-plex
       ipaexfont
