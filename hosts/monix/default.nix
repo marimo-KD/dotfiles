@@ -80,13 +80,14 @@
     };
   };
 
+  # Display Manager
   services.displayManager = {
     autoLogin.user = "marimo";
     defaultSession = "steam";
-    sddm = {
-      enable = true;
-      wayland.enable = true;
-    };
+  };
+  services.xserver.displayManager.lightdm = {
+    enable = true;
+    greeter.enable = false; // autologin
   };
 
   #programs.hyprland = {
@@ -101,7 +102,7 @@
   users.users.marimo = {
     isNormalUser = true;
     description = "marimo";
-    extraGroups = [ "audio" "input" "networkmanager" "wheel" "scanner" "lp" "libvirtd" "gamemode"];
+    extraGroups = [ "audio" "input" "networkmanager" "wheel" "lp" "libvirtd" "gamemode"];
     packages = with pkgs; [];
   };
 
@@ -145,21 +146,19 @@
 
   fonts = {
     packages = with pkgs; [
-      noto-fonts
+      source-han-sans
+      source-han-mono
+      source-han-serif
       noto-fonts-emoji
-      noto-fonts-cjk-sans
-      noto-fonts-cjk-serif
       (nerdfonts.override { fonts = ["NerdFontsSymbolsOnly"]; })
       udev-gothic-nf
-      ibm-plex
-      ipaexfont
     ];
     fontDir.enable = true;
     fontconfig = {
       defaultFonts = {
-        serif = ["Noto Serif CJK JP" "Noto Color Emoji"];
-        sansSerif = ["Noto Sans CJK JP" "Noto Color Emoji"];
-        monospace = ["IBM Plex Mono" "Noto Color Emoji"];
+        serif = ["Source Han Sans" "Noto Color Emoji"];
+        sansSerif = ["Source Han Serif" "Noto Color Emoji"];
+        monospace = ["Source Han Mono" "Noto Color Emoji"];
         emoji = ["Noto Color Emoji"];
       };
       allowBitmaps = false;
