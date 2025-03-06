@@ -235,7 +235,7 @@
   services.open-webui = {
     enable = true;
     host = "0.0.0.0"; # accepts all cilents, but restricted to the tailscale network by FW
-    port = "10001";
+    port = 10001;
   };
 
   # Paperless
