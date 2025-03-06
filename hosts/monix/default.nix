@@ -87,7 +87,7 @@
   };
   services.xserver.displayManager.lightdm = {
     enable = true;
-    greeter.enable = false; // autologin
+    greeter.enable = false; # autologin
   };
 
   #programs.hyprland = {
