@@ -54,6 +54,7 @@ in {
       which-key
       hydra
       major-mode-hydra
+      key-chord
       avy
       ace-window
       popper

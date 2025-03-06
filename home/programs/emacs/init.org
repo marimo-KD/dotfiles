@@ -88,6 +88,7 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
   (scroll-bar-mode -1))
 (push '(menu-bar-lines . 0) default-frame-alist)
 (push '(tool-bar-lines . 0) default-frame-alist)
+(push '(cursor-type . bar) default-frame-alist)
 (setq frame-inhibit-implied-resize t)
 #+end_src
 
@@ -152,7 +153,6 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
 ** setup.el
 コンパイル環境のチェックが入るとNixでコンパイルした時怒られが発生するので止める
 ちなみにzk-phi/setupのこと
-
 #+begin_src emacs-lisp
 (eval-when-compile
   (require 'cl-lib)
@@ -275,7 +275,8 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
          corfu-quit-at-boundary t
          corfu-scroll-margin 2
          tab-always-indent 'complete
-         tab-first-completion nil)
+         tab-first-completion nil
+         text-mode-ispell-word-completion nil)
 
    (setup "corfu-prescient"
      (setq corfu-prescient-enable-filtering nil)
@@ -343,17 +344,25 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
 
 *** Undo/Redo
 #+begin_src emacs-lisp
-(ensure 'undo-fu)
-(ensure 'vundo)
 (setup-lazy '(undo-fu-only-undo
-              undo-fu-only-redo) "undo-fu")
+              undo-fu-only-redo)
+  "undo-fu"
+  :prepare (setup-keybinds nil
+             "M-z" 'undo-fu-only-undo
+             "M-S-z" 'undo-fu-only-redo)) ;; same as Mac undo/redo keybinds
 (setup-lazy '(vundo) "vundo"
-  (setopt vundo-glyph-alist vundo-unicode-symbols))
+  :prepare (setup-keybinds nil
+             "C-c z" 'vundo)
+  (setopt vundo-glyph-alist vundo-unicode-symbols
+          vundo-window-max-height 10))
 #+end_src
 
 *** Region
+set-markはC-SPCでやるので（システム側のIME変更のキーバインドは潰してある）、C-@はあいている
 #+begin_src emacs-lisp
-(setup-lazy '(expreg-expand) "expreg")
+(setup-lazy '(expreg-expand) "expreg"
+  :prepare (setup-keybinds nil
+             "C-@" 'expreg-expand))
 #+end_src
 
 *** Puni
@@ -375,7 +384,6 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
 *** Eglot
 <2024-11-26 Tue>試しにlsp-bridgeを使う
 #+begin_src emacs-lisp
-(ensure 'eglot)
 (setup-lazy '(eglot-ensure) "eglot"
   :prepare (!foreach '(c-ts-mode
                        c++-ts-mode
@@ -411,7 +419,6 @@ boosterを使うので意味ないはずだけど一応
 
 **** eglot-booster
 #+begin_src emacs-lisp
-(ensure-vc '(eglot-booster :url "https://github.com/jdtsmith/eglot-booster"))
 (setup-after "eglot"
   (setup "eglot-booster"
     (eglot-booster-mode)))
@@ -420,7 +427,6 @@ boosterを使うので意味ないはずだけど一応
 **** eglot-x
 拡張とかを使えるように
 #+begin_src emacs-lisp
-(ensure-vc '(eglot-x :url "https://github.com/nemethf/eglot-x"))
 (setup-after "eglot"
   (setup "eglot-x"
     (eglot-x-setup)))
@@ -439,8 +445,7 @@ boosterを使うので意味ないはずだけど一応
 **** magit
 なんかキラーアプリらしいけどうまく使えてない
 #+begin_src emacs-lisp
-(ensure 'magit)
-(setup-lazy '(magit) "magit")
+(setup-lazy '(magit magit-status) "magit")
 #+end_src
 
 **** auto-commit
@@ -637,6 +642,13 @@ Tempelで展開するので、cdlatexのTabでのコマンドの展開は消す
    (global-auto-revert-mode 1)))
 #+end_src
 
+** delsel
+#+begin_src emacs-lisp
+(!-
+ (setup "delsel"
+   (delete-selection-mode 1)))
+#+end_src
+
 ** subword
 #+begin_src emacs-lisp
 (setup-lazy '(subword-mode) "subword"
@@ -772,28 +784,14 @@ modelineは消す
 (setup "nano-modeline"
   (setq nano-modeline-padding '(0.2 . 0.25))
   (setq-default mode-line-format nil)
-  (setup-after "meow"
-    (defun nano-modeline-meow-state ()
-      (propertize (meow-indicator)
-                  'face (nano-modeline-face 'primary)))
-    (defun my/nano-modeline-generic-mode (&optional default)
-      "Generic Nano modeline"
-      (funcall nano-modeline-position
-               '((nano-modeline-meow-state)
-                 (nano-modeline-buffer-status) " "
-                 (nano-modeline-buffer-name) " "
-                 (nano-modeline-git-info))
-               '((nano-modeline-cursor-position)
-                 (nano-modeline-window-dedicated))
-               default))
-    (my/nano-modeline-generic-mode t)))
+  (nano-modeline-text-mode t))
 #+end_src
 
 *** perfect-margin
 #+begin_src emacs-lisp
 (!-
  (setup "perfect-margin"
-   (setq perfect-margin-ignore-filters nil)
+   (setopt perfect-margin-force-regexps '("*Minibuf" "*which-key"))
    (perfect-margin-mode 1)))
 #+end_src
 
@@ -813,13 +811,11 @@ modelineは消す
 *** nerd-icons
 nerd-iconsを採用
 #+begin_src emacs-lisp
-(ensure 'nerd-icons)
 (setup-after "nerd-icons"
   (ignore-errors (nerd-icons-set-font)))
 #+end_src
 
 #+begin_src emacs-lisp
-(ensure 'nerd-icons-completion)
 (setup-after "marginalia"
   (setup "nerd-icons-completion"
     (nerd-icons-completion-mode)
@@ -839,17 +835,19 @@ nerd-iconsを採用
 #+end_src
 
 pixel-scrollを使っていたけど、なんか重いのでやめる
+やっぱり使いたくなった
 #+begin_src emacs-lisp
 (setopt mouse-wheel-scroll-amount '(1 ((shift) . 1))
         mouse-wheel-progressive-speed t
         mouse-wheel-follow-mouse t
         scroll-step 1)
+(pixel-scroll-precision-mode 1)
 #+end_src
 
 *** rainbow-delimiters
 #+begin_src emacs-lisp
-(setup-lazy '(rainbow-delimiters-mode) "rainbow-delimiters")
-(setup-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+(setup-lazy '(rainbow-delimiters-mode) "rainbow-delimiters"
+  :prepare (setup-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 #+end_src
 
 *** highlight line
@@ -904,7 +902,6 @@ indent-barsにひっこし<2024-08-03 Sat>
 
 *** aggressive-indent
 #+begin_src emacs-lisp
-(ensure 'aggressive-indent)
 (setup-lazy '(aggressive-indent-mode) "aggressive-indent"
   :prepare (setup-hook 'emacs-lisp-mode-hook 'aggressive-indent-mode))
 #+end_src
@@ -918,8 +915,6 @@ indent-barsにひっこし<2024-08-03 Sat>
 *** vertico, marginalia
 vertico-mode
 #+begin_src emacs-lisp
-(ensure 'vertico)
-(ensure 'marginalia)
 (setup-lazy '(vertico--advice) "vertico"
   :prepare (progn
              (advice-add 'completing-read-default :around 'vertico--advice)
@@ -958,11 +953,22 @@ vertico-mode
       "<backspace>" 'vertico-directory-delete-char)))
 #+end_src
 
+*** vertico-multiform
+#+begin_src emacs-lisp
+(setup-after "vertico"
+  (setup "vertico-multiform"
+    (setopt vertico-multiform-caegories '(embark-keybinding grid))
+    (vertico-multiform-mode)))
+#+end_src
+
 *** vertico-repeat
 #+begin_src emacs-lisp
-(setup-lazy '(vertico-repeat-save) "vertico-repeat"
-  :prepare (setup-hook 'minibuffer-setup-hook
-             (vertico-repeat-save)))
+(setup-lazy '(vertico-repeat-save vertico-repeat) "vertico-repeat"
+  :prepare (progn
+             (setup-hook 'minibuffer-setup-hook
+               (vertico-repeat-save))
+             (setup-keybinds nil
+               "C-r" 'vertico-repeat)))
 #+end_src
 
 ** Consult
@@ -975,6 +981,11 @@ vertico-mode
     consult-imenu
     consult-yank-pop)
   "consult"
+  :prepare (setup-keybinds nil
+             "C-s" 'consult-line
+             "C-y" 'consult-yank-pop
+             "C-x C-r" 'consult-recent-file
+             "C-x b" 'consult-buffer)
   (setq consult-preview-key 'any))
 (setup-lazy
   '(consult-ghq-find
@@ -1019,48 +1030,15 @@ vertico-mode
   (define-key embark-buffer-map   (kbd "o") (my/embark-ace-action switch-to-buffer))
   (define-key embark-bookmark-map (kbd "o") (my/embark-ace-action bookmark-jump))
 
-  (defun embark-which-key-indicator ()
-    "An embark indicator that displays keymaps using which-key.
-The which-key help message will show the type and value of the
-current target followed by an ellipsis if there are further
-targets."
-    (lambda (&optional keymap targets prefix)
-      (if (null keymap)
-          (which-key--hide-popup-ignore-command)
-        (which-key--show-keymap
-         (if (eq (plist-get (car targets) :type) 'embark-become)
-             "Become"
-           (format "Act on %s '%s'%s"
-                   (plist-get (car targets) :type)
-                   (embark--truncate-target (plist-get (car targets) :target))
-                   (if (cdr targets) "…" "")))
-         (if prefix
-             (pcase (lookup-key keymap prefix 'accept-default)
-               ((and (pred keymapp) km) km)
-               (_ (key-binding prefix 'accept-default)))
-           keymap)
-         nil nil t (lambda (binding)
-                     (not (string-suffix-p "-argument" (cdr binding))))))))
-
-  (setq embark-indicators
-        '(embark-which-key-indicator
-          embark-highlight-indicator
-          embark-isearch-highlight-indicator))
-
-  (defun embark-hide-which-key-indicator (fn &rest args)
-    "Hide the which-key indicator immediately when using the completing-read prompter."
-    (which-key--hide-popup-ignore-command)
-    (let ((embark-indicators
-           (remq #'embark-which-key-indicator embark-indicators)))
-      (apply fn args)))
-
-  (advice-add #'embark-completing-read-prompter
-              :around #'embark-hide-which-key-indicator))
+  (setopt embark-indicators
+          '(embark-minimal-indicator
+            embark-highlight-indicator
+            embark-isearch-highlight-indicator))
+  (setopt embark-help-key "?"))
 #+end_src
 
 ** Orderless
 #+begin_src emacs-lisp
-(ensure 'orderless)
 (setup-after "orderless"
   (defun orderless-migemo (component)
     (setup "migemo")
@@ -1083,8 +1061,7 @@ targets."
 #+end_src
 
 ** Hotfuzz
-#+begin_src emacs-lisp
-(ensure 'hotfuzz)
+#+begin_src emacs-lisp :tangle no
 (setup-after "hotfuzz"
   (setq completion-styles '(hotfuzz)
         completion-category-defaults nil
@@ -1104,42 +1081,41 @@ targets."
 #+begin_src emacs-lisp
 (!-
  (setup "which-key"
-   (setopt which-key-idle-delay 0.2
+   (setopt which-key-idle-delay 10000.0
+           which-key-idle-secondary-delay 0.05
            which-key-show-early-on-C-h t)
-   (which-key-mode)
-   (which-key-setup-side-window-right-bottom)))
+   (which-key-mode)))
 #+end_src
 
 *** Hydra
 #+begin_src emacs-lisp :tangle no
-(ensure 'hydra)
-(ensure 'major-mode-hydra)
 (setup-lazy '(major-mode-hydra
               main-hydra/body
               avy-hydra/body
               org-hydra/body)
   "hydra"
+  :prepare (setup-keybinds nil
+             "M-SPC" 'major-mode-hydra)
   (setup "major-mode-hydra")
   (pretty-hydra-define main-hydra
     (:separator "=" :title "Main" :foreign-keys warn :quit-key "q" :exit t)
     ("File"
-     (("f" find-file "Find file")
+     (("f" find-file "Find File")
       ("r" recentf "Recent")
-      ("s" save-buffer "Save"))
+      ("o" consult-outline "Outline"))
      "Window"
      (("b" consult-buffer "Buffer")
-      ("d" delete-other-windows "Only")
       ("w" ace-window "Ace Window"))
      "Org"
-     (("o" org-hydra/body "Org")
-      ("a" org-agenda "Agenda")
-      ("n" org-roam-node-find "Roam node"))
+     (("a" org-agenda "Agenda")
+      ("n" org-roam-node-find "Find Note")
+      ("c" my/org-capture-fleeting "Capture Note")
+      ("C" nil "View Fleeting"))
      "Tool"
-     (("u" vundo "Undo Tree")
-      ("g" magit "Magit")
-      ("v" vterm "Terminal")
-      ("g" magit "Magit")
-      ("m" major-mode-hydra "Major Hydra"))))
+     (("z" vundo "Undo Tree")
+      ("g" magit-status "Magit")
+      ("t" vterm "Terminal")
+      ("SPC" major-mode-hydra "Major Hydra"))))
   (setup-expecting "avy"
     (pretty-hydra-define avy-hydra
       (:separator "-" :title "Avy" :foreign-keys warn :quit-key "q" :exit t)
@@ -1152,30 +1128,33 @@ targets."
         ("W" avy-goto-word-1 "Word 1"))
        "Line"
        (("l" avy-goto-line "Line")))))
-  (setup-expecting "org"
-    (pretty-hydra-define org-hydra
-      (:separator "-" :title "Org" :foreign-keys warn :quit-key "q" :exit t)
-      ("Babel"
-       (("t" org-babel-tangle "Tangle")
-        ("e" org-babel-execute-src-block "Execute"))
-       "Roam"
-       (("n" org-roam-node-find "Find Node")
-        ("i" org-roam-node-insert "Insert Node")
-        ("t" org-roam-tag-add "Add tag")))))
+  (major-mode-hydra-define org-mode
+    (:separator "-" :title "Org" :foreign-keys warn :quit-key "q" :exit t)
+    ("Babel"
+     (("t" org-babel-tangle "Tangle")
+      ("e" org-babel-execute-src-block "Execute"))
+     "Roam"
+     (("n" org-roam-node-find "Find Node")
+      ("i" org-roam-node-insert "Insert Node")
+      ("t" org-roam-tag-add "Add tag"))))
   )
 #+end_src
 
 *** transient
 Hydraからtransient.elにひっこす
-どうやらprefixが呼ばれた時点で全てのsuffixをloadするという挙動をするので、
+どうやらprefixが呼ばれた時点で全てのsuffixをloadするという挙動をする?ので、
 雑に呼ぶととんでもない時間がかかる
 
 #+begin_src emacs-lisp
 (setup-lazy
   '(avy-menu
     lsp-menu
+    main-menu
     major-mode-menu)
   "transient"
+  :prepare (setup-keybinds nil
+             "M-SPC" 'major-mode-menu)
+  (setopt transient-align-variable-pitch t)
   (transient-define-prefix avy-menu ()
     "Avy menu"
     [["Line"
@@ -1209,6 +1188,25 @@ Hydraからtransient.elにひっこす
       ("i" "Implementation" eglot-find-implementation)
       ("t" "Type" eglot-find-typeDefinition)
       ("r" "Rename" eglot-rename)]])
+  (transient-define-prefix main-menu ()
+    "Main Menu"
+    [["File"
+      ("f" "Find" find-file)
+      ("r" "Recent" recentf)
+      ("o" "Outline" consult-outline)]
+     ["Window"
+      ("b" "Buffer" consult-buffer)
+      ("w" "Ace" ace-window)]
+     ["Org"
+      ("a" "Agenda" org-agenda)
+      ("n" "Find Note" org-roam-node-find)
+      ("c" "Capture" my/org-capture-fleeting)
+      ("C" "View Fleeting" my/org-capture-fleeting)]
+     ["Tool"
+      ("z" "Undo Tree" vundo)
+      ("g" "Magit" magit-status)
+      ("t" "Terminal" vterm)
+      ("SPC" "Major Mode Menu" major-mode-menu)]])
   (transient-define-prefix major-mode-menu ()
     ["Org"
      :if-mode (org-mode)
@@ -1231,8 +1229,21 @@ Hydraからtransient.elにひっこす
   )
 #+end_src
 
+*** key-chord
+同時押しするぜ
+しません
+別につかわなくなった
+#+begin_src emacs-lisp :tangle no
+(setup "key-chord"
+  (key-chord-mode 1)
+  (key-chord-define-global "jk" 'main-menu))
+#+end_src
+
 *** meow
-#+begin_src emacs-lisp
+1年ぐらいつかった
+もっと薄いモードレスなパッケージの方がいいかも
+at-point, on-bufferな風味がある機能はEmbarkにやらせて、それ以外の部分をtransient(とrepeat-mode, devil.elとか)にやらせるか
+#+begin_src emacs-lisp :tangle no
 (setup "meow"
   (!when (equal system-type 'darwin)
     (defun my/mac-deactivate-input-method ()
@@ -1558,7 +1569,10 @@ Hydraからtransient.elにひっこす
 #+begin_src emacs-lisp
 (!-
  (setup "popper"
-   (setup "popper-echo")
+   (setup-keybinds nil
+     "C-`" 'popper-toggle
+     "M-`" 'popper-cycle
+     "C-M-`" 'popper-toggle-type)
    (setopt popper-reference-buffers
            '("\\*Messages\\*"
              "Output\\*$"
@@ -1566,14 +1580,12 @@ Hydraからtransient.elにひっこす
              help-mode
              compilation-mode
              vterm-mode))
-   (popper-mode +1)
-   (popper-echo-mode +1)))
+   (popper-mode +1)))
 #+end_src
 
 ** Avy/Ace
 *** Avy
 #+begin_src emacs-lisp
-(ensure 'avy)
 (setup-lazy '(avy-goto-char
               avy-goto-char-2
               avy-goto-char-timer
@@ -1583,6 +1595,8 @@ Hydraからtransient.elにひっこす
               avy-resume
               avy-goto-migemo-char-timer)
   "avy"
+  :prepare (setup-keybinds nil
+             "C-:" 'avy-goto-migemo-char-timer)
   (defun avy-goto-migemo-char-timer (&optional arg)
     (interactive "P")
     (setup "migemo")
@@ -1614,6 +1628,8 @@ https://karthinks.com/software/emacs-window-management-almanac
               ace-window-one-command
               ace-window-prefix)
   "ace-window"
+  :prepare (setup-keybinds nil
+             "C-x o" 'ace-window)
   (setopt aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
           aw-dispatch-always t)
   (defun ace-window-one-command ()
@@ -1640,8 +1656,8 @@ https://karthinks.com/software/emacs-window-management-almanac
 #+end_src
 
 ** migemo
+"@cmigemo"なる部分はnixでインストールされたパスを置換するためのplace holder
 #+begin_src emacs-lisp
-(ensure 'migemo)
 (setup-after "migemo"
   (setq migemo-command "cmigemo"
         migemo-options '("-q" "--emacs")
@@ -1827,6 +1843,7 @@ https://karthinks.com/software/emacs-window-management-almanac
         org-todo-keywords
         '((sequence "TODO(t)" "INPROGRESS(p!)" "WAIT(w)" "SOMEDAY(s)"
                     "|" "DONE(d!)" "CANCELED(c)"))
+        org-use-fast-todo-selection 'expert
         org-log-into-drawer t
         org-log-done nil))
 (setup-hook 'org-mode-hook 'org-cdlatex-mode)
@@ -1921,6 +1938,7 @@ org-srcでLSPを使えるようにする
 **** Org-babelの言語は起動時に全部読もうとして大変なので遅延する
 https://misohena.jp/blog/2022-08-16-reduce-org-mode-startup-time-org-babel.html
 なんか動かなくなったのでやめた<2024-07-27 Sat>
+これはorg-babel-execute-blockの引数が変わった影響でadviceがおかしくなってる
 #+name: babel-lazy-loading
 #+begin_src emacs-lisp :tangle no
 (defvar my-org-babel-languages
@@ -2020,7 +2038,7 @@ https://misohena.jp/blog/2022-08-16-reduce-org-mode-startup-time-org-babel.html
   (apply original-fun args))
 #+end_src
 
-**** COMMENT Org-babelの遅延ロードその2
+**** Org-babelの遅延ロードその2
 doom-emacsからパクってくる
 #+name: babel-lazy-loading-2
 #+begin_src emacs-lisp :tangle no
@@ -2261,6 +2279,8 @@ Export先のデフォルトのディレクトリを指定
 (setup-lazy '(org-capture
               my/org-capture-fleeting)
   "org-capture"
+  :prepare (setup-keybinds nil
+             "C-c c" 'my/org-capture-fleeting)
   (setq fleeting-file (file-name-concat org-directory "inbox.org"))
   (setq org-capture-templates
         '(
@@ -2270,6 +2290,7 @@ Export先のデフォルトのディレクトリを指定
     (interactive)
     (org-capture nil "f")))
 #+end_src
+
 *** org-roam
 https://jethrokuan.github.io/org-roam-guide/
 https://magnus.therning.org/2021-07-23-keeping-todo-items-in-org-roam-v2.html
@@ -2282,6 +2303,8 @@ https://magnus.therning.org/2021-07-23-keeping-todo-items-in-org-roam-v2.html
               org-roam-node-insert
               org-roam-tag-add)
   "org-roam"
+  :prepare (setup-keybinds nil
+             "C-c n" 'org-roam-node-find)
   (setq org-roam-db-location "~/.emacs.d/org-roam.db"
         org-roam-directory "~/Org/roam"
         org-roam-completion-functions '()
@@ -2567,6 +2590,7 @@ org-bulletはもう古くて、superstarをつかうらしい
           org-attach-id-uuid-folder-format)))
 #+end_src
 
+*** org-noter
 #+begin_src emacs-lisp
 (setup-after "org"
   (setup "org-noter"))
@@ -2579,7 +2603,6 @@ org-bulletはもう古くて、superstarをつかうらしい
 *** oc,citar
 Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせでいく
 #+begin_src emacs-lisp
-(ensure 'citar)
 (setup-after "oc"
   (setq org-cite-global-bibliography '("~/Zotero/reference.bib")
         org-cite-insert-processor 'citar
@@ -2617,7 +2640,6 @@ Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせ�
 
 *** org-download
 #+begin_src emacs-lisp
-(ensure 'org-download)
 (setup-lazy '(org-download-enable
               org-download-yank
               org-download-clipboard)
@@ -2629,7 +2651,6 @@ Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせ�
 
 ** Calendar
 #+begin_src emacs-lisp
-(ensure "japanese-holidays")
 (setup-after "calendar"
   (setup "japanese-holidays"
     (setq calendar-holidays
@@ -2658,7 +2679,6 @@ Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせ�
 ** Eldoc
 *** eldoc-box
 #+begin_src emacs-lisp
-(ensure 'eldoc-box)
 (setup-lazy '(eldoc-box-hover-mode
               eldoc-box-hover-at-point-mode
               eldoc-box-help-at-point)
@@ -2673,18 +2693,16 @@ misttyが結構良さそうで検討中
 Nix側でインストールする
 #+begin_src emacs-lisp
 (setup-lazy '(vterm) "vterm"
-  :prepare (setup-hook 'vterm-mode-hook
-             (progn
-               (setq-local global-hl-line-mode nil)
-               (hl-line-mode -1)))
-  (setq vterm-shell "nu"
-        vterm-timer-delay 0.01))
+  :prepare (setup-keybinds nil
+             "C-c t" 'vterm)
+  (setopt vterm-shell "nu"
+          vterm-timer-delay 0.01))
 #+end_src
 
 **** meow-vterm
 meowとの統合
 meow-vterm-enable, setupあたりを変更
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (ensure-vc '(meow-vterm :url "https://github.com/accelbread/meow-vterm"))
 (setup-lazy '(my/meow-vterm-setup) "meow-vterm"
   :prepare (progn
@@ -2715,19 +2733,16 @@ meow-vterm-enable, setupあたりを変更
 #+end_src
 *** Make dired colorful
 #+begin_src emacs-lisp
-(ensure 'diredfl)
 (setup-lazy '(diredfl-mode) "diredfl"
   :prepare (setup-hook 'dired-mode-hook 'diredfl-mode))
 #+end_src
 *** Icon
 #+begin_src emacs-lisp
-(ensure 'nerd-icons-dired)
 (setup-lazy '(nerd-icons-dired-mode) "nerd-icons-dired"
   :prepare (setup-hook 'dired-mode-hook 'nerd-icons-dired-mode))
 #+end_src
 *** subtree
 #+begin_src emacs-lisp
-(ensure 'dired-subtree)
 (setup-after "dired"
   (setup "dired-subtree"
     (setup-keybinds dired-mode-map
@@ -2736,14 +2751,12 @@ meow-vterm-enable, setupあたりを変更
 #+end_src
 *** collapse
 #+begin_src emacs-lisp
-(ensure 'dired-collapse)
 (setup-lazy '(dired-collapse-mode)
   "dired-collapse"
   :prepare (setup-hook 'dired-mode-hook 'dired-collapse-mode))
 #+end_src
 *** preview
 #+begin_src emacs-lisp
-(ensure 'dired-preview)
 (setup-lazy '(dired-preview-mode) "dired-preview"
   :prepare (setup-hook 'dired-mode-hook 'dired-preview-mode))
 #+end_src
@@ -2751,7 +2764,6 @@ meow-vterm-enable, setupあたりを変更
 *** dirvish
 dirvish.elのdirvish-override-dired-modeを引っぱってきて遅延ロードする
 #+begin_src emacs-lisp :tangle no
-(ensure 'dirvish)
 (setup-lazy '(dirvish-find-entry-a
               dirvish-dired-noselect-a
               dirvish-insert-subdir-a
