@@ -72,23 +72,26 @@
     };
   };
 
-  # Configure keymap in X11
-  services.xserver = {
-    xkb = {
-      layout = "us";
-      variant = "";
-    };
-  };
-
   # Display Manager
   services.displayManager = {
     enable = true;
-    autoLogin.user = "marimo";
-    defaultSession = "steam";
+    # autoLogin.user = "marimo";
+    # defaultSession = "steam";
   };
-  services.xserver.displayManager.lightdm = {
+  services.xrdp = {
     enable = true;
-    greeter.enable = false; # autologin
+    port = 3389;
+    openFirewall = true;
+    defaultWindowManager = "xfce4-session";
+  };
+  services.xserver= {
+    desktopManager = {
+      enable = true;
+    };
+    displayManager.lightdm = {
+      enable = true;
+      greeter.enable = false; # autologin
+    };
   };
 
   #programs.hyprland = {
@@ -107,17 +110,13 @@
     packages = with pkgs; [];
   };
 
-  environment.systemPackages = with pkgs; [
-    mangohud
-  ];
-
   programs = {
     steam = {
       enable = true;
       remotePlay.openFirewall = true;
       gamescopeSession = {
         enable = true;
-        args = ["-r" "60" "-W" "1920" "-H" "1080" "--mangoapp" "--xwayland-count" "2"];
+        args = ["-r" "60" "-W" "1920" "-H" "1080"];
         env = {
           STEAM_MULTIPLE_XWAYLANDS = "1";
         };
