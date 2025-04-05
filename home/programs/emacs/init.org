@@ -136,6 +136,11 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
 (setq package-enable-at-startup nil)
 #+end_src
 
+** LSP-modeでplistを使うようにする
+#+begin_src emacs-lisp
+(setenv "LSP_USE_PLISTS" "true")
+#+end_src
+
 ** footer
 #+begin_src emacs-lisp
 (provide 'early-init)
@@ -310,38 +315,6 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
      "<backtab>" 'corfu-previous)))
 #+end_src
 
-*** tempel
-#+begin_src emacs-lisp
-(ensure 'tempel)
-(setup-lazy '(tempel-complete
-              tempel-expand
-              tempel-setup-capf)
-  "tempel"
-  :prepare
-  (progn
-    (setup-in-idle "tempel")
-    (defun tempel-setup-capf ()
-      (when (or (derived-mode-p 'conf-mode)
-                (derived-mode-p 'prog-mode)
-                (derived-mode-p 'text-mode))
-        (setq-local completion-at-point-functions
-                    (cons #'tempel-expand
-                          completion-at-point-functions))))
-    (add-hook 'after-change-major-mode-hook #'tempel-setup-capf 90))
-  (setup-keybinds tempel-map
-    "<tab>" 'tempel-next
-    "<backtab>" 'tempel-previous)
-  (setup-after "eglot"
-    (setup "eglot-tempel")))
-#+end_src
-
-**** eglot-tempel
-#+begin_src emacs-lisp
-(ensure 'eglot-tempel)
-(setup-after "eglot-tempel"
-  (eglot-tempel-mode))
-#+end_src
-
 *** Undo/Redo
 #+begin_src emacs-lisp
 (setup-lazy '(undo-fu-only-undo
@@ -381,61 +354,70 @@ set-markはC-SPCでやるので（システム側のIME変更のキーバイン�
   "puni")
 #+end_src
 
-*** Eglot
-<2024-11-26 Tue>試しにlsp-bridgeを使う
+*** LSP-mode
 #+begin_src emacs-lisp
-(setup-lazy '(eglot-ensure) "eglot"
-  :prepare (!foreach '(c-ts-mode
-                       c++-ts-mode
-                       rust-ts-mode
-                       tuareg-mode
-                       nix-ts-mode)
-             (setup-hook ,it 'eglot-ensure))
-  (setq eglot-autoshutdown t
-        eglot-ignored-server-capabilities '(:documentHighlightProvider
-                                            :documentOnTypeFormattingProvider)
-        eglot-events-buffer-size 0
-        eglot-sync-connect nil)
-  (dolist (server '((nix-ts-mode "nil")
-                    (typst-ts-mode "tinymist")))
-    (add-to-list 'eglot-server-programs server))
-  (defun my/eglot-capf ()
-    (setq-local completion-at-point-functions
-                (list (cape-capf-super
-                       #'tempel-complete
-                       #'eglot-completion-at-point
-                       #'cape-file))))
-  (setup-hook 'eglot-managed-mode-hook 'my/eglot-capf))
-
+(setup-lazy '(lsp lsp-deferred lsp-org) "lsp-mode"
+  (setup "lsp-mode-autoloads")
+  (setup "lsp-ui")
+  (setup-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
+  (setup-hook 'lsp-mode-hook #'flymake-mode)
+  (setopt lsp-headerline-breadcrumb-enable nil
+          lsp-modeline-code-actions-enable nil
+          lsp-modeline-diagnostics-enable nil
+          lsp-diagnostics-provider :flymake))
+(setup-after "lsp-completion"
+  (setopt lsp-completion-provider :none)
+  (defun my/lsp-mode-setup-completion ()
+    (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+          '(orderless))) ;; Configure orderless
+  (setup-hook 'lsp-completion-mode-hook #'my/lsp-mode-setup-completion))
 #+end_src
 
-**** jsonrpc
-boosterを使うので意味ないはずだけど一応
+lsp-boosterもね
 #+begin_src emacs-lisp
-(setup-after "jsonrpc"
-  (setq jsonrpc-default-request-timeout 3000)
-  (fset #'jsonrpc--log-event #'ignore))
+(defun lsp-booster--advice-json-parse (old-fn &rest args)
+  "Try to parse bytecode instead of json."
+  (or
+   (when (equal (following-char) ?#)
+     (let ((bytecode (read (current-buffer))))
+       (when (byte-code-function-p bytecode)
+         (funcall bytecode))))
+   (apply old-fn args)))
+(advice-add (if (progn (require 'json)
+                       (fboundp 'json-parse-buffer))
+                'json-parse-buffer
+              'json-read)
+            :around
+            #'lsp-booster--advice-json-parse)
+
+(defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+  "Prepend emacs-lsp-booster command to lsp CMD."
+  (let ((orig-result (funcall old-fn cmd test?)))
+    (if (and (not test?)                             ;; for check lsp-server-present?
+             (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+             lsp-use-plists
+             (not (functionp 'json-rpc-connection))  ;; native json-rpc
+             (executable-find "emacs-lsp-booster"))
+        (progn
+          (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+            (setcar orig-result command-from-exec-path))
+          (message "Using emacs-lsp-booster for %s!" orig-result)
+          (cons "emacs-lsp-booster" orig-result))
+      orig-result)))
+(advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
 #+end_src
 
-**** eglot-booster
+あとはUIまわりも
 #+begin_src emacs-lisp
-(setup-after "eglot"
-  (setup "eglot-booster"
-    (eglot-booster-mode)))
-#+end_src
-
-**** eglot-x
-拡張とかを使えるように
-#+begin_src emacs-lisp
-(setup-after "eglot"
-  (setup "eglot-x"
-    (eglot-x-setup)))
+(setup-after "lsp-ui"
+  (setopt lsp-ui-doc-enable t
+          lsp-ui-flycheck-enable nil
+          lsp-ui-peek-enable t))
 #+end_src
 
 *** flymake
 #+begin_src emacs-lisp
 (setup-lazy '(flymake-mode) "flymake"
-  :prepare (setup-hook 'eglot-managed-mode-hook 'flymake-mode)
   (setup-keybinds flymake-mode-map
     "C-c n" 'flymake-goto-next-error
     "C-c p" 'flymake-goto-prev-error))
@@ -448,75 +430,81 @@ boosterを使うので意味ないはずだけど一応
 (setup-lazy '(magit magit-status) "magit")
 #+end_src
 
-**** auto-commit
-今はOrgのリポジトリでだけ使っている
-もう使ってない
-#+begin_src emacs-lisp :tangle no
-(ensure 'git-auto-commit-mode)
-(setup-after "git-auto-commit-mode"
-  (setq gac-automatically-add-new-files-p t)
-  (defun gac-pull-before-push (&rest _args)
-    (let ((current-file (buffer-file-name)))
-      (shell-command "git pull")
-      (when current-file
-        (with-current-buffer (find-buffer-visiting current-file)
-          (revert-buffer t t t)))))
-  (advice-add 'gac-push :before #'gac-pull-before-push))
-
+**** diff-hl
+git diffの情報をいい感じにだしてくれるやつ
+#+begin_src emacs-lisp
+(!-
+ (setup "diff-hl"
+   (global-diff-hl-mode 1)
+   (setup-hook 'dired-mode-hook #'diff-hl-dired-mode)
+   (setup-hook 'magit-pre-refresh-hook #'diff-hl-magit-pre-refresh)
+   (setup-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
+   (unless (window-system)
+     (diff-hl-margin-mode))))
 #+end_src
-
 *** Treesitter
 GrammarはNixでインストールされるのでtreesit-autoは御役御免
 #+begin_src emacs-lisp
 (setup-after "treesit"
-  (setq treesit-font-lock-level 4))
-(dolist (lang '((bash-mode . bash-ts-mode)
-                (c-mode . c-ts-mode)
-                (c++-mode . c++-ts-mode)
-                (csharp-mode . csharp-ts-mode)
-                (cmake-mode . cmake-ts-mode)
-                (css-mode . css-ts-mode)
-                (dockerfile-mode . dockerfile-ts-mode)
-                (python-mode . python-ts-mode)))
-  (add-to-list 'major-mode-remap-alist lang))
-(dolist (lang '(("[Dd]ockerfile\\'" . dockerfile-ts-mode)
-                ("\\.dockerfile\\'" . dockerfile-ts-mode)
-                ("\\.yaml\\'" . yaml-ts-mode)))
-  (add-to-list 'auto-mode-alist lang))
+  (setopt treesit-font-lock-level 4))
+(!foreach '((bash-mode . bash-ts-mode)
+            (c-mode . c-ts-mode)
+            (c++-mode . c++-ts-mode)
+            (csharp-mode . csharp-ts-mode)
+            (cmake-mode . cmake-ts-mode)
+            (css-mode . css-ts-mode)
+            (dockerfile-mode . dockerfile-ts-mode)
+            (python-mode . python-ts-mode))
+  (add-to-list 'major-mode-remap-alist ,it))
+(!foreach '(("[Dd]ockerfile\\'" . dockerfile-ts-mode)
+            ("\\.dockerfile\\'" . dockerfile-ts-mode)
+            ("\\.yaml\\'" . yaml-ts-mode))
+  (add-to-list 'auto-mode-alist ,it))
 
+#+end_src
+
+**** treesit-fold
+#+begin_src emacs-lisp
+(setup "treesit-fold"
+  (global-treesit-fold-mode))
 #+end_src
 
 *** 言語ごとのmajor mode
-**** Rust
+**** Gnuplot
 #+begin_src emacs-lisp
-(ensure 'rust-mode)
-(setup-lazy '(rust-mode) "rust-mode"
-  :prepare (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
-  (setq rust-mode-treesitter-derive t))
-#+end_src
-
-**** Ocaml
-#+begin_src emacs-lisp
-(ensure 'tuareg)
-(setup-lazy '(tuareg-mode
-              tuareg-opam-mode) "tuareg"
-  :prepare (progn
-             (add-to-list 'auto-mode-alist '("[./]opam_?\\'" . tuareg-opam-mode))
-             (add-to-list 'auto-mode-alist '("\\.ml[ip]?\\'" . tuareg-mode))))
+(setup-lazy '(gnuplot-mode) "gnuplot"
+  :prepare
+  (progn
+    (add-to-list 'auto-mode-alist '("\\.plt\\'" . gnuplot-mode))
+    (add-to-list 'auto-mode-alist '("\\.gp\\'" . gnuplot-mode)))
+  (setup "gnuplot-context"))
 #+end_src
 
 **** Julia
 #+begin_src emacs-lisp
-(ensure 'julia-mode)
-(ensure 'julia-vterm)
-(ensure 'ob-julia-vterm)
-(setup-lazy '(julia-vterm-mode) "julia-vterm"
-  :prepare (setup-hook 'julia-mode-hook 'julia-vterm-mode))
-(setup-after "ob-julia-vterm"
-  (defalias 'org-babel-execute:julia 'org-babel-execute:julia-vterm)
-  (defalias 'org-babel-variable-assignments:julia
-    'org-babel-variable-assignments:julia-vterm))
+(setup-lazy '(julia-mode) "julia-mode"
+  :prepare (add-to-list 'auto-mode-alist '("\\.jl\\'" . julia-mode)))
+#+end_src
 
+**** LaTeX
+ほとんどcdlatexがめあて
++Tempelで展開するので、cdlatexのTabでのコマンドの展開は消す+
+#+begin_src emacs-lisp
+(setup-lazy '(texmathp) "texmathp")
+(setup-after "cdlatex"
+  (setq cdlatex-command-alist-comb nil))
+#+end_src
+
+**** Lean4
+#+begin_src emacs-lisp
+(setup-lazy '(lean4-select-mode) "lean4-mode"
+  :prepare (add-to-list 'auto-mode-alist '("\\.lean\\'" . lean4-select-mode)))
+#+end_src
+
+**** Nix
+#+begin_src emacs-lisp
+(setup-lazy '(nix-ts-mode) "nix-ts-mode"
+  :prepare (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode)))
 #+end_src
 
 **** Nushell
@@ -528,22 +516,13 @@ GrammarはNixでインストールされるのでtreesit-autoは御役御免
     (add-to-list 'interpreter-mode-alist '("nu" . nushell-ts-mode))))
 #+end_src
 
-**** Nix
+**** Ocaml
 #+begin_src emacs-lisp
-(ensure 'nix-ts-mode)
-(setup-lazy '(nix-ts-mode) "nix-ts-mode"
-  :prepare (add-to-list 'auto-mode-alist '("\\.nix\\'" . nix-ts-mode)))
-#+end_src
-
-**** Gnuplot
-#+begin_src emacs-lisp
-(ensure 'gnuplot-mode)
-(setup-lazy '(gnuplot-mode) "gnuplot"
-  :prepare
-  (progn
-    (add-to-list 'auto-mode-alist '("\\.plt\\'" . gnuplot-mode))
-    (add-to-list 'auto-mode-alist '("\\.gp\\'" . gnuplot-mode)))
-  (setup "gnuplot-context"))
+(setup-lazy '(tuareg-mode
+              tuareg-opam-mode) "tuareg"
+  :prepare (progn
+             (add-to-list 'auto-mode-alist '("[./]opam_?\\'" . tuareg-opam-mode))
+             (add-to-list 'auto-mode-alist '("\\.ml[ip]?\\'" . tuareg-mode))))
 #+end_src
 
 **** SATySFi
@@ -556,18 +535,6 @@ satysfi-ts-modeをつかいます
              (add-to-list 'auto-mode-alist '("\\.satyg\\'" . satysfi-ts-mode))))
 #+end_src
 
-**** LaTeX
-ほとんどcdlatexがめあて
-Tempelで展開するので、cdlatexのTabでのコマンドの展開は消す
-#+begin_src emacs-lisp
-(ensure 'auctex)
-(ensure 'cdlatex)
-(setup-lazy '(texmathp) "texmathp")
-(setup-after "cdlatex"
-  (setq cdlatex-command-alist-comb nil)
-  (add-to-list 'cdlatex-tab-hook 'tempel-expand))
-#+end_src
-
 **** Typst
 #+begin_src emacs-lisp
 (setup-lazy '(typst-ts-mode) "typst-ts-mode"
@@ -575,37 +542,11 @@ Tempelで展開するので、cdlatexのTabでのコマンドの展開は消す
   (setopt typst-ts-mode-indent-offset 2))
 #+end_src
 
-*** lsp-bridge
-試したけど動きませんでした
-#+begin_src emacs-lisp :tangle no
-(!-
- (setup "yasnippet"
-   (yas-global-mode 1))
- (setup "lsp-bridge"
-   (setopt lsp-bridge-enable-org-babel t
-           lsp-bridge-enable-hover-diagnostic nil
-           lsp-bridge-enable-inlay-hint nil
-           lsp-bridge-enable-diagnostics nil
-           lsp-bridge-signature-show-function #'lsp-bridge-signature-show-with-frame
-           lsp-bridge-nix-lsp-server "nil")
-   (global-lsp-bridge-mode)))
-
-(setup-after "acm"
-  (setup "orderless")
-  (setopt acm-enable-icon t
-          acm-enable-preview t
-          acm-candidate-match-function 'orderless-flex
-          acm-enable-org-roam t
-          acm-enable-capf t)
-  (keymap-unset acm-mode-map "<remap> <next-line>")
-  (keymap-unset acm-mode-map "<remap> <previous-line>")
-  (setup-keybinds acm-mode-map
-    "<tab>" 'acm-select-next
-    "<backtab>" 'acm-select-prev)
-  (unless (display-graphic-p)
-    (setup "acm-terminal")))
-
-
+**** Rust
+#+begin_src emacs-lisp
+(setup-lazy '(rust-mode) "rust-mode"
+  :prepare (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+  (setq rust-mode-treesitter-derive t))
 #+end_src
 
 ** server
@@ -640,6 +581,13 @@ Tempelで展開するので、cdlatexのTabでのコマンドの展開は消す
  (setup "autorevert"
    (setq auto-revert-avoid-polling t)
    (global-auto-revert-mode 1)))
+#+end_src
+
+** recentf
+#+begin_src emacs-lisp
+(!-
+ (setup "recentf"
+   (recentf-mode)))
 #+end_src
 
 ** delsel
@@ -678,7 +626,7 @@ early-init.elでdefault-frame-alistに指定してあるけど、unicodeはま�
   (set-fontset-font
     "fontset-startup"
     'unicode
-    "UDEV Gothic 35LG-12"
+    "UDEV Gothic LG-12"
     nil
     'append))
 #+end_src
@@ -699,7 +647,7 @@ fontsetをweightまで指定したfontspecで作れば別のweightで表示す�
   (let* ((size 11)
          (height (* size 10))
          (propo "Noto Serif CJK JP")
-         (mono "UDEV Gothic 35LG")
+         (mono "UDEV Gothic LG")
          (propo-bold (font-spec :family propo :weight 'medium))
          (mono-bold (font-spec :family mono :weight 'bold)))
     ;; variable-pitch
@@ -774,7 +722,7 @@ ef-themesをつかう
 (setup "ef-themes-autoloads"
   (setopt ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui nil)
-  (load-theme 'ef-owl t))
+  (load-theme 'ef-cyprus t))
 #+end_src
 
 *** Modeline, Headerline
@@ -823,17 +771,6 @@ nerd-iconsを採用
 #+end_src
 
 *** scroll
-#+begin_src emacs-lisp :tangle no
-(!-
- (setup "pixel-scroll"
-  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))
-        mouse-wheel-progressive-speed nil
-        mouse-wheel-follow-mouse t
-        pixel-scroll-precision-large-scroll-height 40.0
-        scroll-step 1)
-  (pixel-scroll-precision-mode 1)))
-#+end_src
-
 pixel-scrollを使っていたけど、なんか重いのでやめる
 やっぱり使いたくなった
 #+begin_src emacs-lisp
@@ -850,14 +787,6 @@ pixel-scrollを使っていたけど、なんか重いのでやめる
   :prepare (setup-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 #+end_src
 
-*** highlight line
-#+begin_src emacs-lisp :tangle no
-(!-
- (setup "lin"
-   (setq lin-face 'lin-blue)
-   (lin-global-mode)))
-#+end_src
-
 ** インデント
 *** タブの挙動
 #+begin_src emacs-lisp
@@ -865,23 +794,8 @@ pixel-scrollを使っていたけど、なんか重いのでやめる
 (setq-default tab-width 2)
 #+end_src
 
-*** highlight-indent-guides
-indent-barsにひっこし<2024-08-03 Sat>
-#+begin_src emacs-lisp :tangle no
-(ensure 'highlight-indent-guides)
-(setup-lazy '(highlight-indent-guides-mode) "highlight-indent-guides"
-  :prepare
-  (progn
-    (setup-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-    (setup-hook 'yaml-mode-hook 'highlight-indent-guides-mode))
-  (setq highlight-indent-guides-method 'bitmap
-        highlight-indent-guides-character 124
-        highlight-indent-guides-responsive 'top))
-#+end_src
-
 *** indent-bars
 #+begin_src emacs-lisp
-(ensure 'indent-bars)
 (setup-lazy '(indent-bars-mode) "indent-bars"
   :prepare
   (progn
@@ -994,9 +908,6 @@ vertico-mode
   "consult-ghq"
   (setopt consult-ghq-find-function #'consult-fd
           consult-ghq-grep-function #'consult-ripgrep))
-(setup-lazy
-  '(consult-eglot)
-  "consult-eglot")
 #+end_src
 
 ** embark
@@ -1060,16 +971,6 @@ vertico-mode
                                         (org-roam-node (styles orderless-migemo-style)))))
 #+end_src
 
-** Hotfuzz
-#+begin_src emacs-lisp :tangle no
-(setup-after "hotfuzz"
-  (setq completion-styles '(hotfuzz)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion))
-                                        (eglot (styles hotfuzz))
-                                        (eglot-capf (styles hotfuzz)))))
-#+end_src
-
 ** Prescient
 #+begin_src emacs-lisp
 (setup-after "precient"
@@ -1087,59 +988,6 @@ vertico-mode
    (which-key-mode)))
 #+end_src
 
-*** Hydra
-#+begin_src emacs-lisp :tangle no
-(setup-lazy '(major-mode-hydra
-              main-hydra/body
-              avy-hydra/body
-              org-hydra/body)
-  "hydra"
-  :prepare (setup-keybinds nil
-             "M-SPC" 'major-mode-hydra)
-  (setup "major-mode-hydra")
-  (pretty-hydra-define main-hydra
-    (:separator "=" :title "Main" :foreign-keys warn :quit-key "q" :exit t)
-    ("File"
-     (("f" find-file "Find File")
-      ("r" recentf "Recent")
-      ("o" consult-outline "Outline"))
-     "Window"
-     (("b" consult-buffer "Buffer")
-      ("w" ace-window "Ace Window"))
-     "Org"
-     (("a" org-agenda "Agenda")
-      ("n" org-roam-node-find "Find Note")
-      ("c" my/org-capture-fleeting "Capture Note")
-      ("C" nil "View Fleeting"))
-     "Tool"
-     (("z" vundo "Undo Tree")
-      ("g" magit-status "Magit")
-      ("t" vterm "Terminal")
-      ("SPC" major-mode-hydra "Major Hydra"))))
-  (setup-expecting "avy"
-    (pretty-hydra-define avy-hydra
-      (:separator "-" :title "Avy" :foreign-keys warn :quit-key "q" :exit t)
-      ("Char"
-       (("c" avy-goto-char "Char")
-        ("C" avy-goto-char-2 "Char 2")
-        ("t" avy-goto-char-timer "Timer"))
-       "Word"
-       (("w" avy-goto-word-0 "Word")
-        ("W" avy-goto-word-1 "Word 1"))
-       "Line"
-       (("l" avy-goto-line "Line")))))
-  (major-mode-hydra-define org-mode
-    (:separator "-" :title "Org" :foreign-keys warn :quit-key "q" :exit t)
-    ("Babel"
-     (("t" org-babel-tangle "Tangle")
-      ("e" org-babel-execute-src-block "Execute"))
-     "Roam"
-     (("n" org-roam-node-find "Find Node")
-      ("i" org-roam-node-insert "Insert Node")
-      ("t" org-roam-tag-add "Add tag"))))
-  )
-#+end_src
-
 *** transient
 Hydraからtransient.elにひっこす
 どうやらprefixが呼ばれた時点で全てのsuffixをloadするという挙動をする?ので、
@@ -1148,7 +996,7 @@ Hydraからtransient.elにひっこす
 #+begin_src emacs-lisp
 (setup-lazy
   '(avy-menu
-    lsp-menu
+    eglot-menu
     main-menu
     major-mode-menu)
   "transient"
@@ -1174,7 +1022,7 @@ Hydraからtransient.elにひっこす
       ("W" "Word 1" avy-goto-word-1)]
      ["Line"
       ("l" "Line" avy-goto-line)]])
-  (transient-define-prefix lsp-menu ()
+  (transient-define-prefix eglot-menu ()
     "LSP Menu"
     [["Buffer"
       ("f" "Format" eglot-format-buffer)
@@ -1227,342 +1075,6 @@ Hydraからtransient.elにひっこす
       ("j" "Daily Note" org-roam-dailies-goto-today)]
      ])
   )
-#+end_src
-
-*** key-chord
-同時押しするぜ
-しません
-別につかわなくなった
-#+begin_src emacs-lisp :tangle no
-(setup "key-chord"
-  (key-chord-mode 1)
-  (key-chord-define-global "jk" 'main-menu))
-#+end_src
-
-*** meow
-1年ぐらいつかった
-もっと薄いモードレスなパッケージの方がいいかも
-at-point, on-bufferな風味がある機能はEmbarkにやらせて、それ以外の部分をtransient(とrepeat-mode, devil.elとか)にやらせるか
-#+begin_src emacs-lisp :tangle no
-(setup "meow"
-  (!when (equal system-type 'darwin)
-    (defun my/mac-deactivate-input-method ()
-      (progn
-        (when (and (equal window-system 'mac) (fboundp 'mac-select-input-source))
-          (mac-select-input-source "com.apple.inputmethod.Kotoeri.RomajiTyping.Roman"))
-        (when (and (equal window-system 'ns) (fboundp 'mac-ime-deactivate))
-          (mac-ime-deactivate))))
-    (defun my/mac-deactivate-ime-without-insert ()
-      (when (and (frame-focus-state) (not (meow-insert-mode-p)))
-        (my/mac-deactivate-input-method)))
-    (setup-hook 'meow-insert-exit-hook 'my/mac-deactivate-input-method)
-    (add-function :after after-focus-change-function #'my/mac-deactivate-ime-without-insert))
-  (!when (and (equal system-type 'gnu/linux) (fboundp 'fcitx--deactivate))
-    (when (display-graphic-p)
-      (setup-hook 'meow-insert-exit-hook 'fcitx--deactivate)))
-  (setq meow-cursor-type-insert '(bar . 3)
-        meow-use-cursor-position-hack t
-        meow-selection-command-fallback
-        '((meow-change . meow-change-char)
-          (meow-kill . meow-delete)
-          (meow-cancel-selection . keyboard-quit)
-          (meow-pop-selection . meow-pop-grab)
-          (meow-beacon-change . meow-beacon-change-char)))
-
-  (defun meow-save-clipboard ()
-    "Copy in clipboard."
-    (interactive)
-    (let ((meow-use-clipboard t))
-      (meow-save)))
-
-  (add-to-list 'insert-pair-alist '(?$ "\\(" "\\)"))
-
-  (defun insert-pair-region (start end char)
-    (interactive
-     (list (region-beginning) (region-end)
-           (read-char "Wrapping Char (command): ")))
-    (let* ((pair (or (assoc char insert-pair-alist)
-                     (rassoc (list char) insert-pair-alist)))
-           (open (cond ((and pair (nth 2 pair)) (nth 1 pair))
-                       (pair (nth 0 pair))
-                       (t char)))
-           (close (cond ((and pair (nth 2 pair)) (nth 2 pair))
-                        (pair (nth 1 pair))
-                        (t char))))
-      (save-excursion
-        (goto-char start)
-        (setq start (point-marker))
-        (goto-char end)
-        (setq end (point-marker))
-        (goto-char start)
-        (insert open)
-        (goto-char end)
-        (insert close))
-      (goto-char start)))
-
-  (defun meow-surround-delete ()
-    (interactive)
-    (let* ((ch (meow-thing-prompt "Delete thing: "))
-           (inner (meow--parse-inner-of-thing-char ch))
-           (outer (meow--parse-bounds-of-thing-char ch)))
-      (delete-region (cdr inner) (cdr outer))
-      (kill-region (car inner) (cdr inner))
-      (delete-region (car outer) (car inner))))
-
-  (defun meow-surround-squeeze ()
-    (interactive)
-    (let* ((ch (meow-thing-prompt "Delete thing: "))
-           (inner (meow--parse-inner-of-thing-char ch))
-           (outer (meow--parse-bounds-of-thing-char ch)))
-      (delete-region (cdr inner) (cdr outer))
-
-      (delete-region (car outer) (car inner))))
-
-  <<meow-thing-register>>
-  <<meow-surround>>
-  <<meow-setup>>
-  (meow-global-mode)
-  )
-#+end_src
-
-**** thingsの追加
-#+name: meow-thing-register
-#+begin_src emacs-lisp :tangle no
-(make-variable-buffer-local 'meow-char-thing-table)
-(setq-default meow-char-thing-table
-      '((?\( . round)
-        (?\[ . square)
-        (?\{ . curly)
-        (?\< . angle)
-        (?` . backquote)
-        (?\' . quote)
-        (?\" . wquote)
-        (?s . line)
-        (?b . buffer)
-        (?g . string)
-        (?p . paragraph)))
-
-(meow-thing-register 'angle
-                     '(pair ("<") (">"))
-                     '(pair ("<") (">")))
-(meow-thing-register 'quote
-                     '(pair ("'") ("'"))
-                     '(pair ("'") ("'")))
-(meow-thing-register 'wquote
-                     '(pair ("\"") ("\""))
-                     '(pair ("\"") ("\"")))
-(meow-thing-register 'backquote
-                     '(pair ("`") ("`"))
-                     '(pair ("`") ("`")))
-(meow-thing-register 'org-md-block
-                   '(regexp "^[ \\|\t]*\\(#\\+begin_\\|```\\)[^\n]*\n" "^[ \\|\t]*\\(#\\+end_[^\n]*\\|```\\)$")
-                   '(regexp "^[ \\|\t]*\\(#\\+begin_\\|```\\)[^\n]*\n" "^[ \\|\t]*\\(#\\+end_[^\n]*\\|```\\)$")
-                   )
-(meow-thing-register 'inline-math
-                     '(pair ("\\(") ("\\)"))
-                     '(pair ("\\(") ("\\)")))
-(meow-thing-register 'display-math
-                     '(pair ("\\[") ("\\]"))
-                     '(pair ("\\[") ("\\]")))
-
-
-(setup-hook 'org-mode-hook
-  (setq-local meow-char-thing-table
-              (cons '(?o . org-md-block)
-                    meow-char-thing-table)))
-(setup-hook 'markdown-mode-hook
-  (setq-local meow-char-thing-table
-              (cons '(?o . org-md-block)
-                    meow-char-thing-table)))
-#+end_src
-
-#+begin_src emacs-lisp
-(ensure 'meow-tree-sitter)
-(setup-after "treesit"
-  (setup "meow-tree-sitter"
-    (meow-tree-sitter-register-defaults)))
-#+end_src
-
-**** surround
-#+name: meow-surround
-#+begin_src emacs-lisp :tangle no
-(add-to-list 'insert-pair-alist '(?$ "\\(" "\\)"))
-
-(defun insert-pair-region (start end char)
-  (interactive
-   (list (region-beginning) (region-end)
-         (read-char "Wrapping Char (command): ")))
-  (let* ((pair (or (assoc char insert-pair-alist)
-                   (rassoc (list char) insert-pair-alist)))
-         (open (cond ((and pair (nth 2 pair)) (nth 1 pair))
-                     (pair (nth 0 pair))
-                     (t char)))
-         (close (cond ((and pair (nth 2 pair)) (nth 2 pair))
-                      (pair (nth 1 pair))
-                      (t char))))
-    (save-excursion
-      (goto-char start)
-      (setq start (point-marker))
-      (goto-char end)
-      (setq end (point-marker))
-      (goto-char start)
-      (insert open)
-      (goto-char end)
-      (insert close))
-    (goto-char start)))
-
-(defun meow-surround-squeeze ()
-  (interactive)
-  (let* ((ch (meow-thing-prompt "Delete thing: "))
-         (inner (meow--parse-inner-of-thing-char ch))
-         (outer (meow--parse-bounds-of-thing-char ch)))
-    (delete-region (cdr inner) (cdr outer))
-    (kill-region (car inner) (cdr inner))
-    (delete-region (car outer) (car inner))))
-#+end_src
-
-**** キーバインド
-#+name: meow-setup
-#+begin_src emacs-lisp :tangle no
-(defun meow-setup ()
-  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-  (meow-motion-overwrite-define-key
-   '("j" . meow-next)
-   '("k" . meow-prev)
-   ;; main menu
-   '("; f" . ("Find" . find-file))
-   '("; r" . ("Recent" . recentf))
-   '("; s" . ("Save" . save-buffer))
-   '("; b" . ("Buffer" . consult-buffer))
-   '("; w" . ("Window" . ace-window))
-   '("; u" . ("Undo Tree" . vundo))
-   '("; g" . magit)
-   '("; t" . ("Term" . vterm))
-   '("; n" . ("Find Roam" . org-roam-node-find))
-   '("<escape>" . ignore))
-  (meow-leader-define-key
-   ;; SPC j/k will run the original command in MOTION state.
-   '("j" . "H-j")
-   '("k" . "H-k")
-   ;; Use SPC (0-9) for digit arguments.
-   '("1" . meow-digit-argument)
-   '("2" . meow-digit-argument)
-   '("3" . meow-digit-argument)
-   '("4" . meow-digit-argument)
-   '("5" . meow-digit-argument)
-   '("6" . meow-digit-argument)
-   '("7" . meow-digit-argument)
-   '("8" . meow-digit-argument)
-   '("9" . meow-digit-argument)
-   '("0" . meow-digit-argument)
-   '("/" . meow-keypad-describe-key)
-   '("?" . meow-cheatsheet))
-  (meow-normal-define-key
-   '("0" . meow-expand-0)
-   '("9" . meow-expand-9)
-   '("8" . meow-expand-8)
-   '("7" . meow-expand-7)
-   '("6" . meow-expand-6)
-   '("5" . meow-expand-5)
-   '("4" . meow-expand-4)
-   '("3" . meow-expand-3)
-   '("2" . meow-expand-2)
-   '("1" . meow-expand-1)
-   '("-" . meow-reverse)
-
-   ;; basic
-   '("h" . meow-left)
-   '("j" . meow-next)
-   '("k" . meow-prev)
-   '("l" . meow-right)
-
-   '("H" . meow-beginning-of-thing)
-   '("J" . meow-page-down)
-   '("K" . meow-page-up)
-   '("L" . meow-end-of-thing)
-
-   '("i" . meow-insert)
-   '("I" . meow-open-above)
-   '("a" . meow-append)
-   '("A" . meow-open-below)
-
-   ;; selection
-   '("v l" . ("line" . meow-line))
-   '("v i" . ("Inner things" . meow-inner-of-thing))
-   '("v a" . ("Bound things" . meow-bounds-of-thing))
-   '("v b" . ("Block" . meow-block))
-   '("v c" . ("Inner" . puni-mark-list-around-point))
-   '("v x" . ("Bound" . puni-mark-sexp-around-point))
-   '("v s" . ("Symbol" . meow-mark-symbol))
-   '("v w" . ("Word" . meow-mark-word))
-   '("v v" . ("ExpReg" . puni-expand-region))
-   '("v r" . ("Rectangle" . rectangle-mark-mode))
-
-   ;; puni
-   '(", (" . ("(a)" . puni-wrap-round))
-   '(", [" . ("[a]" . puni-wrap-square))
-   '(", {" . ("{a}" . puni-wrap-curly))
-   '(", <" . ("<a>" . puni-wrap-angle))
-   '(", d" . ("del" . puni-splice))
-   '(", l" . ("slurp" . puni-slurp-forward))
-   '(", h" . ("barf" . puni-barf-forward))
-
-   '("m" . meow-join)
-
-   '("e" . meow-next-word)
-   '("E" . meow-next-symbol)
-   '("b" . meow-back-word)
-   '("B" . meow-back-symbol)
-   '("w" . expreg-expand)
-
-   '("g" . meow-grab)
-   '("<escape>" . meow-cancel-selection)
-
-   '("t" . meow-find)
-   '("T" . meow-till)
-
-   ;; editing
-   '("d" . meow-kill)
-   '("c" . meow-change)
-
-   '("r" . meow-replace)
-   '("R" . meow-swap-grab)
-
-   '("p" . meow-yank)
-   '("P" . consult-yank-pop)
-   '("y" . meow-save)
-   '("Y" . meow-save-clipboard)
-
-   '("u" . undo-fu-only-undo)
-   '("U" . undo-fu-only-redo)
-
-   '("=" . indent-region)
-
-   ;; main menu
-   '("; f" . ("Find" . find-file))
-   '("; r" . ("Recent" . recentf))
-   '("; s" . ("Save" . save-buffer))
-   '("; b" . ("Buffer" . consult-buffer))
-   '("; w" . ("Window" . ace-window))
-   '("; u" . ("Undo Tree" . vundo))
-   '("; g" . magit)
-   '("; t" . ("Term" . vterm))
-   '("; n" . ("Find Roam" . org-roam-node-find))
-   '("; j" . ("Journal" . org-roam-dailies-capture-today))
-   '("; c" . ("Capture" . my/org-capture-fleeting))
-   '("; l" . ("LSP" . lsp-menu))
-
-   ;; command
-   '("." . embark-act)
-   '(":" . major-mode-menu)
-   '("/" . consult-line)
-   '("n" . vertico-repeat)
-   '("q" . popper-toggle)
-   '("Q" . popper-toggle-type)
-   '("`" . popper-cycle)
-   '("f" . avy-goto-migemo-char-timer)
-   '("F" . avy-menu)))
-(meow-setup)
 #+end_src
 
 ** Popper
@@ -1922,8 +1434,6 @@ org-srcでLSPを使えるようにする
 :dir attachだとattachのディレクトリで実行しようとするのでorg-srcでひっかかる
 :output-dirで(org-attach-dir)を実行する
 #+begin_src emacs-lisp
-(setup-after "org"
-  (setup "ob"))
 (setup-after "ob"
   (add-to-list 'org-babel-default-header-args
                '(:output-dir . (lambda () (org-attach-dir nil t))))
@@ -2092,6 +1602,7 @@ doom-emacsからパクってくる
 
 (advice-add #'org-babel-do-load-languages :override #'ignore)
 #+end_src
+
 **** Tangle/Detangleで対応する箇所を行き来できるように
 https://github.com/gmoutso/dotemacs/blob/master/lisp/tanglerc.el
 
@@ -2203,7 +1714,6 @@ Note sure why this was written: all languages must be the same in org file."
 **** org-nix-shell
 nix-shellの環境下でbabel-executeできるようにするやつ
 #+begin_src emacs-lisp
-(ensure 'org-nix-shell)
 (setup-lazy '(org-nix-shell-mode) "org-nix-shell"
   :prepare (setup-hook 'org-mode-hook 'org-nix-shell-mode))
 #+end_src
@@ -2261,7 +1771,7 @@ Export先のデフォルトのディレクトリを指定
 *** ox-gfm
 #+begin_src emacs-lisp
 (setup-after "org"
-  (setup "ox-gfm"))
+  (setup "ox-gfm-autoloads"))
 #+end_src
 
 *** org-crypt
@@ -2309,6 +1819,7 @@ https://magnus.therning.org/2021-07-23-keeping-todo-items-in-org-roam-v2.html
         org-roam-directory "~/Org/roam"
         org-roam-completion-functions '()
         org-roam-verbose nil
+        org-roam-node-display-template (concat "${title:*} " (propertize "${tags:15}" 'face 'org-tag))
         org-roam-capture-templates
         '(("m" "main" plain
            "%?"
@@ -2469,8 +1980,6 @@ https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
 
 **** org-roam-ql
 #+begin_src emacs-lisp
-(ensure 'org-roam-ql)
-(ensure 'org-roam-ql-ql)
 (setup-lazy '(my/roam-update-agenda-files
               org-roam-ql-search
               org-roam-ql-nodes
@@ -2486,7 +1995,6 @@ https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
 使ってたけど、あんまり使い勝手がよくないかもなのでやめてorg-bulletだけつかう
 やっぱり戻ってきた
 #+begin_src emacs-lisp
-(ensure 'org-modern)
 (setup-lazy '(org-modern-mode
               org-modern-agenda)
   "org-modern"
@@ -2508,7 +2016,10 @@ https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html
         org-agenda-current-time-string
         "◀── now ─────────────────────────────────────────────────"
         )
-  (setopt org-modern-star 'replace))
+  (setopt org-modern-star 'replace
+          org-modern-hide-stars nil
+          org-modern-table nil
+          org-modern-list '((?* . "•") (?+ . "‣"))))
 (setup-lazy '(org-modern-indent-mode)
   "org-modern-indent"
   :prepare (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
@@ -2579,6 +2090,17 @@ org-bulletはもう古くて、superstarをつかうらしい
 
 #+end_src
 
+*** calfw-org
+#+begin_src emacs-lisp
+(setup-lazy '(cfw:open-org-calendar) "calfw-org"
+  :prepare (progn
+             (setup-keybinds nil
+               "C-c a" 'cfw:open-org-calendar)
+             (advice-add 'cfw:open-org-calendar :before #'my/roam-update-agenda-files))
+  (setq cfw:org-agenda-schedule-args nil))
+
+#+end_src
+
 *** org-attach
 #+begin_src emacs-lisp
 (setup-after "org-attach"
@@ -2592,9 +2114,7 @@ org-bulletはもう古くて、superstarをつかうらしい
 
 *** org-noter
 #+begin_src emacs-lisp
-(setup-after "org"
-  (setup "org-noter"))
-(setup-after "org-noter"
+(setup-lazy '(org-noter) "org-noter"
   (setq org-noter-notes-window-location 'horizontal-split
         org-noter-always-create-frame nil)
   (org-noter-enable-org-roam-integration))
@@ -2602,6 +2122,7 @@ org-bulletはもう古くて、superstarをつかうらしい
 
 *** oc,citar
 Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせでいく
+org-roam-bibtexとかもセットアップした方がいいかも
 #+begin_src emacs-lisp
 (setup-after "oc"
   (setq org-cite-global-bibliography '("~/Zotero/reference.bib")
@@ -2622,7 +2143,6 @@ Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせ�
 
 *** org-appear
 #+begin_src emacs-lisp
-(ensure 'org-appear)
 (setup-lazy '(org-appear-mode) "org-appear"
   :prepare (setup-hook 'org-mode-hook 'org-appear-mode)
   (setq org-appear-autoemphasis t
@@ -2633,7 +2153,6 @@ Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせ�
 
 *** org-fragtog
 #+begin_src emacs-lisp
-(ensure 'org-fragtog)
 (setup-lazy '(org-fragtog-mode) "org-fragtog"
   :prepare (setup-hook 'org-mode-hook 'org-fragtog-mode))
 #+end_src
@@ -2646,21 +2165,43 @@ Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせ�
   "org-download"
   :prepare (setup-hook 'dired-mode-hook 'org-download-enable)
   (setq org-download-method 'attach))
-
 #+end_src
 
 ** Calendar
+calendar.elもcalfwも使っていく
+#+name: calendar.el
 #+begin_src emacs-lisp
 (setup-after "calendar"
   (setup "japanese-holidays"
-    (setq calendar-holidays
-          (append japanese-holidays holiday-local-holidays holiday-other-holidays)
-          calendar-mark-holidays-flag t)
-    (setq japanese-holiday-weekend '(0 6)
-          japanese-holiday-weekend-marker
-          '(holiday nil nil nil nil nil japanese-holiday-saturday))
     (setup-hook 'calendar-today-visible-hook 'japanese-holiday-mark-weekend)
     (setup-hook 'calendar-today-invisible-hook 'japanese-holiday-mark-weekend)))
+#+end_src
+
+#+name: calfw
+#+begin_src emacs-lisp
+(setup-lazy '(cfw:open-calendar-buffer) "calfw"
+  (setup "japanese-holidays")
+  ;; Unicode characters
+  (setq cfw:fchar-junction ?╋
+        cfw:fchar-vertical-line ?┃
+        cfw:fchar-horizontal-line ?━
+        cfw:fchar-left-junction ?┣
+        cfw:fchar-right-junction ?┫
+        cfw:fchar-top-junction ?┯
+        cfw:fchar-top-left-corner ?┏
+        cfw:fchar-top-right-corner ?┓)
+  )
+#+end_src
+
+#+name: japanese-holidays
+#+begin_src emacs-lisp
+(setup-after "japanese-holidays"
+  (setq calendar-holidays
+          (append japanese-holidays holiday-local-holidays holiday-other-holidays)
+          calendar-mark-holidays-flag t)
+  (setq japanese-holiday-weekend '(0 6)
+          japanese-holiday-weekend-marker
+          '(holiday nil nil nil nil nil japanese-holiday-saturday)))
 #+end_src
 
 ** PDF-tools
@@ -2687,10 +2228,7 @@ Zoteroで管理してるので、zotero-better-bibtexとcitarの組み合わせ�
 #+end_src
 
 ** Terminal
-今はvtermを使っている
-misttyが結構良さそうで検討中
 *** vterm
-Nix側でインストールする
 #+begin_src emacs-lisp
 (setup-lazy '(vterm) "vterm"
   :prepare (setup-keybinds nil
@@ -2699,28 +2237,15 @@ Nix側でインストールする
           vterm-timer-delay 0.01))
 #+end_src
 
-**** meow-vterm
-meowとの統合
-meow-vterm-enable, setupあたりを変更
-#+begin_src emacs-lisp :tangle no
-(ensure-vc '(meow-vterm :url "https://github.com/accelbread/meow-vterm"))
-(setup-lazy '(my/meow-vterm-setup) "meow-vterm"
-  :prepare (progn
-             (setq vterm-keymap-exceptions '("C-c"))
-             (setup-hook 'vterm-mode-hook 'my/meow-vterm-setup))
-  (defun my/meow-vterm-setup ()
-    "Modified meow-vterm-setup for lazy loading"
-    (define-key vterm-mode-map (kbd "C-c ESC") #'vterm-send-escape)
-    (dolist (c '((yank . vterm-yank)
-                 (xterm-paste . vterm-xterm-paste)
-                 (yank-pop . vterm-yank-pop)
-                 (mouse-yank-primary . vterm-yank-primary)
-                 (self-insert-command . vterm--self-insert)
-                 (beginning-of-defun . vterm-previous-prompt)
-                 (end-of-defun . vterm-next-prompt)))
-      (define-key meow-vterm-normal-mode-map (vector 'remap (car c)) (cdr c)))
-    (meow-vterm-setup)))
-
+*** eat
+macosだとterminfoをコンパイルし直す必要がある
+eat.tiをtic -x eat.tiでコンパイルして、~/.terminfo配下に配置
+なんか遅い
+#+begin_src emacs-lisp
+(setup-lazy '(eat) "eat"
+  ;; :prepare (setup-keybinds nil "C-c t" (lambda ()(interactive) (eat "nu")))
+  (setopt eat-shell "nu") ;; まだnongnuに降ってきてない
+  )
 #+end_src
 
 ** Dired
@@ -2759,48 +2284,6 @@ meow-vterm-enable, setupあたりを変更
 #+begin_src emacs-lisp
 (setup-lazy '(dired-preview-mode) "dired-preview"
   :prepare (setup-hook 'dired-mode-hook 'dired-preview-mode))
-#+end_src
-
-*** dirvish
-dirvish.elのdirvish-override-dired-modeを引っぱってきて遅延ロードする
-#+begin_src emacs-lisp :tangle no
-(setup-lazy '(dirvish-find-entry-a
-              dirvish-dired-noselect-a
-              dirvish-insert-subdir-a
-              dirvish-thumb-buf-a
-              dirvish-wdired-enter-a
-              dirvish-init-dired-buffer
-              dirvish-subtree-toggle-or-open)
-  "dirvish"
-  :prepare ;; dirvish-override-dired-mode
-  (let ((ads '((dired-find-file dirvish-find-entry-a :override)
-               (dired-noselect dirvish-dired-noselect-a :around)
-               (dired-insert-subdir dirvish-insert-subdir-a :after)
-               (image-dired-create-thumbnail-buffer dirvish-thumb-buf-a :around)
-               (wdired-change-to-wdired-mode dirvish-wdired-enter-a :after)
-               (wdired-change-to-dired-mode dirvish-init-dired-buffer :after)))
-        (sel-ch #'dirvish-selection-change-h)
-        (tab-post #'dirvish-tab-new-post-h))
-    (progn (pcase-dolist (`(,sym ,fn ,how) ads) (advice-add sym how fn))
-           (add-hook 'window-selection-change-functions sel-ch)
-           (add-hook 'tab-bar-tab-post-open-functions tab-post)))
-
-  (setq dirvish-attributes
-        '(vc-state subtree-state nerd-icons collapse git-msg file-time file-size)
-        dirvish-use-header-line t
-        dirvish-use-mode-line nil
-        dirvish-preview-dispatchers '(gif pdf)
-        dirvish-quick-access-entries
-        '(("h" "~/" "Home")
-          ("d" "~/Downloads/" "Downloads"))
-        mouse-1-click-follows-link nil)
-  (setup-keybinds dirvish-mode-map
-    "<mouse-1>" 'dirvish-subtree-toggle-or-open
-    "<mouse-2>" 'dired-mouse-file-file-other-window
-    "<mouse-3>" 'dired-mouse-find-file)
-  (!when (equal system-type 'darwin)
-    (setq insert-directory-program "gls")))
-
 #+end_src
 
 ** Footer

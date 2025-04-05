@@ -13,7 +13,12 @@
     ];
     extraConfig = {
       ghq.root = "~/src";
+      diff.algorithm = "histogram";
     };
+  };
+  programs.gh = {
+    enable = true;
+    settings.git_protocol = "ssh";
   };
   home.packages = with pkgs; [
     ghq
