@@ -23,8 +23,8 @@
     ./programs/gpg
     #./programs/hyprland
     #./programs/hyprpaper
-    ./programs/latex
-    ./programs/mako
+    #./programs/latex
+    #./programs/mako
     #./programs/mpd
     ./programs/neovim
     ./programs/nushell
