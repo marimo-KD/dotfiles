@@ -52,7 +52,10 @@ Dashboardを使うとOrgを読むので起動が遅い
 (setq inhibit-startup-screen t)
 #+end_src
 
-** Window Almanac
+** DONE Window Almanac
+:LOGBOOK:
+- State "DONE"       from              [2025-04-12 土 18:06]
+:END:
 https://qiita.com/ayatakesi/items/8e5824c5622c59c6946c
 https://karthinks.com/software/emacs-window-management-almanac
 
@@ -61,10 +64,16 @@ https://misohena.jp/blog/2022-12-26-fast-locate-library-on-nt-emacs.html
 この辺を参考にrequireを高速化する？
 Nixでelispをインストールするとsite-lispに全部入って、subdirs.elでload-pathに追加される
 load-pathが結構大きいのでワンチャン効果があるかもしれない
-** LaTeXの入力高速化を考える
+** DONE LaTeXの入力高速化を考える
+:LOGBOOK:
+- State "DONE"       from              [2025-04-12 土 18:06]
+:END:
 https://karthinks.com/software/latex-input-for-impatient-scholars/
 https://www.reddit.com/r/emacs/comments/g8ecpj/comment/foo64ge/
-** Avyをもっと
+** DONE Avyをもっと
+:LOGBOOK:
+- State "DONE"       from              [2025-04-12 土 18:06]
+:END:
 単に移動するだけでなく
 あとはmigemoも付けないとね
 https://emacs-jp.github.io/tips/avy-can-do-anything
@@ -171,10 +180,11 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
   (defun my/setup--locate-library (file)
     (unless (member file setup--simulated-absent-libraries)
       (or (let ((el-file (locate-library (concat file ".el"))))
-            (when el-file
+            (when (and el-file (fboundp 'comp-lookup-eln))
               (comp-lookup-eln el-file)))
           (locate-library file))))
-  (advice-add #'setup--locate-library :override #'my/setup--locate-library))
+  ;;(advice-add #'setup--locate-library :override #'my/setup--locate-library)
+  )
 (setup-initialize)
 #+end_src
 
@@ -1357,7 +1367,7 @@ https://karthinks.com/software/emacs-window-management-almanac
                     "|" "DONE(d!)" "CANCELED(c)"))
         org-use-fast-todo-selection 'expert
         org-log-into-drawer t
-        org-log-done nil))
+        org-log-done 'time))
 (setup-hook 'org-mode-hook 'org-cdlatex-mode)
 (setup-hook 'org-mode-hook 'my/proportional-font)
 (setup-hook 'org-mode-hook 'visual-line-mode)

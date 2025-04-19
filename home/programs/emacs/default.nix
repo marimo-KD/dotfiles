@@ -8,8 +8,9 @@ in {
     package = (
       let myemacs = (
             if pkgs.stdenv.isDarwin
-            then pkgs.emacs-unstable.overrideAttrs (old: {
+            then (pkgs.emacs-unstable.override { withNativeCompilation = false; } ).overrideAttrs (old: {
 	      withXwidgets = true;
+	      withNativeCompilation = false; # ad-hoc fix for libgccjit issue
               buildInputs = old.buildInputs ++ [
                 pkgs.darwin.apple_sdk.frameworks.WebKit
               ];
