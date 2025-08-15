@@ -37,6 +37,6 @@
     udev-gothic-nf
     ibm-plex
     nerd-fonts.iosevka
-    nerd-fonts.nerd-fonts-symbol-only
+    nerd-fonts.symbols-only
   ];
 }
