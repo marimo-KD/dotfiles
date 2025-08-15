@@ -33,6 +33,6 @@ in {
     gnuplot
     slack
     lean4
-    dptrp1py
+    # dptrp1py
  ];
 }

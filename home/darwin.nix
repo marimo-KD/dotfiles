@@ -26,9 +26,13 @@
     ./programs/starship
     ./programs/zoxide
 
-    ./packages.nix
+    # ./packages.nix
   ];
   home.packages = with pkgs; [
-    iterm2
+    nil
+    typst
+    gnuplot
+    slack
+    lean4
   ];
 }

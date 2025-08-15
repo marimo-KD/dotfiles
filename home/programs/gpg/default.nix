@@ -3,7 +3,7 @@
     programs.gpg.enable = true;
     services.gpg-agent = {
       enable = pkgs.stdenv.isLinux;
-      pinentryPackage = pkgs.pinentry-tty;
+      pinentry.package = pkgs.pinentry-tty;
     };
   }
 

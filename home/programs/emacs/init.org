@@ -452,6 +452,7 @@ git diffの情報をいい感じにだしてくれるやつ
    (unless (window-system)
      (diff-hl-margin-mode))))
 #+end_src
+
 *** Treesitter
 GrammarはNixでインストールされるのでtreesit-autoは御役御免
 #+begin_src emacs-lisp
