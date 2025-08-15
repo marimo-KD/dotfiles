@@ -17,7 +17,6 @@
   programs.zsh.enable = true;
   environment.shells = [ pkgs.zsh ];
 
-  services.nix-daemon.enable = true; # multi-user install
   nix.settings = {
     trusted-users = ["marimo"];
     experimental-features = "nix-command flakes";
