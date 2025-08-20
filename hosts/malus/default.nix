@@ -5,6 +5,7 @@
     shell = pkgs.zsh;
   };
   system.stateVersion = 5;
+  ids.gids.nixbld = 30000;
   networking = {
     hostName = "malus";
     computerName = "malus";

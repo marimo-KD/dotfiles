@@ -450,7 +450,7 @@ GrammarはNixでインストールされるのでtreesit-autoは御役御免
 #+begin_src emacs-lisp
 (setup-lazy '(faust-mode) "faust-mode"
   :prepare
-  (add-to-alist '("\\.dsp\\'" . faust-mode)))
+  (add-to-list 'auto-mode-alist '("\\.dsp\\'" . faust-mode)))
 #+end_src
 
 **** Gnuplot
