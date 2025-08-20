@@ -1,6 +1,5 @@
 #+title: My Emacs Config
 #+author: marimo
-#+STARTUP: fold
 
 * メモ
 ** DONE Home-managerで管理する
@@ -188,44 +187,6 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
 (setup-initialize)
 #+end_src
 
-** package.el
-もともとはコンパイル時にインストールする目論みだったけど、全部Nixでインストールすることにした
-#+begin_src emacs-lisp :tangle no
-(eval-and-compile
-  (setq package-archives '(("org" . "https://orgmode.org/elpa/")
-                          ("melpa" . "https://melpa.org/packages/")
-                          ("gnu" . "https://elpa.gnu.org/packages/"))
-        package-install-upgrade-built-in t
-        package-native-compile t)
-  (mapc #'(lambda (add) (add-to-list 'load-path add))
-        (eval-when-compile
-          (require 'package)
-          (package-initialize)
-          (let ((package-user-dir-real (file-truename package-user-dir)))
-            (nreverse (apply #'nconc
-                             (mapcar #'(lambda (path)
-                                         (if (string-prefix-p package-user-dir-real path)
-                                             (list path)
-                                           nil))
-                                     load-path)))))))
-#+end_src
-
-*** ensure
-- インタプリタで実行されるとき
-- コンパイル時
-にだけインストールする。
-(つもりだったけど、なんかうまくいかないのでこうしておく)
-#+begin_src emacs-lisp
-;(defmacro ensure (pkg)
-;  (unless (package-installed-p pkg)
-;    `(package-install ,pkg)))
-;(defmacro ensure-vc (arg)
-;  (unless (package-installed-p (car arg))
-;    `(package-vc-install ,arg)))
-(defmacro ensure (pkg) `())
-(defmacro ensure-vc (pkg) `())
-#+end_src
-
 ** 標準の設定
 *** パフォーマンスに関する設定
 #+begin_src emacs-lisp
@@ -282,11 +243,11 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
    ;;(setup "hotfuzz")
    (setopt corfu-auto t
          corfu-auto-prefix 2
-         corfu-auto-delay 0.1
-         corfu-popupinfo-delay nil
+         corfu-auto-delay 0.05
+         corfu-popupinfo-delay 0
          corfu-cycle t
          corfu-preselect 'prompt
-         corfu-quit-no-match t
+         corfu-quit-no-match 'separator
          corfu-quit-at-boundary t
          corfu-scroll-margin 2
          tab-always-indent 'complete
@@ -311,6 +272,8 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
    (setup "cape"
      (setup "cape-keyword")
      (setq cape-dabbrev-check-other-buffers #'cape--buffers-major-mode)
+     (setup-after "lsp-completion"
+       (advice-add #'lsp-completion-at-point :around #'cape-wrap-buster))
      (setq-default completion-at-point-functions
                    '(cape-dabbrev
                      cape-file
@@ -321,6 +284,7 @@ https://emacs-jp.github.io/tips/fifteen-ways-to-use-embark
    (keymap-unset corfu-map "<remap> <next-line>")
    (keymap-unset corfu-map "<remap> <previous-line>")
    (setup-keybinds corfu-map
+     "SPC" 'corfu-insert-separator
      "<tab>" 'corfu-next
      "<backtab>" 'corfu-previous)))
 #+end_src
@@ -375,6 +339,7 @@ set-markはC-SPCでやるので（システム側のIME変更のキーバイン�
           lsp-modeline-code-actions-enable nil
           lsp-modeline-diagnostics-enable nil
           lsp-diagnostics-provider :flymake))
+
 (setup-after "lsp-completion"
   (setopt lsp-completion-provider :none)
   (defun my/lsp-mode-setup-completion ()
@@ -481,6 +446,13 @@ GrammarはNixでインストールされるのでtreesit-autoは御役御免
 #+end_src
 
 *** 言語ごとのmajor mode
+**** Faust
+#+begin_src emacs-lisp
+(setup-lazy '(faust-mode) "faust-mode"
+  :prepare
+  (add-to-alist '("\\.dsp\\'" . faust-mode)))
+#+end_src
+
 **** Gnuplot
 #+begin_src emacs-lisp
 (setup-lazy '(gnuplot-mode) "gnuplot"
@@ -654,9 +626,8 @@ fontsetをweightまで指定したfontspecで作れば別のweightで表示す�
   '((t :inherit default))
   "")
 
-(defun my/set-font()
-  (let* ((size 11)
-         (height (* size 10))
+(defun my/set-font(size)
+  (let* ((height (* size 10))
          (propo "Noto Serif CJK JP")
          (mono "UDEV Gothic LG")
          (propo-bold (font-spec :family propo :weight 'medium))
@@ -703,55 +674,66 @@ fontsetをweightまで指定したfontspecで作れば別のweightで表示す�
   (variable-pitch-mode 1))
 
 (when (display-graphic-p)
-  (my/set-font))
+  (my/set-font 12))
 #+end_src
 
 **** Ligatureの対応
 ligature.elでworkaroundする
 #+begin_src emacs-lisp :noweb no
-(!-
- (setup "ligature"
-   (ligature-set-ligatures 'prog-mode '("--" "---" "==" "===" "!=" "!==" "=!="
-                                        "=:=" "=/=" "<=" ">=" "&&" "&&&" "&=" "++" "+++" "***" ";;" "!!"
-                                        "??" "???" "?:" "?." "?=" "<:" ":<" ":>" ">:" "<:<" "<>" "<<<" ">>>"
-                                        "<<" ">>" "||" "-|" "_|_" "|-" "||-" "|=" "||=" "##" "###" "####"
-                                        "#{" "#[" "]#" "#(" "#?" "#_" "#_(" "#:" "#!" "#=" "^=" "<$>" "<$"
-                                        "$>" "<+>" "<+" "+>" "<*>" "<*" "*>" "</" "</>" "/>" "<!--" "<#--"
-                                        "-->" "->" "->>" "<<-" "<-" "<=<" "=<<" "<<=" "<==" "<=>" "<==>"
-                                        "==>" "=>" "=>>" ">=>" ">>=" ">>-" ">-" "-<" "-<<" ">->" "<-<" "<-|"
-                                        "<=|" "|=>" "|->" "<->" "<~~" "<~" "<~>" "~~" "~~>" "~>" "~-" "-~"
-                                        "~@" "[||]" "|]" "[|" "|}" "{|" "[<" ">]" "|>" "<|" "||>" "<||"
-                                        "|||>" "<|||" "<|>" "..." ".." ".=" "..<" ".?" "::" ":::" ":=" "::="
-                                        ":?" ":?>" "//" "///" "/*" "*/" "/=" "//=" "/==" "@_" "__" "???"
-                                        "<:<" ";;;"))
-   (global-ligature-mode t)))
+(setup "ligature"
+  (ligature-set-ligatures 'prog-mode '("--" "---" "==" "===" "!=" "!==" "=!="
+                                       "=:=" "=/=" "<=" ">=" "&&" "&&&" "&=" "++" "+++" "***" ";;" "!!"
+                                       "??" "???" "?:" "?." "?=" "<:" ":<" ":>" ">:" "<:<" "<>" "<<<" ">>>"
+                                       "<<" ">>" "||" "-|" "_|_" "|-" "||-" "|=" "||=" "##" "###" "####"
+                                       "#{" "#[" "]#" "#(" "#?" "#_" "#_(" "#:" "#!" "#=" "^=" "<$>" "<$"
+                                       "$>" "<+>" "<+" "+>" "<*>" "<*" "*>" "</" "</>" "/>" "<!--" "<#--"
+                                       "-->" "->" "->>" "<<-" "<-" "<=<" "=<<" "<<=" "<==" "<=>" "<==>"
+                                       "==>" "=>" "=>>" ">=>" ">>=" ">>-" ">-" "-<" "-<<" ">->" "<-<" "<-|"
+                                       "<=|" "|=>" "|->" "<->" "<~~" "<~" "<~>" "~~" "~~>" "~>" "~-" "-~"
+                                       "~@" "[||]" "|]" "[|" "|}" "{|" "[<" ">]" "|>" "<|" "||>" "<||"
+                                       "|||>" "<|||" "<|>" "..." ".." ".=" "..<" ".?" "::" ":::" ":=" "::="
+                                       ":?" ":?>" "//" "///" "/*" "*/" "/=" "//=" "/==" "@_" "__" "???"
+                                       "<:<" ";;;"))
+   (global-ligature-mode t))
 #+end_src
 
 *** Theme
 ef-themesをつかう
 #+begin_src emacs-lisp
-(setup "ef-themes-autoloads"
+(setup "ef-themes"
   (setopt ef-themes-mixed-fonts t
           ef-themes-variable-pitch-ui nil)
-  (load-theme 'ef-cyprus t))
+  (ef-themes-select 'ef-cyprus))
 #+end_src
 
 *** Modeline, Headerline
 nano-modelineでheaderのみ設定
 modelineは消す
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (setup "nano-modeline"
   (setq nano-modeline-padding '(0.2 . 0.25))
   (setq-default mode-line-format nil)
   (nano-modeline-text-mode t))
 #+end_src
 
+#+begin_src emacs-lisp
+(setup "moody"
+  (moody-replace-vc-mode)
+  (moody-replace-mode-line-buffer-identification)
+  (moody-replace-eldoc-minibuffer-message-function))
+#+end_src
+
+#+begin_src emacs-lisp
+(setup "minions"
+  (setopt minions-mode-line-lighter "[+]")
+  (minions-mode))
+#+end_src
+
 *** perfect-margin
 #+begin_src emacs-lisp
-(!-
- (setup "perfect-margin"
-   (setopt perfect-margin-force-regexps '("*Minibuf" "*which-key"))
-   (perfect-margin-mode 1)))
+(setup "perfect-margin"
+  (setopt perfect-margin-force-regexps '("*Minibuf" "*which-key"))
+  (perfect-margin-mode 1))
 #+end_src
 
 *** spacious-padding
@@ -760,7 +742,7 @@ modelineは消す
   (setopt spacious-padding-widths
           '( :internal-border-width 15
              :header-line-width 4
-             :mode-line-width 6
+             :mode-line-width 0
              :tab-width 4
              :right-divider-width 30
              :scroll-bar-width 8))
@@ -1430,14 +1412,6 @@ LaTeX数式のプレビューのときのヘッダー
         org-edit-src-content-indentation 0)
   (add-to-list 'org-src-lang-modes '("typst" . typst-ts)))
 #+end_src
-**** org-src-context
-org-srcでLSPを使えるようにする
-ちょっとbuggyな挙動をするので（そもそもそういうHackなので）やめる
-#+begin_src emacs-lisp :tangle no
-(setup-after "org-src"
-  (setup "org-src-context"
-    (org-src-context-mode t)))
-#+end_src
 
 *** ob
 :fileで出力する先のデフォルトを設定
@@ -1454,109 +1428,6 @@ org-srcでLSPを使えるようにする
   )
 (setup-after "ob-C"
   (setopt org-babel-C-compiler "clang"))
-#+end_src
-
-**** Org-babelの言語は起動時に全部読もうとして大変なので遅延する
-https://misohena.jp/blog/2022-08-16-reduce-org-mode-startup-time-org-babel.html
-なんか動かなくなったのでやめた<2024-07-27 Sat>
-これはorg-babel-execute-blockの引数が変わった影響でadviceがおかしくなってる
-#+name: babel-lazy-loading
-#+begin_src emacs-lisp :tangle no
-(defvar my-org-babel-languages
-  ;;(<langname> . ob-<filename>.el)
-  '((elisp . emacs-lisp)
-    (emacs-lisp . emacs-lisp)
-    (makefile . makefile)
-    (ditaa . ditaa)
-    (dot . dot)
-    (plantuml . plantuml)
-    (perl . perl)
-    (cpp . C)
-    (C++ . C)
-    (D . C)
-    (C . C)
-    (js . js)
-    (java . java)
-    (org . org)
-    (R . R)
-    (gnuplot . gnuplot)
-    (julia . julia-vterm)
-    (julia-vterm . julia-vterm)
-    (ocaml . ocaml)
-    (python . python)
-    (shell . shell)
-    (sh . shell)
-    (bash . shell)
-    (zsh . shell)
-    (fish . shell)
-    (csh . shell)
-    (ash . shell)
-    (dash . shell)
-      (ksh . shell)
-      (mksh . shell)
-      (posh . shell)))
-
-(defun my-org-babel-language-files ()
-  "重複しない全ての言語バックエンドファイル名を返す。"
-  (seq-uniq (mapcar #'cdr my-org-babel-languages)))
-
-;; my-org-babel-languagesからorg-babel-load-languagesを設定する。
-;; org-lintやorg-pcompleteにorg-babel-load-languagesを使った処理がある
-;; ようなので。
-;; このときcustom-set-variablesを使わないようにすること。
-;; org-babel-do-load-languagesが呼ばれて全部読み込まれてしまうので。
-(setq org-babel-load-languages
-      (mapcar (lambda (lang) (cons lang t)) ;;(emacs-lisp . t)のような形式
-              (my-org-babel-language-files)))
-
-(defun my-org-require-lang-file (lang-file-name)
-  "ob-LANG-FILE-NAME.elを読み込む。"
-  (when lang-file-name
-    (require (intern (format "ob-%s" lang-file-name)) nil t)))
-
-(defun my-org-require-lang (lang)
-  "LANGを読み込む。"
-  (my-org-require-lang-file
-   (alist-get
-    (if (stringp lang) (intern lang) lang)
-    my-org-babel-languages)))
-
-(defun my-org-require-lang-all ()
-  "全ての言語を読み込む。"
-  (mapc #'my-org-require-lang-file
-        (my-org-babel-language-files)))
-
-;; org-elementで言語名を返す時、その言語をロードする。
-(advice-add #'org-element-property :around #'my-org-element-property)
-(defun my-org-element-property (original-fun property element)
-  (let ((value (funcall original-fun property element)))
-    (when (eq property :language)
-      (my-org-require-lang value))
-    value))
-
-;; ob-table.elに(org-babel-execute-src-block nil (list "emacs-lisp" "results" params))
-;; のような呼び出し方をする所があるので。
-(advice-add #'org-babel-execute-src-block :around
-            #'my-org-babel-execute-src-block)
-(defun my-org-babel-execute-src-block (original-fun
-                                       &optional arg info params executor-type)
-  (my-org-require-lang (nth 0 info))
-  (funcall original-fun arg info params executor-type))
-
-;; (match-string)の値を直接langとして渡しているので。
-(advice-add #'org-babel-enter-header-arg-w-completion :around
-            #'my-org-babel-enter-header-arg-w-completion)
-(defun my-org-babel-enter-header-arg-w-completion (original-fun
-                                                   lang)
-  (my-org-require-lang lang)
-  (funcall original-fun lang))
-
-;; org-lint(org-lint-wrong-header-argument, org-lint-wrong-header-value)内で参照しているので。
-;; 面倒なので全部読み込んでしまう。
-(advice-add #'org-lint :around #'my-org-lint)
-(defun my-org-lint (original-fun &rest args)
-  (my-org-require-lang-all)
-  (apply original-fun args))
 #+end_src
 
 **** Org-babelの遅延ロードその2
@@ -1798,7 +1669,8 @@ Export先のデフォルトのディレクトリを指定
 *** org-capture
 #+begin_src emacs-lisp
 (setup-lazy '(org-capture
-              my/org-capture-fleeting)
+              my/org-capture-fleeting
+              my/org-open-fleeting)
   "org-capture"
   :prepare (setup-keybinds nil
              "C-c c" 'my/org-capture-fleeting)
@@ -1809,15 +1681,17 @@ Export先のデフォルトのディレクトリを指定
           ))
   (defun my/org-capture-fleeting ()
     (interactive)
-    (org-capture nil "f")))
+    (org-capture nil "f"))
+  (defun my/org-open-fleeting ()
+    (interactive)
+    (find-file fleeting-file)))
 #+end_src
 
 *** org-roam
 https://jethrokuan.github.io/org-roam-guide/
 https://magnus.therning.org/2021-07-23-keeping-todo-items-in-org-roam-v2.html
 ディレクトリをflatにした
-とりあえずは何でも放り込むところとしてorg-roam-dailiesを使っているけど、後でRoamに整理するときに日付まで追う必要があって大変なので
-普通にorg-capture使ったほうが良いかも
+とりあえずは何でも放り込むところとしてorg-roam-dailiesを使っているけど、後でRoamに整理するときに日付まで追う必要があって大変なので普通にorg-capture使ったほうが良いかも
 
 #+begin_src emacs-lisp
 (setup-lazy '(org-roam-node-find
@@ -1825,30 +1699,19 @@ https://magnus.therning.org/2021-07-23-keeping-todo-items-in-org-roam-v2.html
               org-roam-tag-add)
   "org-roam"
   :prepare (setup-keybinds nil
-             "C-c n" 'org-roam-node-find)
+             "C-c n b" 'org-roam-buffer-toggle
+             "C-c n f" 'org-roam-node-find
+             "C-c n i" 'org-roam-node-insert)
   (setq org-roam-db-location "~/.emacs.d/org-roam.db"
         org-roam-directory "~/Org/roam"
         org-roam-completion-functions '()
+        org-roam-completion-everywhere t
         org-roam-verbose nil
         org-roam-node-display-template (concat "${title:*} " (propertize "${tags:15}" 'face 'org-tag))
         org-roam-capture-templates
-        '(("m" "main" plain
-           "%?"
+        '(("m" "main" plain "%?"
            :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                              "#+title: ${title}\n")
-           :immediate-finish t
-           :unnarrowed t)
-          ("r" "reference" plain "%?"
-           :if-new
-           (file+head "%<%Y%m%d%H%M%S>-${title}.org"
-                      "#+title: ${title}\n#+filetags: :reference:\n")
-           :immediate-finish t
-           :unnarrowed t)
-          ("a" "article" plain "%?"
-           :if-new
-           (file+head "%<%Y%m%d%H%M%S>-${title}.org"
-                      "#+title: ${title}\n#+filetags: :article:\n")
-           :immediate-finish t
+                              "#+title: ${title}\n#+filetags: :draft:\n")
            :unnarrowed t)))
   ;; Update tags for TODO
   (defun my/roam-get-filetags ()
@@ -1890,7 +1753,7 @@ https://magnus.therning.org/2021-07-23-keeping-todo-items-in-org-roam-v2.html
                  (my/roam-del-filetag "TODO")))))))
   (add-hook 'find-file-hook #'my/roam-update-todo-tag)
   (add-hook 'before-save-hook #'my/roam-update-todo-tag)
-  (org-roam-db-autosync-mode t))
+  (org-roam-db-autosync-enable))
 
 (setup-lazy '(org-roam-dailies-goto-date
               org-roam-dailies-capture-date
@@ -1957,7 +1820,6 @@ https://magnus.therning.org/2021-07-23-keeping-todo-items-in-org-roam-v2.html
 *** org-superstar
 org-bulletはもう古くて、superstarをつかうらしい
 #+begin_src emacs-lisp :tangle no
-(ensure 'org-superstar)
 (setup-lazy '(org-superstar-mode)
   "org-superstar"
   :prepare (setup-hook 'org-mode-hook 'org-superstar-mode))
@@ -1973,7 +1835,6 @@ org-bulletはもう古くて、superstarをつかうらしい
 基本Org-qlを使う はやいので
 もうつかってません
 #+begin_src emacs-lisp :tangle no
-(ensure 'org-ql)
 (setup-lazy '(org-ql-view) "org-ql-view")
 (setup-lazy '(org-ql-search) "org-ql-search")
 (setup-lazy '(my/org-agenda
@@ -2097,6 +1958,8 @@ org-roam-bibtexとかもセットアップした方がいいかも
 
 ** Calendar
 calendar.elもcalfwも使っていく
+org-roam-dailiesとかorg-journalとかの当日のファイルにシュっと飛べるようにしたい
+デフォルトだとcalendar.elとorg-journalの組み合わせしか無理
 #+name: calendar.el
 #+begin_src emacs-lisp
 (setup-after "calendar"

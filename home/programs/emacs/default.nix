@@ -9,14 +9,14 @@ in {
       let myemacs = (
             if pkgs.stdenv.isDarwin
             then (pkgs.emacs-unstable.override { withNativeCompilation = false; } ).overrideAttrs (old: {
-	      withXwidgets = true;
-	      withNativeCompilation = false; # ad-hoc fix for libgccjit issue
+              withXwidgets = true;
+              # withNativeCompilation = false; # ad-hoc fix for libgccjit issue
               buildInputs = old.buildInputs ++ [
                 pkgs.darwin.apple_sdk.frameworks.WebKit
               ];
               configureFlags = old.configureFlags ++ ["--with-xwidgets"];
               patches = (old.patches or [ ]) ++ [
-                ./emacs-head-inline.patch
+                ./emacs-29.1-inline.patch
               ];
             })
             else pkgs.emacs-unstable-pgtk
@@ -34,6 +34,8 @@ in {
       ligature
       ef-themes
       nano-modeline
+      moody
+      minions
       perfect-margin
       spacious-padding
       indent-bars
@@ -103,6 +105,7 @@ in {
       nushell-ts-mode
       nix-ts-mode
       markdown-mode
+      faust-mode
       gnuplot
       auctex
       cdlatex
@@ -194,9 +197,7 @@ in {
     sqlite
     udev-gothic
     noto-fonts-cjk-serif
-    (nerdfonts.override { fonts = [
-      "NerdFontsSymbolsOnly"
-    ]; })
+    nerd-fonts.symbols-only
   ];
   fonts.fontconfig.enable = true;
 }

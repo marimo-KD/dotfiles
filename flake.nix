@@ -10,7 +10,7 @@
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     # xremap.url = "github:xremap/nix-flake";
-    nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
+    # nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
     # musnix = {
     #  url = "github:musnix/musnix";
     #  inputs.nixpkgs.follows = "nixpkgs";
@@ -56,7 +56,7 @@
             home-manager.useUserPackages = true;
             home-manager.users.marimo = import ./home/darwin.nix;
             nixpkgs.overlays = [
-              inputs.nixpkgs-firefox-darwin.overlay
+              # inputs.nixpkgs-firefox-darwin.overlay
               inputs.emacs-overlay.overlay
               (final: prev: {
                 ghostscript = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.ghostscript;

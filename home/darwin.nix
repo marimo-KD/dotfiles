@@ -12,7 +12,7 @@
     ./programs/bat
     ./programs/carapace
     ./programs/direnv
-    ./programs/discord
+    # ./programs/discord
     ./programs/emacs
     ./programs/fd
     # ./programs/firefox
@@ -22,6 +22,7 @@
     ./programs/latex
     ./programs/neovim
     ./programs/nushell
+    ./programs/puredata
     ./programs/ripgrep
     ./programs/starship
     ./programs/zoxide
