@@ -9,5 +9,6 @@ in
 {
   home.packages = with pkgs; [
     faust
+    faust2puredata
   ];
 }

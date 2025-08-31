@@ -14,7 +14,7 @@
     ./programs/direnv
     # ./programs/discord
     ./programs/emacs
-    ./programs/faust
+    # ./programs/faust
     ./programs/fd
     # ./programs/firefox
     ./programs/fzf
@@ -23,7 +23,7 @@
     ./programs/latex
     ./programs/neovim
     ./programs/nushell
-    ./programs/puredata
+    # ./programs/puredata
     ./programs/ripgrep
     ./programs/starship
     ./programs/zoxide
