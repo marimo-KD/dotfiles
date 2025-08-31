@@ -54,7 +54,7 @@
     openFirewall = true; # Open a UDP Port that tailscale uses.
   };
 
-  services.cockpit = {
+  services.netdata = {
     enable = true;
   };
 
