@@ -56,6 +56,7 @@
 
   services.netdata = {
     enable = true;
+    package = pkgs.netdataCloud;
   };
 
   # This option defines the first version of NixOS you have installed on this particular machine,
