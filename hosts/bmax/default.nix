@@ -46,7 +46,7 @@
 
   networking.firewall = {
     enable = true;
-    trustedInterfaces = [ "tailscale0" ];
+    trustedInterfaces = [ "tailscale0" ]; # allow connections come from tailscale network.
   };
 
   services.tailscale = {
@@ -54,10 +54,9 @@
     openFirewall = true; # Open a UDP Port that tailscale uses.
   };
 
-  services.netdata = {
+  services.cockpit = {
     enable = true;
   };
-
 
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
