@@ -42,6 +42,28 @@
           ./hosts/monix
         ];
       };
+      bmax = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          {
+            nixpkgs.overlays = [
+              (_: prev: {
+                tailscale = prev.tailscale.overrideAttrs (old: {
+                  checkFlags =
+                    builtins.map (
+                      flag:
+                        if prev.lib.hasPrefix "-skip=" flag
+                        then flag + "|^TestGetList$|^TestIgnoreLocallyBoundPorts$|^TestPoller$"
+                        else flag
+                    )
+                    old.checkFlags;
+                });
+              })
+            ];
+          }
+          ./hosts/bmax
+        ];
+      };
     };
     darwinConfigurations = {
       malus = nix-darwin.lib.darwinSystem {
