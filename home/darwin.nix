@@ -20,6 +20,7 @@
     ./programs/fzf
     ./programs/git
     ./programs/gpg
+    ./programs/helix
     ./programs/latex
     ./programs/neovim
     ./programs/nushell
