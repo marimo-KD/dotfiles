@@ -15,7 +15,7 @@
       };
       terminal = {
         shell = {
-          program = "nu";
+          # program = "nu";
         };
       };
       keyboard = {

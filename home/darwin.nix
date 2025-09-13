@@ -23,7 +23,7 @@
     ./programs/helix
     ./programs/latex
     ./programs/neovim
-    ./programs/nushell
+    # ./programs/nushell
     # ./programs/puredata
     ./programs/ripgrep
     ./programs/starship
