@@ -42,7 +42,7 @@ let hostconfig = config;
 
   networking.firewall = {
     enable = true;
-    trustedInterfaces = [ "tailscale0" ]; # allow connections come from tailscale network.
+    trustedInterfaces = [ "tailscale0" "containers0"]; # allow connections come from tailscale network.
   };
 
   services.tailscale = {
