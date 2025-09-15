@@ -38,7 +38,6 @@
   networking.firewall = {
     enable = true;
     trustedInterfaces = [ "tailscale0" ]; # allow connections come from tailscale network.
-    interfaces."ve-+".allowedTCPPorts = [ config.services.prometheus.exporters.node.port ];
   };
 
   services.tailscale = {
@@ -56,17 +55,28 @@
     enable = true;
     port = 9000;
     enabledCollectors = ["systemd"];
+    listenAddress = "192.168.100.1";
   };
 
   security.polkit.enable = true;
+
+  networking = {
+    bridges.containers0.interfaces = [];
+    useDHCP = false;
+    interfaces."enp2s0".useDHCP = true;
+    interfaces."containers0".ipv4.addresses = [{
+      address = "192.168.100.1";
+      prefixLength = 24;
+    }];
+  };
 
   containers = {
     prometheus = {
       autoStart = true;
       privateUsers = "pick";
       privateNetwork = true;
-      hostAddress = "192.168.100.1";
-      localAddress = "192.168.100.11";
+      hostBridge = "containers0";
+      localAddress = "192.168.100.11/24";
       config = { cfg, pkgs, lib, ...}: {
         system.stateVersion = "25.05";
         services.prometheus = {
@@ -81,10 +91,10 @@
             }
           ];
         };
-	networking = {
+        networking = {
           firewall = {
             enable = true;
-            allowedTCPPorts = [9090];
+            allowedTCPPorts = [ cfg.services.prometheus.port ];
           };
           useHostResolvConf = lib.mkForce false;
         };
