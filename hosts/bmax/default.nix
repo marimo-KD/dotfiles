@@ -15,20 +15,13 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "bmax"; # Define your hostname.
-  # Pick only one of the below networking options.
   networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  # networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
 
   # Set your time zone.
   time.timeZone = "Asia/Tokyo";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-  # console = {
-  #   font = "Lat2-Terminus16";
-  #   keyMap = "us";
-  #   useXkbConfig = true; # use xkb.options in tty.
-  # };
 
   users.users.marimo = {
     isNormalUser = true;
@@ -36,8 +29,6 @@
     extraGroups = ["wheel"];
   };
 
-  # List packages installed in system profile.
-  # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
@@ -59,6 +50,46 @@
     package = pkgs.netdataCloud;
   };
 
+  services.prometheus.exporters.node = {
+    enable = true;
+    port = 9000;
+    enabledCollectors = ["systemd"];
+  };
+
+  networking = {
+    useDHCP = false;
+    interfaces.enp2s0.useDHCP = true;
+    bridges.br0.interfaces = ["enp2s0"];
+    interfaces.br0.ipv4.addresses = [{
+      address = "192.168.100.1";
+      prefixLength = 24;
+    }];
+  };
+
+  containers = {
+    prometheus = {
+      autoStart = true;
+      privateUsers = "pick";
+      privateNetwork = true;
+      hostBridge = "br0";
+      localAddress = "192.168.100.11/24";
+      config = { cfg, pkgs, lib, ...}: {
+        system.stateVersion = "25.05";
+        services.prometheus = {
+          enable = true;
+          globalConfig.scrape_interval = "20s";
+          scrapeConfigs = [
+            {
+              job_name = "node";
+              static_configs = [{
+                targets = ["192.168.100.1:${toString config.services.prometheus.exporters.node.port}"];
+              }];
+            }
+          ];
+        };
+      };
+    };
+  };
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
   #
