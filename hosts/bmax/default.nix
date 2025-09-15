@@ -116,7 +116,7 @@ let hostconfig = config; in
           settings = {
             server = {
               http_addr = "192.168.100.12";
-              http_port = "3000";
+              http_port = 3000;
               enable_gzip = true;
             };
           };
