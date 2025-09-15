@@ -126,18 +126,6 @@ let hostconfig = config;
               enable_gzip = true;
             };
           };
-          provision = {
-            enable = true;
-            datasources.settings.datasources = [
-              {
-                name = "Prometheus";
-                type = "Prometheus";
-                url = "http://${prometheusAddress}:${toString prometheusPort}";
-                isDefault = true;
-                editable = false;
-              }
-            ];
-          };
           openFirewall = true;      
         };
         networking = {
