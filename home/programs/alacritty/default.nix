@@ -13,11 +13,11 @@
         };
         size = 14;
       };
-      terminal = {
-        shell = {
-          # program = "nu";
-        };
-      };
+      # terminal = {
+      #   shell = {
+      #     # program = "nu";
+      #   };
+      # };
       keyboard = {
         bindings = [
           { key = "¥"; chars = "\\\\";}

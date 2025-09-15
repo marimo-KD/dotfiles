@@ -28,6 +28,7 @@
     ./programs/ripgrep
     ./programs/starship
     ./programs/zoxide
+    ./programs/zsh
 
     # ./packages.nix
   ];

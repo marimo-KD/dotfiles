@@ -1,8 +1,10 @@
 {...}: {
   programs.zsh = {
     enable = true;
-    enableCompletions = true;
-    autosuggestions.enable = true;
+    enableCompletion = true;
+    autocd = true;
+    autosuggestion.enable = true;
+    defaultKeymap = "emacs";
     syntaxHighlighting.enable = true;
     history.size = 10000;
   };
