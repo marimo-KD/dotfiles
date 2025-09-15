@@ -82,6 +82,8 @@ let hostconfig = config; in
         services.prometheus = {
           enable = true;
           globalConfig.scrape_interval = "20s";
+          retentionTime = "14d";
+          listenAddress = "192.168.100.11";
           scrapeConfigs = [
             {
               job_name = "node";
@@ -95,6 +97,46 @@ let hostconfig = config; in
           firewall = {
             enable = true;
             allowedTCPPorts = [ config.services.prometheus.port ];
+          };
+          useHostResolvConf = lib.mkForce false;
+        };
+        services.resolved.enable = true;
+      };
+    };
+    grafana = {
+      autoStart = true;
+      privateUsers = "pick";
+      privateNetwork = true;
+      hostBridge = "containers0";
+      localAddress = "192.168.100.12/24";
+      config = { config, pkgs, lib, ...}: {
+        system.stateVersion = "25.05";
+        services.grafana = {
+          enable = true;
+          settings = {
+            server = {
+              http_addr = "192.168.100.12";
+              http_port = "3000";
+              enable_gzip = true;
+            };
+          };
+          provision = {
+            enable = true;
+            datasources.settings.datasources = [
+              {
+                name = "Prometheus";
+                type = "Prometheus";
+                url = "http://${hostconfig.services.prometheus.listenAddress}:${toString hostconfig.services.prometheus.port}";
+                isDefault = true;
+                editable = false;
+              }
+            ];
+          };
+          openFirewall = true;      
+        };
+        networking = {
+          firewall = {
+            enable = true;
           };
           useHostResolvConf = lib.mkForce false;
         };
