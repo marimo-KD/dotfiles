@@ -3,7 +3,7 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 { config, lib, pkgs, ... }:
-
+let hostconfig = config; in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -77,7 +77,7 @@
       privateNetwork = true;
       hostBridge = "containers0";
       localAddress = "192.168.100.11/24";
-      config = { cfg, pkgs, lib, ...}: {
+      config = { config, pkgs, lib, ...}: {
         system.stateVersion = "25.05";
         services.prometheus = {
           enable = true;
@@ -86,7 +86,7 @@
             {
               job_name = "node";
               static_configs = [{
-                targets = ["192.168.100.1:${toString config.services.prometheus.exporters.node.port}"];
+                targets = ["192.168.100.1:${toString hostconfig.services.prometheus.exporters.node.port}"];
               }];
             }
           ];
@@ -94,7 +94,7 @@
         networking = {
           firewall = {
             enable = true;
-            allowedTCPPorts = [ cfg.services.prometheus.port ];
+            allowedTCPPorts = [ config.services.prometheus.port ];
           };
           useHostResolvConf = lib.mkForce false;
         };
