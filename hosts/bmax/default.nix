@@ -57,8 +57,7 @@
   };
 
   networking = {
-    useDHCP = false;
-    interfaces.enp2s0.useDHCP = true;
+    useDHCP = true;
     bridges.br0.interfaces = ["enp2s0"];
     interfaces.br0.ipv4.addresses = [{
       address = "192.168.100.1";
