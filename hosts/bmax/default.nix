@@ -3,7 +3,12 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 { config, lib, pkgs, ... }:
-let hostconfig = config; in
+let hostconfig = config;
+  prometheusAddress = "192.168.100.11";
+  prometheusPort = 9090;
+  grafanaAddress = "192.168.100.12";
+  grafanaPort = 3000;
+  in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -76,14 +81,15 @@ let hostconfig = config; in
       privateUsers = "pick";
       privateNetwork = true;
       hostBridge = "containers0";
-      localAddress = "192.168.100.11/24";
+      localAddress = prometheusAddress;
       config = { config, pkgs, lib, ...}: {
         system.stateVersion = "25.05";
         services.prometheus = {
           enable = true;
           globalConfig.scrape_interval = "20s";
           retentionTime = "14d";
-          listenAddress = "192.168.100.11";
+          listenAddress = prometheusAddress;
+          port = prometheusPort;
           scrapeConfigs = [
             {
               job_name = "node";
@@ -108,15 +114,15 @@ let hostconfig = config; in
       privateUsers = "pick";
       privateNetwork = true;
       hostBridge = "containers0";
-      localAddress = "192.168.100.12/24";
+      localAddress = grafanaAddress;
       config = { config, pkgs, lib, ...}: {
         system.stateVersion = "25.05";
         services.grafana = {
           enable = true;
           settings = {
             server = {
-              http_addr = "192.168.100.12";
-              http_port = 3000;
+              http_addr = grafanaAddress;
+              http_port = grafanaPort;
               enable_gzip = true;
             };
           };
@@ -126,7 +132,7 @@ let hostconfig = config; in
               {
                 name = "Prometheus";
                 type = "Prometheus";
-                url = "http://${hostconfig.services.prometheus.listenAddress}:${toString hostconfig.services.prometheus.port}";
+                url = "http://${prometheusAddress}:${toString prometheusPort}";
                 isDefault = true;
                 editable = false;
               }
