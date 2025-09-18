@@ -8,6 +8,8 @@ let hostconfig = config;
   prometheusPort = 9090;
   grafanaAddress = "192.168.100.12";
   grafanaPort = 3000;
+  couchdbAddress = "192.168.100.13";
+  couchdbPort = 5984;
   in
 {
   imports =
@@ -131,6 +133,29 @@ let hostconfig = config;
         networking = {
           firewall = {
             enable = true;
+          };
+          useHostResolvConf = lib.mkForce false;
+        };
+        services.resolved.enable = true;
+      };
+    };
+    couchdb = {
+      autoStart = true;
+      privateUsers = "pick";
+      privateNetwork = true;
+      hostBridge = "containers0";
+      localAddress = "${couchdbAddress}/24";
+      config = { config, pkgs, lib, ...}: {
+        system.stateVersion = "25.05";
+        services.couchdb = {
+          enable = true;
+          bindAddress = couchdbAddress;
+          port = couchdbPort;
+        };
+        networking = {
+          firewall = {
+            enable = true;
+            allowedTCPPorts = [ config.services.coucbdb.port ];
           };
           useHostResolvConf = lib.mkForce false;
         };
