@@ -10,6 +10,7 @@ let hostconfig = config;
   grafanaPort = 3000;
   couchdbAddress = "192.168.100.13";
   couchdbPort = 5984;
+  tunnelAddress = "192.168.100.21";
   in
 {
   imports =
@@ -162,6 +163,31 @@ let hostconfig = config;
           useHostResolvConf = lib.mkForce false;
         };
         services.resolved.enable = true;
+      };
+    };
+    tunnel = {
+      autoStart = true;
+      privateUsers = "pick";
+      privateNetwork = true;
+      hostBridge = "containers0";
+      localAddress = "${tunnelAddress}/24";
+      bindMounts = {
+        credentials = {
+          mountPoint = "/mnt/cloudflared:idmap";
+          hostPath = "/home/marimo/.cloudflared";
+          isReadOnly = true;
+        };
+      };
+      config = {config, pkgs, lib, ...}: {
+        system.stateVersion = "25.05";
+        services.cloudflared = {
+          enable = true;
+          certificateFile = "/mnt/cloudflared/cert.pem";
+          tunnels.bmax0 = {
+            default = "http_status:404";
+            credentialsFile = "/mnt/cloudflared/3cbf78f1-2bb7-482d-99ea-e7dd3994d0c9.json";
+          };
+        };
       };
     };
   };
