@@ -149,13 +149,15 @@ let hostconfig = config;
         system.stateVersion = "25.05";
         services.couchdb = {
           enable = true;
-          bindAddress = couchdbAddress;
+          bindAddress = "0.0.0.0";
           port = couchdbPort;
+          adminUser = "admin";
+          adminPass = "password";
         };
         networking = {
           firewall = {
             enable = true;
-            allowedTCPPorts = [ config.services.coucbdb.port ];
+            allowedTCPPorts = [ config.services.couchdb.port ];
           };
           useHostResolvConf = lib.mkForce false;
         };
