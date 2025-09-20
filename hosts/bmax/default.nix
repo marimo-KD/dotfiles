@@ -10,6 +10,8 @@ let hostconfig = config;
   grafanaPort = 3000;
   couchdbAddress = "192.168.100.13";
   couchdbPort = 5984;
+  silverbulletAddress = "192.168.100.14";
+  silverbulletPort = 7000;
   tunnelAddress = "192.168.100.21";
   in
 {
@@ -145,38 +147,26 @@ let hostconfig = config;
         services.resolved.enable = true;
       };
     };
-    couchdb = {
+    silverbullet = {
       autoStart = true;
       privateUsers = "pick";
       privateNetwork = true;
       hostBridge = "containers0";
-      bindMounts = {
-        config = {
-          mountPoint = "/mnt/couchdb/default.ini";
-          hostPath = "/home/marimo/.couchdb/default.ini";
-          isReadOnly = true;
-        };
-      };
-      localAddress = "${couchdbAddress}/24";
-      config = { config, pkgs, lib, ...}: {
+      localAddress = "${silverbulletAddress}/24";
+      config = {config, pkgs, lib, ...}: {
         system.stateVersion = "25.05";
-        services.couchdb = {
+        services.silverbullet = {
           enable = true;
-          bindAddress = "0.0.0.0";
-          port = couchdbPort;
-          adminUser = "admin";
-          adminPass = "password";
-          extraConfigFiles = ["/mnt/couchdb/default.ini"];
+          listenAddress = silverbulletAddress;
+          listenPort = silverbulletPort;
+          openFirewall = true;
         };
         networking = {
-          firewall = {
-            enable = true;
-            allowedTCPPorts = [ config.services.couchdb.port ];
-          };
+          firewall.enable = true;
           useHostResolvConf = lib.mkForce false;
         };
         services.resolved.enable = true;
-      };
+      }
     };
 #    tunnel = {
 #      autoStart = true;
