@@ -54,10 +54,15 @@ let hostconfig = config;
     useRoutingFeatures = "both";
   };
 
-  services.netdata = {
+  services.cloudflared = {
     enable = true;
-    package = pkgs.netdataCloud;
+    certificateFile = "/home/marimo/.cloudflared/cert.pem";
+    tunnels.bmax0 = {
+      default = "http_status:404";
+      credentialsFile = "/home/marimo/.cloudflared/3cbf78f1-2bb7-482d-99ea-e7dd3994d0c9.json";
+    };
   };
+
 
   services.prometheus.exporters.node = {
     enable = true;
@@ -145,6 +150,13 @@ let hostconfig = config;
       privateUsers = "pick";
       privateNetwork = true;
       hostBridge = "containers0";
+      bindMounts = {
+        config = {
+          mountPoint = "/mnt/couchdb/default.ini";
+          hostPath = "/home/marimo/.couchdb/default.ini";
+          isReadOnly = true;
+        };
+      };
       localAddress = "${couchdbAddress}/24";
       config = { config, pkgs, lib, ...}: {
         system.stateVersion = "25.05";
@@ -154,6 +166,7 @@ let hostconfig = config;
           port = couchdbPort;
           adminUser = "admin";
           adminPass = "password";
+          extraConfigFiles = ["/mnt/couchdb/default.ini"];
         };
         networking = {
           firewall = {
@@ -165,31 +178,38 @@ let hostconfig = config;
         services.resolved.enable = true;
       };
     };
-    tunnel = {
-      autoStart = true;
-      privateUsers = "pick";
-      privateNetwork = true;
-      hostBridge = "containers0";
-      localAddress = "${tunnelAddress}/24";
-      bindMounts = {
-        credentials = {
-          mountPoint = "/mnt/cloudflared:idmap";
-          hostPath = "/home/marimo/.cloudflared";
-          isReadOnly = true;
-        };
-      };
-      config = {config, pkgs, lib, ...}: {
-        system.stateVersion = "25.05";
-        services.cloudflared = {
-          enable = true;
-          certificateFile = "/mnt/cloudflared/cert.pem";
-          tunnels.bmax0 = {
-            default = "http_status:404";
-            credentialsFile = "/mnt/cloudflared/3cbf78f1-2bb7-482d-99ea-e7dd3994d0c9.json";
-          };
-        };
-      };
-    };
+#    tunnel = {
+#      autoStart = true;
+#      privateUsers = "pick";
+#      privateNetwork = true;
+#      hostBridge = "containers0";
+#      localAddress = "${tunnelAddress}/24";
+#      bindMounts = {
+#        credentials = {
+#          mountPoint = "/mnt/cloudflared:idmap";
+#          hostPath = "/home/marimo/.cloudflared";
+#          isReadOnly = true;
+#        };
+#      };
+#      config = {config, pkgs, lib, ...}: {
+#        system.stateVersion = "25.05";
+#        services.cloudflared = {
+#          enable = true;
+#          certificateFile = "/mnt/cloudflared/cert.pem";
+#          tunnels.bmax0 = {
+#            default = "http_status:404";
+#            credentialsFile = "/mnt/cloudflared/3cbf78f1-2bb7-482d-99ea-e7dd3994d0c9.json";
+#          };
+#        };
+#        networking = {
+#          firewall = {
+#            enable = true;
+#          };
+#          useHostResolvConf = lib.mkForce false;
+#        };
+#        services.resolved.enable = true;
+#      };
+#    };
   };
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
