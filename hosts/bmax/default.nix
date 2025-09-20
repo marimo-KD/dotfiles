@@ -2,7 +2,7 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, ... }:
+{ inputs, config, lib, pkgs, ... }:
 let hostconfig = config;
   prometheusAddress = "192.168.100.11";
   prometheusPort = 9090;
@@ -155,10 +155,15 @@ let hostconfig = config;
       localAddress = "${silverbulletAddress}/24";
       macvlans = ["enp2s0"];
       config = {config, pkgs, lib, ...}: {
+        nixpkgs.overlays = [
+          (final: prev: {
+            silverbullet = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.silverbullet;
+          })
+        ];
         system.stateVersion = "25.05";
         services.silverbullet = {
           enable = true;
-          listenAddress = "0.0.0.0";
+          listenAddress = silverbulletAddress;
           listenPort = silverbulletPort;
           openFirewall = true;
         };

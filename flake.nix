@@ -59,9 +59,6 @@
                     old.checkFlags;
                 });
               })
-              (final: prev: {
-                silverbullet = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.silverbullet;
-              })
             ];
           }
           ./hosts/bmax
