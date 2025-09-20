@@ -153,20 +153,22 @@ let hostconfig = config;
       privateNetwork = true;
       hostBridge = "containers0";
       localAddress = "${silverbulletAddress}/24";
+      macvlans = ["enp2s0"];
       config = {config, pkgs, lib, ...}: {
         system.stateVersion = "25.05";
         services.silverbullet = {
           enable = true;
-          listenAddress = silverbulletAddress;
+          listenAddress = "0.0.0.0";
           listenPort = silverbulletPort;
           openFirewall = true;
         };
         networking = {
           firewall.enable = true;
+          interfaces.mv-enp2s0.useDHCP = true;
           useHostResolvConf = lib.mkForce false;
         };
         services.resolved.enable = true;
-      }
+      };
     };
 #    tunnel = {
 #      autoStart = true;
