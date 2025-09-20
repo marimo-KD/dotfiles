@@ -163,7 +163,7 @@ let hostconfig = config;
         system.stateVersion = "25.05";
         services.silverbullet = {
           enable = true;
-          listenAddress = silverbulletAddress;
+          listenAddress = "0.0.0.0";
           listenPort = silverbulletPort;
           openFirewall = true;
         };
