@@ -13,7 +13,7 @@
     ./programs/carapace
     ./programs/direnv
     # ./programs/discord
-    ./programs/emacs
+    # ./programs/emacs
     # ./programs/faust
     ./programs/fd
     # ./programs/firefox
@@ -33,10 +33,11 @@
     # ./packages.nix
   ];
   home.packages = with pkgs; [
-    nil
+    nixd
     typst
     gnuplot
     slack
     lean4
+    prismlauncher
   ];
 }
