@@ -4,17 +4,22 @@
 
 { inputs, config, lib, pkgs, ... }:
 let hostconfig = config;
+  hostAddress = "192.168.100.1";
   prometheusAddress = "192.168.100.11";
   prometheusPort = 9090;
   blackboxAddress = "192.168.100.31";
   blackboxPort = 9115;
   grafanaAddress = "192.168.100.12";
   grafanaPort = 3000;
-  couchdbAddress = "192.168.100.13";
-  couchdbPort = 5984;
   silverbulletAddress = "192.168.100.14";
   silverbulletPort = 7000;
-  tunnelAddress = "192.168.100.21";
+  container-extraHosts = ''
+    ${hostAddress} host
+    ${prometheusAddress} prometheus.container
+    ${blackboxAddress} blackbox-exporter.container
+    ${grafanaAddress} grafana.container
+    ${silverbulletAddress} silverbullet.container
+  '';
   in
 {
   imports =
@@ -72,7 +77,7 @@ let hostconfig = config;
     enable = true;
     port = 9000;
     enabledCollectors = ["systemd"];
-    listenAddress = "192.168.100.1";
+    listenAddress = hostAddress;
   };
 
   security.polkit.enable = true;
@@ -82,7 +87,7 @@ let hostconfig = config;
     useDHCP = false;
     interfaces."enp2s0".useDHCP = true;
     interfaces."containers0".ipv4.addresses = [{
-      address = "192.168.100.1";
+      address = hostAddress;
       prefixLength = 24;
     }];
   };
@@ -106,7 +111,7 @@ let hostconfig = config;
             {
               job_name = "node";
               static_configs = [{
-                targets = ["192.168.100.1:${toString hostconfig.services.prometheus.exporters.node.port}"];
+                targets = ["${hostAddress}:${toString hostconfig.services.prometheus.exporters.node.port}"];
               }];
             }
             {
@@ -130,7 +135,7 @@ let hostconfig = config;
                 }
                 {
                   target_label = "__address__";
-                  replacement = "${blackboxAddress}:9115";
+                  replacement = "blackbox-exporter.container:9115";
                 }
               ];
             }
@@ -141,9 +146,8 @@ let hostconfig = config;
             enable = true;
             allowedTCPPorts = [ config.services.prometheus.port ];
           };
-          useHostResolvConf = lib.mkForce false;
+          extraHosts = container-extraHosts;
         };
-        services.resolved.enable = true;
       };
     };
     blackbox-exporter = {
@@ -167,9 +171,8 @@ let hostconfig = config;
         };
         networking = {
           firewall.enable = true;
-          useHostResolvConf = lib.mkForce false;
+          extraHosts = container-extraHosts;
         };
-        services.resolved.enable = true;
       };
     };
     grafana = {
@@ -192,12 +195,9 @@ let hostconfig = config;
           openFirewall = true;      
         };
         networking = {
-          firewall = {
-            enable = true;
-          };
-          useHostResolvConf = lib.mkForce false;
+          firewall.enable = true;
+          extraHosts = container-extraHosts;
         };
-        services.resolved.enable = true;
       };
     };
     silverbullet = {
@@ -224,6 +224,7 @@ let hostconfig = config;
           firewall.enable = true;
           interfaces.mv-enp2s0.useDHCP = true;
           useHostResolvConf = lib.mkForce false;
+          extraHosts = container-extraHosts;
         };
         services.resolved.enable = true;
       };
