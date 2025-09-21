@@ -6,6 +6,8 @@
 let hostconfig = config;
   prometheusAddress = "192.168.100.11";
   prometheusPort = 9090;
+  blackboxAddress = "192.168.100.31";
+  blackboxPort = 9115;
   grafanaAddress = "192.168.100.12";
   grafanaPort = 3000;
   couchdbAddress = "192.168.100.13";
@@ -107,6 +109,31 @@ let hostconfig = config;
                 targets = ["192.168.100.1:${toString hostconfig.services.prometheus.exporters.node.port}"];
               }];
             }
+            {
+              job_name = "blackbox";
+              metrics_path = "/probe";
+              static_configs = [{
+                targets = [
+                  "${prometheusAddress}:${toString prometheusPort}"
+                  "${grafanaAddress}:${toString grafanaPort}"
+                  "${silverbulletAddress}:${toString silverbulletPort}"
+                ];
+              }];
+              relabel_configs = [
+                {
+                  source_labels = ["__address__"];
+                  target_label = "__param_target";
+                }
+                {
+                  source_labels = ["__param_target"];
+                  target_label = "instance";
+                }
+                {
+                  target_label = "__address__";
+                  replacement = "${blackboxAddress}:9115";
+                }
+              ];
+            }
           ];
         };
         networking = {
@@ -114,6 +141,32 @@ let hostconfig = config;
             enable = true;
             allowedTCPPorts = [ config.services.prometheus.port ];
           };
+          useHostResolvConf = lib.mkForce false;
+        };
+        services.resolved.enable = true;
+      };
+    };
+    blackbox-exporter = {
+      autoStart = true;
+      privateUsers = "pick";
+      hostBridge = "containers0";
+      localAddress = "${blackboxAddress}/24";
+      config = { config, pkgs, lib, ...}: {
+        system.stateVersion = "25.05";
+        services.prometheus.exporters.blackbox = {
+          enable = true;
+          port = blackboxPort;
+          openFirewall = true;
+          configFile = pkgs.writeText "config.yml"
+            ''
+              modules:
+                http_2xx:
+                  prober: http
+                  http:
+            '';
+        };
+        networking = {
+          firewall.enable = true;
           useHostResolvConf = lib.mkForce false;
         };
         services.resolved.enable = true;
