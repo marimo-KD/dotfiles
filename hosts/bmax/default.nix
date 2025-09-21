@@ -15,10 +15,10 @@ let hostconfig = config;
   silverbulletPort = 7000;
   container-extraHosts = ''
     ${hostAddress} host
-    ${prometheusAddress} prometheus.container
-    ${blackboxAddress} blackbox-exporter.container
-    ${grafanaAddress} grafana.container
-    ${silverbulletAddress} silverbullet.container
+    ${prometheusAddress} prometheus.containers
+    ${blackboxAddress} blackbox-exporter.containers
+    ${grafanaAddress} grafana.containers
+    ${silverbulletAddress} silverbullet.containers
   '';
   in
 {
@@ -135,7 +135,7 @@ let hostconfig = config;
                 }
                 {
                   target_label = "__address__";
-                  replacement = "blackbox-exporter.container:9115";
+                  replacement = "blackbox-exporter.containers:9115";
                 }
               ];
             }
@@ -153,6 +153,7 @@ let hostconfig = config;
     blackbox-exporter = {
       autoStart = true;
       privateUsers = "pick";
+      privateNetwork = true;
       hostBridge = "containers0";
       localAddress = "${blackboxAddress}/24";
       config = { config, pkgs, lib, ...}: {
