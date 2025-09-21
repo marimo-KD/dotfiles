@@ -119,9 +119,9 @@ let hostconfig = config;
               metrics_path = "/probe";
               static_configs = [{
                 targets = [
-                  "${prometheusAddress}:${toString prometheusPort}"
-                  "${grafanaAddress}:${toString grafanaPort}"
-                  "${silverbulletAddress}:${toString silverbulletPort}"
+                  "prometheus.containers:${toString prometheusPort}"
+                  "grafana.containers:${toString grafanaPort}"
+                  "silverbullet.containers:${toString silverbulletPort}"
                 ];
               }];
               relabel_configs = [
