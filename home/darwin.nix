@@ -38,6 +38,13 @@
     gnuplot
     slack
     lean4
-    prismlauncher
+    (prismlauncher.override {
+      jdks = [
+        graalvm-ce
+        zulu8
+        zulu17
+        zulu
+      ];
+    })
   ];
 }
