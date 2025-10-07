@@ -356,7 +356,7 @@ let hostconfig = config;
     };
     vikunja = {
       autoStart = true;
-      privateUsers = true;
+      privateUsers = "pick";
       privateNetwork = true;
       hostBridge = "containers0";
       localAddress = "${vikunjaAddress}/24";
