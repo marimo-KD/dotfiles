@@ -76,7 +76,6 @@ let hostconfig = config;
     };
   };
 
-
   services.prometheus.exporters.node = {
     enable = true;
     port = 9000;
@@ -129,23 +128,50 @@ let hostconfig = config;
       privateNetwork = true;
       hostBridge = "containers0";
       localAddress = "${nginxAddress}/24";
+      bindMounts = {
+        credentials = {
+          mountPoint = "/mnt/credentials:idmap";
+          hostPath = "/home/marimo/.acme-credentials";
+          isReadOnly = true;
+        };
+      };
       config = {config, pkgs, lib, ...}: {
         system.stateVersion = "25.05";
+        security.acme = {
+          acceptTerms = true;
+          defaults.email = (builtins.readFile /mnt/credentials/email);
+          certs."aegagropila.org" = {
+            dnsProvider = "cloudflare";
+            dnsPropagationCheck = true;
+            domain = "aegagropila.org";
+            group = "nginx";
+            environmentFile = "/mnt/credentials/env";
+            extraDomainNames =[
+              "*.aegagropila.org"
+            ];
+          };
+        };
         services.nginx = {
           enable = true;
           recommendedProxySettings = true;
           virtualHosts = {
             "prometheus.aegagropila.org" = {
+              forceSSL = true;
+              useACMEHost = "aegagropila.org";
               locations."/" = {
                 proxyPass = "http://${prometheusAddress}:${toString prometheusPort}";
               };
             };
             "grafana.aegagropila.org" = {
+              forceSSL = true;
+              useACMEHost = "aegagropila.org";
               locations."/" = {
                 proxyPass = "http://${grafanaAddress}:${toString grafanaPort}";
               };
             };
             "silverbullet.aegagropila.org" = {
+              forceSSL = true;
+              useACMEHost = "aegagropila.org";
               locations."/" = {
                 proxyPass = "http://${silverbulletAddress}:${toString silverbulletPort}";
               };
