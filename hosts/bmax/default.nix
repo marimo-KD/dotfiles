@@ -5,6 +5,8 @@
 { inputs, config, lib, pkgs, ... }:
 let hostconfig = config;
   hostAddress = "192.168.100.1";
+  dnsAddress = "192.168.100.100";
+  nginxAddress = "192.168.100.101";
   prometheusAddress = "192.168.100.11";
   prometheusPort = 9090;
   blackboxAddress = "192.168.100.31";
@@ -15,6 +17,8 @@ let hostconfig = config;
   silverbulletPort = 7000;
   container-extraHosts = ''
     ${hostAddress} host
+    ${dnsAddress} dns.containers
+    ${nginxAddress} nginx.containers
     ${prometheusAddress} prometheus.containers
     ${blackboxAddress} blackbox-exporter.containers
     ${grafanaAddress} grafana.containers
@@ -93,6 +97,67 @@ let hostconfig = config;
   };
 
   containers = {
+    dns = {
+      # dns server for name resolving in the tailnet.
+      autoStart = true;
+      privateUsers = true;
+      privateNetwork = true;
+      hostBridge = "containers0";
+      localAddress = "${dnsAddress}/24";
+      config = { config, pkgs, lib, ...}: {
+        system.stateVersion = "25.05";
+        services.dnsmasq = {
+          enable = true;
+          alwaysKeepRunning = true;
+          resolveLocalQueries = true;
+          settings = {
+            address = "/.aegagropila.org/${nginxAddress}";
+          };
+        };
+        networking = {
+          firewall.enable = true;
+          firewall.allowedTCPPorts = [ 53 ];
+          extraHosts = container-extraHosts;
+        };
+      };
+    };
+    nginx = {
+      # reverse proxy
+      autoStart = true;
+      privateUsers = true;
+      privateNetwork = true;
+      hostBridge = "containers0";
+      localAddress = "${nginxAddress}/24";
+      config = {config, pkgs, lib, ...}: {
+        system.stateVersion = "25.05";
+        services.nginx = {
+          enable = true;
+          recommendedProxySettings = true;
+          virtualHosts = {
+            "prometheus.aegagropila.org" = {
+              locations."/" = {
+                proxyPass = "http://${prometheusAddress}:${prometheusPort}";
+              };
+            };
+            "grafana.aegagropila.org" = {
+              locations."/" = {
+                proxyPass = "http://${grafanaAddress}:${grafanaPort}";
+              };
+            };
+            "silverbullet.aegagropila.org" = {
+              locations."/" = {
+                proxyPass = "http://${silverbulletAddress}:${silverbulletPort}";
+              };
+            };
+          };
+        };
+        networking = {
+          firewall.enable = true;
+          firewall.allowedTCPPorts = [ 80 443 ];
+          extraHosts = container-extraHosts;
+        };
+      };
+    };
     prometheus = {
       autoStart = true;
       privateUsers = "pick";
@@ -207,7 +272,7 @@ let hostconfig = config;
       privateNetwork = true;
       hostBridge = "containers0";
       localAddress = "${silverbulletAddress}/24";
-      macvlans = ["enp2s0"];
+      macvlans = ["enp2s0"]; # allow to access internet directly (to avoid double-nat)
       config = {config, pkgs, lib, ...}: {
         nixpkgs.overlays = [
           (final: prev: {
@@ -230,38 +295,6 @@ let hostconfig = config;
         services.resolved.enable = true;
       };
     };
-#    tunnel = {
-#      autoStart = true;
-#      privateUsers = "pick";
-#      privateNetwork = true;
-#      hostBridge = "containers0";
-#      localAddress = "${tunnelAddress}/24";
-#      bindMounts = {
-#        credentials = {
-#          mountPoint = "/mnt/cloudflared:idmap";
-#          hostPath = "/home/marimo/.cloudflared";
-#          isReadOnly = true;
-#        };
-#      };
-#      config = {config, pkgs, lib, ...}: {
-#        system.stateVersion = "25.05";
-#        services.cloudflared = {
-#          enable = true;
-#          certificateFile = "/mnt/cloudflared/cert.pem";
-#          tunnels.bmax0 = {
-#            default = "http_status:404";
-#            credentialsFile = "/mnt/cloudflared/3cbf78f1-2bb7-482d-99ea-e7dd3994d0c9.json";
-#          };
-#        };
-#        networking = {
-#          firewall = {
-#            enable = true;
-#          };
-#          useHostResolvConf = lib.mkForce false;
-#        };
-#        services.resolved.enable = true;
-#      };
-#    };
   };
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
