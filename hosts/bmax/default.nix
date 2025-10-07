@@ -100,7 +100,7 @@ let hostconfig = config;
     dns = {
       # dns server for name resolving in the tailnet.
       autoStart = true;
-      privateUsers = true;
+      privateUsers = "pick";
       privateNetwork = true;
       hostBridge = "containers0";
       localAddress = "${dnsAddress}/24";
@@ -124,7 +124,7 @@ let hostconfig = config;
     nginx = {
       # reverse proxy
       autoStart = true;
-      privateUsers = true;
+      privateUsers = "pick";
       privateNetwork = true;
       hostBridge = "containers0";
       localAddress = "${nginxAddress}/24";
