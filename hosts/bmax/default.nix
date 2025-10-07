@@ -117,6 +117,7 @@ let hostconfig = config;
         networking = {
           firewall.enable = true;
           firewall.allowedTCPPorts = [ 53 ];
+          firewall.allowedUDPPorts = [ 53 ];
           extraHosts = container-extraHosts;
         };
       };
