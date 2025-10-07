@@ -83,21 +83,6 @@ let hostconfig = config;
     listenAddress = hostAddress;
   };
 
-  security.acme = {
-    acceptTerms = true;
-    defaults.email = secrets.acme.email;
-    defaults.dnsResolver = "1.1.1.1:53";
-    certs."aegagropila.org" = {
-      dnsProvider = "cloudflare";
-      dnsPropagationCheck = true;
-      domain = "aegagropila.org";
-      environmentFile = "/home/marimo/.acme-credentials/env";
-      extraDomainNames =[
-        "*.aegagropila.org"
-      ];
-    };
-  };
-
   security.polkit.enable = true;
 
   networking = {
@@ -143,33 +128,51 @@ let hostconfig = config;
       privateNetwork = true;
       hostBridge = "containers0";
       localAddress = "${nginxAddress}/24";
+      macvlans = [ "enp2s0" ]; # allow internet access to get certificates
       bindMounts = {
         credentials = {
-          mountPoint = "/mnt/certkeys:owneridmap";
-          hostPath = "/var/lib/acme/aegagropila.org";
+          mountPoint = "/home/marimo/.acme-credentials:idmap";
+          hostPath = "/mnt/credentials";
           isReadOnly = true;
         };
       };
       config = {config, pkgs, lib, ...}: {
         system.stateVersion = "25.05";
+        security.acme = {
+          acceptTerms = true;
+          defaults.email = secrets.acme.email;
+          defaults.dnsResolver = "1.1.1.1:53";
+          certs."aegagropila.org" = {
+            dnsProvider = "cloudflare";
+            dnsPropagationCheck = true;
+            domain = "aegagropila.org";
+            environmentFile = "/mnt/credentials/env";
+            extraDomainNames =[
+              "*.aegagropila.org"
+            ];
+          };
+        };
         services.nginx = {
           enable = true;
           recommendedProxySettings = true;
           virtualHosts = {
             "prometheus.aegagropila.org" = {
               forceSSL = true;
-              sslCertificate = "/mnt/certkeys/cert.pem";
-              sslCertificateKey = "/mnt/certkeys/key.pem";
+              useACMEHost = "aegagropila.org";
               locations."/" = {
                 proxyPass = "http://${prometheusAddress}:${toString prometheusPort}";
               };
             };
             "grafana.aegagropila.org" = {
+              forceSSL = true;
+              useACMEHost = "aegagropila.org";
               locations."/" = {
                 proxyPass = "http://${grafanaAddress}:${toString grafanaPort}";
               };
             };
             "silverbullet.aegagropila.org" = {
+              forceSSL = true;
+              useACMEHost = "aegagropila.org";
               locations."/" = {
                 proxyPass = "http://${silverbulletAddress}:${toString silverbulletPort}";
               };
@@ -178,7 +181,7 @@ let hostconfig = config;
         };
         networking = {
           firewall.enable = true;
-          firewall.allowedTCPPorts = [ 80 443 ];
+          firewall.interfaces."eth0".allowedTCPPorts = [ 80 443 ];
           extraHosts = container-extraHosts;
         };
       };
