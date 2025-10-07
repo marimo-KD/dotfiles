@@ -131,8 +131,8 @@ let hostconfig = config;
       macvlans = [ "enp2s0" ]; # allow internet access to get certificates
       bindMounts = {
         credentials = {
-          mountPoint = "/home/marimo/.acme-credentials:idmap";
-          hostPath = "/mnt/credentials";
+          mountPoint = "/mnt/credentials:idmap";
+          hostPath = "/home/marimo/.acme-credentials";
           isReadOnly = true;
         };
       };
@@ -146,6 +146,7 @@ let hostconfig = config;
             dnsProvider = "cloudflare";
             dnsPropagationCheck = true;
             domain = "aegagropila.org";
+            group = "nginx";
             environmentFile = "/mnt/credentials/env";
             extraDomainNames =[
               "*.aegagropila.org"
@@ -182,6 +183,7 @@ let hostconfig = config;
         networking = {
           firewall.enable = true;
           firewall.interfaces."eth0".allowedTCPPorts = [ 80 443 ];
+          interfaces."mv-enp2s0".useDHCP = true;
           extraHosts = container-extraHosts;
         };
       };
