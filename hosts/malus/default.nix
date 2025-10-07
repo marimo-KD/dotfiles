@@ -9,6 +9,11 @@
   networking = {
     hostName = "malus";
     computerName = "malus";
+    knownNetworkServices = [
+      "Wi-Fi"
+      "USB 10/100/1000 LAN"
+      "Thunderbolt Bridge"
+    ];
   };
 
   documentation.enable = false;
