@@ -7,6 +7,7 @@ let hostconfig = config;
   hostAddress = "192.168.100.1";
   dnsAddress = "192.168.100.100";
   nginxAddress = "192.168.100.101";
+  nginxExporterPort = 9113;
   prometheusAddress = "192.168.100.11";
   prometheusPort = 9090;
   blackboxAddress = "192.168.100.31";
@@ -15,6 +16,8 @@ let hostconfig = config;
   grafanaPort = 3000;
   silverbulletAddress = "192.168.100.14";
   silverbulletPort = 7000;
+  vikunjaAddress = "192.168.100.15";
+  vikunjaPort = 3456;
   container-extraHosts = ''
     ${hostAddress} host
     ${dnsAddress} dns.containers
@@ -23,6 +26,7 @@ let hostconfig = config;
     ${blackboxAddress} blackbox-exporter.containers
     ${grafanaAddress} grafana.containers
     ${silverbulletAddress} silverbullet.containers
+    ${vikunjaAddress} vikunja.containers
   '';
   in
 {
@@ -156,6 +160,9 @@ let hostconfig = config;
         services.nginx = {
           enable = true;
           recommendedProxySettings = true;
+          recommendedTlsSettings = true;
+          recommendedOptimisation = true;
+          statusPage = true;
           virtualHosts = {
             "prometheus.aegagropila.org" = {
               forceSSL = true;
@@ -178,11 +185,24 @@ let hostconfig = config;
                 proxyPass = "http://${silverbulletAddress}:${toString silverbulletPort}";
               };
             };
+            "vikunja.aegagropila.org" = {
+              forceSSL = true;
+              useACMEHost = "aegagropila.org";
+              locations."/" = {
+                proxyPass = "http://${vikunjaAddress}:${toString vikunjaPort}";
+                proxyWebsockets = true;
+              };
+            };
           };
+        };
+        services.prometheus.exporters.nginx = {
+          enable = true;
+          port = nginxExporterPort;
+          listenAddress = nginxAddress;
         };
         networking = {
           firewall.enable = true;
-          firewall.interfaces."eth0".allowedTCPPorts = [ 80 443 ];
+          firewall.interfaces."eth0".allowedTCPPorts = [ 80 443 nginxExporterPort ];
           interfaces."mv-enp2s0".useDHCP = true;
           extraHosts = container-extraHosts;
         };
@@ -233,6 +253,15 @@ let hostconfig = config;
                   replacement = "blackbox-exporter.containers:9115";
                 }
               ];
+            }
+            {
+              job_name = "vikunja";
+              metrics_path = "/api/v1/metrics";
+              static_configs = [{
+                targets = [
+                  "vikunja.containers:${toString vikunjaPort}"
+                ];
+              }];
             }
           ];
         };
@@ -325,6 +354,28 @@ let hostconfig = config;
         services.resolved.enable = true;
       };
     };
+    vikunja = {
+      autoStart = true;
+      privateUsers = true;
+      privateNetwork = true;
+      hostBridge = "containers0";
+      localAddress = "${vikunjaAddress}/24";
+      config = {config, pkgs, lib, ...}: {
+        system.stateVersion = "25.05";
+        services.vikunja = {
+          enable = true;
+          port = vikunjaPort;
+          frontendScheme = "http";
+          frontendHostname = "vikunja.aegagropila.org";
+        };
+        networking = {
+          firewall.enable = true;
+          firewall.allowedTCPPorts = [ vikunjaPort ];
+          extraHosts = container-extraHosts;
+        };
+      };
+    };
+    
   };
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
