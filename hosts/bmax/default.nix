@@ -136,17 +136,17 @@ let hostconfig = config;
           virtualHosts = {
             "prometheus.aegagropila.org" = {
               locations."/" = {
-                proxyPass = "http://${prometheusAddress}:${prometheusPort}";
+                proxyPass = "http://${prometheusAddress}:${toString prometheusPort}";
               };
             };
             "grafana.aegagropila.org" = {
               locations."/" = {
-                proxyPass = "http://${grafanaAddress}:${grafanaPort}";
+                proxyPass = "http://${grafanaAddress}:${toString grafanaPort}";
               };
             };
             "silverbullet.aegagropila.org" = {
               locations."/" = {
-                proxyPass = "http://${silverbulletAddress}:${silverbulletPort}";
+                proxyPass = "http://${silverbulletAddress}:${toString silverbulletPort}";
               };
             };
           };
