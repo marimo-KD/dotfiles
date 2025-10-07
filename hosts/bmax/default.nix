@@ -86,11 +86,11 @@ let hostconfig = config;
   security.acme = {
     acceptTerms = true;
     defaults.email = secrets.acme.email;
+    defaults.dnsResolver = "1.1.1.1:53";
     certs."aegagropila.org" = {
       dnsProvider = "cloudflare";
       dnsPropagationCheck = true;
       domain = "aegagropila.org";
-      group = "nginx";
       environmentFile = "/home/marimo/.acme-credentials/env";
       extraDomainNames =[
         "*.aegagropila.org"
@@ -144,11 +144,11 @@ let hostconfig = config;
       hostBridge = "containers0";
       localAddress = "${nginxAddress}/24";
       bindMounts = {
-        # credentials = {
-        #   mountPoint = "/mnt/certkeys:idmap";
-        #   hostPath = "/var/lib/acme/aegagropila.org";
-        #   isReadOnly = true;
-        # };
+        credentials = {
+          mountPoint = "/mnt/certkeys:owneridmap";
+          hostPath = "/var/lib/acme/aegagropila.org";
+          isReadOnly = true;
+        };
       };
       config = {config, pkgs, lib, ...}: {
         system.stateVersion = "25.05";
@@ -157,6 +157,9 @@ let hostconfig = config;
           recommendedProxySettings = true;
           virtualHosts = {
             "prometheus.aegagropila.org" = {
+              forceSSL = true;
+              sslCertificate = "/mnt/certkeys/cert.pem";
+              sslCertificateKey = "/mnt/certkeys/key.pem";
               locations."/" = {
                 proxyPass = "http://${prometheusAddress}:${toString prometheusPort}";
               };
