@@ -2,7 +2,7 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ inputs, config, lib, pkgs, ... }:
+{ inputs, config, lib, pkgs, secrets, ... }:
 let hostconfig = config;
   hostAddress = "192.168.100.1";
   dnsAddress = "192.168.100.100";
@@ -139,7 +139,7 @@ let hostconfig = config;
         system.stateVersion = "25.05";
         security.acme = {
           acceptTerms = true;
-          defaults.email = (builtins.readFile /mnt/credentials/email);
+          defaults.email = secrets.acme.email;
           certs."aegagropila.org" = {
             dnsProvider = "cloudflare";
             dnsPropagationCheck = true;

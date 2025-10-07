@@ -21,12 +21,15 @@
     };
   };
 
-  outputs = inputs@{self, nixpkgs-unstable, nixpkgs, nix-darwin, home-manager, ...} : {
+  outputs = inputs@{self, nixpkgs-unstable, nixpkgs, nix-darwin, home-manager, ...}:
+    let
+      secrets = builtins.fromJSON (builtins.readFile "${self}/secrets/secrets.json");
+    in {
     nixosConfigurations = {
       monix = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
-          inherit inputs;
+          inherit inputs secrets;
         };
         modules = [
           home-manager.nixosModules.home-manager
@@ -45,7 +48,7 @@
       bmax = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = {
-          inherit inputs;
+          inherit inputs secrets;
         };
         modules = [
           {
