@@ -263,6 +263,14 @@ let hostconfig = config;
                 ];
               }];
             }
+            {
+              job_name = "nginx";
+              static_configs = [{
+                targets = [
+                  "nginx.containers:${toString nginxExporterPort}"
+                ];
+              }];
+            }
           ];
         };
         networking = {
@@ -367,6 +375,15 @@ let hostconfig = config;
           port = vikunjaPort;
           frontendScheme = "http";
           frontendHostname = "vikunja.aegagropila.org";
+          settings = {
+            service = {
+              enableemailreminders = false;
+              enableregistration = false;
+            };
+            metrics = {
+              enabled = true;
+            };
+          };
         };
         networking = {
           firewall.enable = true;
