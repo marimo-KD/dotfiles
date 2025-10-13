@@ -195,6 +195,13 @@ let hostconfig = config;
                 proxyPass = "http://silverbullet.containers:${toString silverbulletPort}";
               };
             };
+            "miniflux.aegagropila.org" = {
+              forceSSL = true;
+              useACMEHost = "aegagropila.org";
+              locations."/" = {
+                proxyPass = "http://miniflux.containers:${toString minifluxPort}";
+              };
+            };
           };
         };
         services.prometheus.exporters.nginx = {
@@ -261,6 +268,14 @@ let hostconfig = config;
               static_configs = [{
                 targets = [
                   "nginx.containers:${toString nginxExporterPort}"
+                ];
+              }];
+            }
+            {
+              job_name = "postgreSQL";
+              static_configs = [{
+                targets = [
+                  "postgresql.containers:${toString postgresqlExporterPort}"
                 ];
               }];
             }
@@ -367,11 +382,14 @@ let hostconfig = config;
           enable = true;
           enableJIT = true;
           enableTCPIP = true;
-          port = postgresqlPort;
+          settings.port = postgresqlPort;
           ensureUsers =[
             {
               name = "miniflux";
               ensureDBOwnership = true;
+            }
+            {
+              name = "exporter";
             }
           ];
           ensureDatabases = [ "miniflux" ];
@@ -386,6 +404,10 @@ let hostconfig = config;
           enable = true;
           listenAddress = postgresqlAddress;
           port = postgresqlExporterPort;
+          environmentFile = pkgs.writeText "exporter.env" ''
+            DATA_SOURCE_USER=exporter
+            DATA_SOURCE_URI=localhost:${toString postgresqlPort}/main?sslmode=disable
+          '';
         };
         networking = {
           firewall.enable = true;
