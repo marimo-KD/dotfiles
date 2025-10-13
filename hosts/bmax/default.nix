@@ -401,18 +401,26 @@ let hostconfig = config;
       privateNetwork = true;
       hostBridge = "containers0";
       localAddress = "${minifluxAddress}/24";
+      bindMounts = {
+        credentials = {
+          mountPoint = "/mnt/miniflux:idmap";
+          hostPath = "/home/marimo/.miniflux";
+          isReadOnly = true;
+        };
+      };
       config = {config, pkgs, lib, ...}: {
         system.stateVersion = "25.05";
         services.miniflux = {
           enable = true;
           createDatabaseLocally = false;
           config = {
-            LISTEN_ADDR = "${minifluxAddress}:${minifluxPort}";
-            CREATE_ADMIN = 0;
+            LISTEN_ADDR = "${minifluxAddress}:${toString minifluxPort}";
+            CREATE_ADMIN = 1;
             WATCHDOG = 1;
             BASE_URL = "https://miniflux.aegagropila.org";
-            DATABASE_URL = "host=postgresql.containers port=${postgresqlPort} user=miniflux dbname=miniflux sslmode=disable";
+            DATABASE_URL = "host=postgresql.containers port=${toString postgresqlPort} user=miniflux dbname=miniflux sslmode=disable";
           };
+          adminCredentialsFile = "/mnt/miniflux/admin";
         };
         networking = {
           firewall.enable = true;
