@@ -16,6 +16,11 @@ let hostconfig = config;
   grafanaPort = 3000;
   silverbulletAddress = "192.168.100.14";
   silverbulletPort = 7000;
+  postgresqlAddress = "192.168.100.40";
+  postgresqlPort = 5432;
+  postgresqlExporterPort = 9115;
+  minifluxAddress = "192.168.100.15";
+  minifluxPort = 8080;
   container-extraHosts = ''
     ${hostAddress} host
     ${dnsAddress} dns.containers
@@ -24,6 +29,8 @@ let hostconfig = config;
     ${blackboxAddress} blackbox-exporter.containers
     ${grafanaAddress} grafana.containers
     ${silverbulletAddress} silverbullet.containers
+    ${postgresqlAddress} postgresql.containers
+    ${minifluxAddress} miniflux.containers
   '';
   in
 {
@@ -116,7 +123,7 @@ let hostconfig = config;
           resolveLocalQueries = true;
           settings = {
             address = "/.aegagropila.org/${nginxAddress}";
-            server = [ "1.1.1.1" "1.0.0.1" "2606:4700:4700::1111" "2606:4700:4700::1001" ];
+            server = [ "1.1.1.1" "1.0.0.1" "2606:4700:4700::1111" "2606:4700:4700::1001" ]; # cloudflare dns
           };
         };
         networking = {
@@ -343,6 +350,73 @@ let hostconfig = config;
         };
         networking = {
           firewall.enable = true;
+          nameservers = [ dnsAddress ];
+          defaultGateway = hostAddress;
+        };
+      };
+    };
+    postgresql = {
+      autoStart = true;
+      privateUsers = "pick";
+      privateNetwork = true;
+      hostBridge = "containers0";
+      localAddress = "${postgresqlAddress}/24";
+      config = {config, pkgs, lib, ...}: {
+        system.stateVersion = "25.05";
+        services.postgresql = {
+          enable = true;
+          enableJIT = true;
+          enableTCPIP = true;
+          port = postgresqlPort;
+          ensureUsers =[
+            {
+              name = "miniflux";
+              ensureDBOwnership = true;
+            }
+          ];
+          ensureDatabases = [ "miniflux" ];
+          authentication = pkgs.lib.mkOverride 10 ''
+            #type database DBuser origin-address auth-method
+            local all      all     trust
+            # ipv4
+            host  all      all     ${hostAddress}/24   trust
+          '';
+        };
+        services.prometheus.exporters.postgres = {
+          enable = true;
+          listenAddress = postgresqlAddress;
+          port = postgresqlExporterPort;
+        };
+        networking = {
+          firewall.enable = true;
+          firewall.allowedTCPPorts = [ postgresqlPort postgresqlExporterPort ];
+          nameservers = [ dnsAddress ];
+          defaultGateway = hostAddress;
+        };
+      };
+    };
+    miniflux = {
+      autoStart = true;
+      privateUsers = "pick";
+      privateNetwork = true;
+      hostBridge = "containers0";
+      localAddress = "${minifluxAddress}/24";
+      config = {config, pkgs, lib, ...}: {
+        system.stateVersion = "25.05";
+        services.miniflux = {
+          enable = true;
+          createDatabaseLocally = false;
+          config = {
+            LISTEN_ADDR = "${minifluxAddress}:${minifluxPort}";
+            CREATE_ADMIN = 0;
+            WATCHDOG = 1;
+            BASE_URL = "https://miniflux.aegagropila.org";
+            DATABASE_URL = "host=postgresql.containers port=${postgresqlPort} user=miniflux dbname=miniflux sslmode=disable";
+          };
+        };
+        networking = {
+          firewall.enable = true;
+          firewall.allowedTCPPorts = [ minifluxPort ];
           nameservers = [ dnsAddress ];
           defaultGateway = hostAddress;
         };
