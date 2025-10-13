@@ -16,8 +16,6 @@ let hostconfig = config;
   grafanaPort = 3000;
   silverbulletAddress = "192.168.100.14";
   silverbulletPort = 7000;
-  vikunjaAddress = "192.168.100.15";
-  vikunjaPort = 3456;
   container-extraHosts = ''
     ${hostAddress} host
     ${dnsAddress} dns.containers
@@ -26,7 +24,6 @@ let hostconfig = config;
     ${blackboxAddress} blackbox-exporter.containers
     ${grafanaAddress} grafana.containers
     ${silverbulletAddress} silverbullet.containers
-    ${vikunjaAddress} vikunja.containers
   '';
   in
 {
@@ -60,11 +57,6 @@ let hostconfig = config;
     git
   ];
 
-  networking.firewall = {
-    enable = true;
-    trustedInterfaces = [ "tailscale0" "containers0"]; # allow connections come from tailscale network.
-  };
-
   services.tailscale = {
     enable = true;
     openFirewall = true; # Open a UDP Port that tailscale uses.
@@ -97,6 +89,15 @@ let hostconfig = config;
       address = hostAddress;
       prefixLength = 24;
     }];
+    firewall = {
+      enable = true;
+      trustedInterfaces = [ "tailscale0" "containers0"]; # allow connections come from tailscale network.
+    };
+    nat = {
+      enable = true;
+      internalInterfaces = [ "containers0" ];
+      externalInterface = "enp2s0";
+    };
   };
 
   containers = {
@@ -115,6 +116,7 @@ let hostconfig = config;
           resolveLocalQueries = true;
           settings = {
             address = "/.aegagropila.org/${nginxAddress}";
+            server = [ "1.1.1.1" "1.0.0.1" "2606:4700:4700::1111" "2606:4700:4700::1001" ];
           };
         };
         networking = {
@@ -132,7 +134,6 @@ let hostconfig = config;
       privateNetwork = true;
       hostBridge = "containers0";
       localAddress = "${nginxAddress}/24";
-      macvlans = [ "enp2s0" ]; # allow internet access to get certificates
       bindMounts = {
         credentials = {
           mountPoint = "/mnt/credentials:idmap";
@@ -163,34 +164,27 @@ let hostconfig = config;
           recommendedTlsSettings = true;
           recommendedOptimisation = true;
           statusPage = true;
+          resolver.addresses = [ dnsAddress ];
           virtualHosts = {
             "prometheus.aegagropila.org" = {
               forceSSL = true;
               useACMEHost = "aegagropila.org";
               locations."/" = {
-                proxyPass = "http://${prometheusAddress}:${toString prometheusPort}";
+                proxyPass = "http://prometheus.containers:${toString prometheusPort}";
               };
             };
             "grafana.aegagropila.org" = {
               forceSSL = true;
               useACMEHost = "aegagropila.org";
               locations."/" = {
-                proxyPass = "http://${grafanaAddress}:${toString grafanaPort}";
+                proxyPass = "http://grafana.containers:${toString grafanaPort}";
               };
             };
             "silverbullet.aegagropila.org" = {
               forceSSL = true;
               useACMEHost = "aegagropila.org";
               locations."/" = {
-                proxyPass = "http://${silverbulletAddress}:${toString silverbulletPort}";
-              };
-            };
-            "vikunja.aegagropila.org" = {
-              forceSSL = true;
-              useACMEHost = "aegagropila.org";
-              locations."/" = {
-                proxyPass = "http://${vikunjaAddress}:${toString vikunjaPort}";
-                proxyWebsockets = true;
+                proxyPass = "http://silverbullet.containers:${toString silverbulletPort}";
               };
             };
           };
@@ -203,8 +197,7 @@ let hostconfig = config;
         networking = {
           firewall.enable = true;
           firewall.interfaces."eth0".allowedTCPPorts = [ 80 443 nginxExporterPort ];
-          interfaces."mv-enp2s0".useDHCP = true;
-          extraHosts = container-extraHosts;
+          nameservers = [ dnsAddress ];
         };
       };
     };
@@ -255,15 +248,6 @@ let hostconfig = config;
               ];
             }
             {
-              job_name = "vikunja";
-              metrics_path = "/api/v1/metrics";
-              static_configs = [{
-                targets = [
-                  "vikunja.containers:${toString vikunjaPort}"
-                ];
-              }];
-            }
-            {
               job_name = "nginx";
               static_configs = [{
                 targets = [
@@ -278,7 +262,7 @@ let hostconfig = config;
             enable = true;
             allowedTCPPorts = [ config.services.prometheus.port ];
           };
-          extraHosts = container-extraHosts;
+          nameservers = [ dnsAddress ];
         };
       };
     };
@@ -304,7 +288,7 @@ let hostconfig = config;
         };
         networking = {
           firewall.enable = true;
-          extraHosts = container-extraHosts;
+          nameservers = [ dnsAddress ];
         };
       };
     };
@@ -329,7 +313,7 @@ let hostconfig = config;
         };
         networking = {
           firewall.enable = true;
-          extraHosts = container-extraHosts;
+          nameservers = [ dnsAddress ];
         };
       };
     };
@@ -339,7 +323,6 @@ let hostconfig = config;
       privateNetwork = true;
       hostBridge = "containers0";
       localAddress = "${silverbulletAddress}/24";
-      macvlans = ["enp2s0"]; # allow to access internet directly (to avoid double-nat)
       config = {config, pkgs, lib, ...}: {
         nixpkgs.overlays = [
           (final: prev: {
@@ -349,50 +332,16 @@ let hostconfig = config;
         system.stateVersion = "25.05";
         services.silverbullet = {
           enable = true;
-          listenAddress = "0.0.0.0";
+          listenAddress = silverbulletAddress;
           listenPort = silverbulletPort;
           openFirewall = true;
         };
         networking = {
           firewall.enable = true;
-          interfaces.mv-enp2s0.useDHCP = true;
-          useHostResolvConf = lib.mkForce false;
-          extraHosts = container-extraHosts;
-        };
-        services.resolved.enable = true;
-      };
-    };
-    vikunja = {
-      autoStart = true;
-      privateUsers = "pick";
-      privateNetwork = true;
-      hostBridge = "containers0";
-      localAddress = "${vikunjaAddress}/24";
-      config = {config, pkgs, lib, ...}: {
-        system.stateVersion = "25.05";
-        services.vikunja = {
-          enable = true;
-          port = vikunjaPort;
-          frontendScheme = "http";
-          frontendHostname = "vikunja.aegagropila.org";
-          settings = {
-            service = {
-              enableemailreminders = false;
-              enableregistration = false;
-            };
-            metrics = {
-              enabled = true;
-            };
-          };
-        };
-        networking = {
-          firewall.enable = true;
-          firewall.allowedTCPPorts = [ vikunjaPort ];
-          extraHosts = container-extraHosts;
+          nameservers = [ dnsAddress ];
         };
       };
     };
-    
   };
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
