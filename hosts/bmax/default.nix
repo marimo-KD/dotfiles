@@ -350,6 +350,13 @@ let hostconfig = config;
       privateNetwork = true;
       hostBridge = "containers0";
       localAddress = "${silverbulletAddress}/24";
+      bindMounts = {
+        env = {
+          mountPoint = "/mnt/silverbullet/env:idmap";
+          hostPath = "/home/marimo/.silverbullet.env";
+          isReadOnly = true;
+        };
+      };
       config = {config, pkgs, lib, ...}: {
         nixpkgs.overlays = [
           (final: prev: {
@@ -362,6 +369,7 @@ let hostconfig = config;
           listenAddress = silverbulletAddress;
           listenPort = silverbulletPort;
           openFirewall = true;
+          envFile = "/mnt/silverbullet/env";
         };
         networking = {
           firewall.enable = true;
