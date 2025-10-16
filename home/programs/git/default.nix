@@ -10,6 +10,7 @@
       ".dir-locals.el"
       ".dir-locals-2.el"
       ".direnv"
+      ".DS_Store"
     ];
     extraConfig = {
       ghq.root = "~/src";

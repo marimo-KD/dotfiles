@@ -9,15 +9,17 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    # xremap.url = "github:xremap/nix-flake";
-    # nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
-    # musnix = {
-    #  url = "github:musnix/musnix";
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #};
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+    papis = {
+      url = "github:papis/papis";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    papis-zotero = {
+      url = "github:papis/papis-zotero";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -41,7 +43,6 @@
               inputs.emacs-overlay.overlay
             ];
           }
-          # inputs.musnix.nixosModules.musnix
           ./hosts/monix
         ];
       };
@@ -84,7 +85,6 @@
             home-manager.useUserPackages = true;
             home-manager.users.marimo = import ./home/darwin.nix;
             nixpkgs.overlays = [
-              # inputs.nixpkgs-firefox-darwin.overlay
               inputs.emacs-overlay.overlay
               (final: prev: {
                 ghostscript = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.ghostscript;
