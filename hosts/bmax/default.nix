@@ -21,6 +21,8 @@ let hostconfig = config;
   postgresqlExporterPort = 9115;
   minifluxAddress = "192.168.100.15";
   minifluxPort = 8080;
+  webdavAddress = "192.168.100.16";
+  webdavPort = 6065;
   container-extraHosts = ''
     ${hostAddress} host
     ${dnsAddress} dns.containers
@@ -31,6 +33,7 @@ let hostconfig = config;
     ${silverbulletAddress} silverbullet.containers
     ${postgresqlAddress} postgresql.containers
     ${minifluxAddress} miniflux.containers
+    ${webdavAddress} webdav.containers
   '';
   in
 {
@@ -200,6 +203,20 @@ let hostconfig = config;
               useACMEHost = "aegagropila.org";
               locations."/" = {
                 proxyPass = "http://miniflux.containers:${toString minifluxPort}";
+              };
+            };
+            "webdav.aegagropila.org" = {
+              forceSSL = true;
+              useACMEHost = "aegagropila.org";
+              locations."/" = {
+                proxyPass = "http://webdav.containers:${toString webdavPort}";
+                extraConfig = ''
+                  set $dest $http_destination;
+                  if ($http_destination ~ "^https://webdav.aegagropila.org(?<path>(.+))") {
+                    set $dest /$path;
+                  }
+                  proxy_set_header Destination $dest;
+                '';
               };
             };
           };
@@ -455,6 +472,53 @@ let hostconfig = config;
         networking = {
           firewall.enable = true;
           firewall.allowedTCPPorts = [ minifluxPort ];
+          nameservers = [ dnsAddress ];
+          defaultGateway = hostAddress;
+        };
+      };
+    };
+    webdav = {
+      autoStart = true;
+      privateUsers = "pick";
+      privateNetwork = true;
+      hostBridge = "containers0";
+      localAddress = "${webdavAddress}/24";
+      bindMounts = {
+        credentials = {
+          mountPoint = "/mnt/webdav:idmap";
+          hostPath = "/home/marimo/.webdav.env";
+          isReadOnly = true;
+        };
+      };
+      config = {config, pkgs, lib, ...}: {
+        system.stateVersion = "25.05";
+        services.webdav = {
+          enable = true;
+          environmentFile = /mnt/webdav;
+          settings = {
+            address = webdavAddress;
+            port = webdavPort;
+            prefix = "/";
+            behindProxy = true;
+            directory = "/data";
+            permissions = "R";
+            users = [
+              {
+                username = "{ENV}ZOTERO_USERNAME";
+                password = "{ENV}ZOTERO_PASSWORD";
+                rules = [
+                  {
+                    path = "/zotero/";
+                    permissions = "CRUD";
+                  }
+                ];
+              }
+            ];
+          };
+        };
+        networking = {
+          firewall.enable = true;
+          firewall.allowedTCPPorts = [ webdavPort ];
           nameservers = [ dnsAddress ];
           defaultGateway = hostAddress;
         };
