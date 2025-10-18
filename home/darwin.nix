@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{pkgs, inputs, ...}: {
   home = rec {
     username = "marimo";
     homeDirectory = "/Users/${username}";

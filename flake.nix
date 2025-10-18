@@ -73,7 +73,7 @@
       };
     };
     darwinConfigurations = {
-      malus = nix-darwin.lib.darwinSystem {
+      malus = nix-darwin.lib.darwinSystem rec {
         system = "aarch64-darwin";
         specialArgs = {
           inherit inputs;
@@ -83,6 +83,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = specialArgs;
             home-manager.users.marimo = import ./home/darwin.nix;
             nixpkgs.overlays = [
               inputs.emacs-overlay.overlay
