@@ -13,14 +13,6 @@
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    papis = {
-      url = "github:papis/papis";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    papis-zotero = {
-      url = "github:papis/papis-zotero";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = inputs@{self, nixpkgs-unstable, nixpkgs, nix-darwin, home-manager, ...}:
