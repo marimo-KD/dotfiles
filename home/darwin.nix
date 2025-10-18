@@ -5,7 +5,6 @@
     stateVersion = "23.11";
   };
   programs.home-manager.enable = true;
-  services.syncthing.enable = true;
   imports = [
     ./programs/alacritty
     ./programs/bash
