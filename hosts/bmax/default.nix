@@ -16,6 +16,8 @@ let hostconfig = config;
   grafanaPort = 3000;
   silverbulletAddress = "192.168.100.14";
   silverbulletPort = 7000;
+  couchdbAddress = "192.168.100.41";
+  couchdbPort = 5984;
   postgresqlAddress = "192.168.100.40";
   postgresqlPort = 5432;
   postgresqlExporterPort = 9115;
@@ -31,6 +33,7 @@ let hostconfig = config;
     ${blackboxAddress} blackbox-exporter.containers
     ${grafanaAddress} grafana.containers
     ${silverbulletAddress} silverbullet.containers
+    ${couchdbAddress} couchdb.containers
     ${postgresqlAddress} postgresql.containers
     ${minifluxAddress} miniflux.containers
     ${webdavAddress} webdav.containers
@@ -191,18 +194,24 @@ let hostconfig = config;
                 proxyPass = "http://grafana.containers:${toString grafanaPort}";
               };
             };
-            "silverbullet.aegagropila.org" = {
-              forceSSL = true;
-              useACMEHost = "aegagropila.org";
-              locations."/" = {
-                proxyPass = "http://silverbullet.containers:${toString silverbulletPort}";
-              };
-            };
             "miniflux.aegagropila.org" = {
               forceSSL = true;
               useACMEHost = "aegagropila.org";
               locations."/" = {
                 proxyPass = "http://miniflux.containers:${toString minifluxPort}";
+              };
+            };
+            "couchdb.aegagropila.org" = {
+              forceSSL = true;
+              useACMEHost = "aegagropila.org";
+              locations."/" = {
+                proxyPass = "http://couchdb.containers:${toString couchdbPort}";
+                extraConfig = ''
+                  proxy_redirect off;
+                  proxy_buffering off;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                '';
               };
             };
             "webdav.aegagropila.org" = {
@@ -361,40 +370,6 @@ let hostconfig = config;
         };
       };
     };
-    silverbullet = {
-      autoStart = true;
-      privateUsers = "pick";
-      privateNetwork = true;
-      hostBridge = "containers0";
-      localAddress = "${silverbulletAddress}/24";
-      bindMounts = {
-        env = {
-          mountPoint = "/mnt/silverbullet/env:idmap";
-          hostPath = "/home/marimo/.silverbullet.env";
-          isReadOnly = true;
-        };
-      };
-      config = {config, pkgs, lib, ...}: {
-        nixpkgs.overlays = [
-          (final: prev: {
-            silverbullet = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.silverbullet;
-          })
-        ];
-        system.stateVersion = "25.05";
-        services.silverbullet = {
-          enable = true;
-          listenAddress = silverbulletAddress;
-          listenPort = silverbulletPort;
-          openFirewall = true;
-          envFile = "/mnt/silverbullet/env";
-        };
-        networking = {
-          firewall.enable = true;
-          nameservers = [ dnsAddress ];
-          defaultGateway = hostAddress;
-        };
-      };
-    };
     postgresql = {
       autoStart = true;
       privateUsers = "pick";
@@ -440,6 +415,52 @@ let hostconfig = config;
           nameservers = [ dnsAddress ];
           defaultGateway = hostAddress;
         };
+      };
+    };
+    couchdb = {
+      autoStart = true;
+      privateUsers = "pick";
+      privateNetwork = true;
+      hostBridge = "containers0";
+      localAddress = "${couchdbAddress}/24";
+      config = {...}: {
+        system.stateVersion = "25.05";
+        services.couchdb = {
+          enable = true;
+          port = couchdbPort;
+          adminPass = "admin";
+          extraConfig = {
+            couchdb = {
+              single_node = true;
+              max_document_size = 50000000;
+            };
+            chttpd = {
+              require_valid_user = true;
+              max_http_request_size = 4294967296;
+            };
+            chttpd_auth = {
+              require_valid_user = true;
+              authentication_redirect = "/_utils/session.html";
+            };
+            httpd = {
+              WWW-Authenticate = "Basic realm=\"couchdb\"";
+              enable_cors = true;
+            };
+            cors = {
+              origins = "app://obsidian.md,capacitor://localhost,http://localhost";
+              credentials = true;
+              headers = "accept, authorization, content-type, origin, referer";
+              methods = "GET, PUT, POST, HEAD, DELETE";
+              max_age = 3600;
+            };
+          };
+        };
+        networking = {
+          firewall.enable = true;
+          firewall.allowedTCPPorts = [ couchdbPort ];
+          nameservers = [ dnsAddress ];
+          defaultGateway = hostAddress;
+        }
       };
     };
     miniflux = {
