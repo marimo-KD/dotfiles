@@ -220,6 +220,8 @@ let hostconfig = config;
               locations."/" = {
                 proxyPass = "http://webdav.containers:${toString webdavPort}";
                 extraConfig = ''
+                  proxy_set_header REMOTE-HOST $remote_addr;
+                  proxy_redirect off;
                   set $dest $http_destination;
                   if ($http_destination ~ "^https://webdav.aegagropila.org(?<path>(.+))") {
                     set $dest /$path;
@@ -525,8 +527,8 @@ let hostconfig = config;
             permissions = "R";
             users = [
               {
-                username = "{ENV}ZOTERO_USERNAME";
-                password = "{ENV}ZOTERO_PASSWORD";
+                username = "{env}ZOTERO_USERNAME";
+                password = "{env}ZOTERO_PASSWORD";
                 rules = [
                   {
                     path = "/zotero/";
