@@ -29,8 +29,8 @@
   };
 
   services.tailscale = {
-    enable = true;
-    overrideLocalDns = true;
+    # enable = true;
+    # overrideLocalDns = true;
   };
 
   fonts.packages = with pkgs; [

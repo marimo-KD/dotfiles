@@ -34,6 +34,7 @@
   home.packages = with pkgs; [
     nixd
     typst
+    tinymist
     gnuplot
     slack
     lean4
