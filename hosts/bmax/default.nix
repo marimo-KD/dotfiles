@@ -18,9 +18,11 @@ let hostconfig = config;
   silverbulletPort = 7000;
   couchdbAddress = "192.168.100.41";
   couchdbPort = 5984;
-  postgresqlAddress = "192.168.100.40";
+  storageAddress = "192.168.100.40";
   postgresqlPort = 5432;
   postgresqlExporterPort = 9115;
+  rustfsConsolePort = 9001;
+  rustfsPort = 9000;
   minifluxAddress = "192.168.100.15";
   minifluxPort = 8080;
   webdavAddress = "192.168.100.16";
@@ -34,7 +36,9 @@ let hostconfig = config;
     ${grafanaAddress} grafana.containers
     ${silverbulletAddress} silverbullet.containers
     ${couchdbAddress} couchdb.containers
-    ${postgresqlAddress} postgresql.containers
+    ${storageAddress} postgresql.containers
+    ${storageAddress} rustfs.containers
+    ${storageAddress} storage.containers
     ${minifluxAddress} miniflux.containers
     ${webdavAddress} webdav.containers
   '';
@@ -377,7 +381,7 @@ let hostconfig = config;
       privateUsers = "pick";
       privateNetwork = true;
       hostBridge = "containers0";
-      localAddress = "${postgresqlAddress}/24";
+      localAddress = "${storageAddress}/24";
       config = {config, pkgs, lib, ...}: {
         system.stateVersion = "25.05";
         services.postgresql = {
@@ -404,12 +408,19 @@ let hostconfig = config;
         };
         services.prometheus.exporters.postgres = {
           enable = true;
-          listenAddress = postgresqlAddress;
+          listenAddress = storageAddress;
           port = postgresqlExporterPort;
           environmentFile = pkgs.writeText "exporter.env" ''
             DATA_SOURCE_USER=exporter
             DATA_SOURCE_URI=localhost:${toString postgresqlPort}/main?sslmode=disable
           '';
+        };
+        services.rustfs = {
+          enable = true;
+          port = rustfsPort;
+          consolePort = rustfsConsolePort;
+          rootCredentialsFile = null;
+          openFirewall = true;
         };
         networking = {
           firewall.enable = true;
