@@ -429,6 +429,7 @@ let hostconfig = config;
         system.stateVersion = "25.05";
         services.couchdb = {
           enable = true;
+          bindAddress = couchdbAddress;
           port = couchdbPort;
           adminPass = "admin";
           extraConfig = {
@@ -439,6 +440,7 @@ let hostconfig = config;
             chttpd = {
               require_valid_user = true;
               max_http_request_size = 4294967296;
+              enable_cors = true;
             };
             chttpd_auth = {
               require_valid_user = true;
@@ -462,7 +464,7 @@ let hostconfig = config;
           firewall.allowedTCPPorts = [ couchdbPort ];
           nameservers = [ dnsAddress ];
           defaultGateway = hostAddress;
-        }
+        };
       };
     };
     miniflux = {
