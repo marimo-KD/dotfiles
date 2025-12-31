@@ -13,6 +13,10 @@
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    rustfs = {
+      url = "github:rustfs/rustfs?ref=refs/tags/1.0.0-alpha.78";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs@{self, nixpkgs-unstable, nixpkgs, nix-darwin, home-manager, ...}:
@@ -57,6 +61,9 @@
                     )
                     old.checkFlags;
                 });
+              })
+              (_: _: {
+                rustfs = inputs.rustfs.packages.${pkgs.system}.default;
               })
             ];
           }
