@@ -13,10 +13,7 @@
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    rustfs = {
-      url = "github:rustfs/rustfs?ref=refs/tags/1.0.0-alpha.78";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    quatlet-nix.url = "github:SEIAROTg/quadlet-nix";
   };
 
   outputs = inputs@{self, nixpkgs-unstable, nixpkgs, nix-darwin, home-manager, ...}:
@@ -48,6 +45,8 @@
           inherit inputs secrets;
         };
         modules = [
+          inputs.quadlet-nix.nixosModules.quadlet
+          home-manager.nixosModules.home-manager
           {
             nixpkgs.overlays = [
               (_: prev: {
@@ -61,9 +60,6 @@
                     )
                     old.checkFlags;
                 });
-              })
-              (_: _: {
-                rustfs = inputs.rustfs.packages.${pkgs.system}.default;
               })
             ];
           }
