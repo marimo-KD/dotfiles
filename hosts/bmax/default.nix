@@ -52,6 +52,9 @@ let hostconfig = config;
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernel.sysctl = {
+    "net.ipv4.ip_unprivileged_port_start = 80";
+  };
 
   networking.hostName = "bmax"; # Define your hostname.
   networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -101,12 +104,66 @@ let hostconfig = config;
     };
   };
 
-  services.traefik = {
+  # services.traefik = {
+  #   enable = false;
+  #   dataDir = "/var/lib/traefik";
+  #   environmentFiles = [ "/home/marimo/.acme-credentials/env" ];
+  #   group = "podman";
+  #   staticConfigOptions = {
+  #     web = {
+  #       address = ":80";
+  #       asDefault = true;
+  #       http.redirections.entrypoint = {
+  #         to = "websecure";
+  #         scheme = "https";
+  #       };
+  #     };
+  #     websecure = {
+  #       address = ":443";
+  #       asDefault = true;
+  #       http.tls.certResolver = "letsencrypt";
+  #     };
+  #     certificationResolvers.letsencrypt.acme = {
+  #       email = secrets.acme.email;
+  #       storage = "${config.services.traefik.dataDir}/acme.json";
+  #       caServer = "https://acme-staging-v02.api.letsencrypt.org/directory";
+  #       dnsChallenge = {
+  #         provider = "cloudflare";
+  #         resolvers = ["1.1.1.1:53" "8.8.8.8:53"];
+  #       };
+  #     };
+  #     providers.docker = {
+  #       endpoint = "unix:///run/user/${toString config.users.users.podman.uid}/podman/podman.sock";
+  #       exposedByDefault = false;
+  #     };
+  #     api.dashboard = true;
+  #   };
+  # };
+
+  services.prometheus.exporters.node = {
     enable = true;
-    dataDir = "/var/lib/traefik";
-    environmentFiles = [ "/home/marimo/.acme-credentials/env" ];
-    group = "podman";
-    staticConfigOptions = {
+    port = 9000;
+    enabledCollectors = ["systemd"];
+    listenAddress = hostAddress;
+  };
+
+  security.polkit.enable = true;
+
+  networking = {
+    useDHCP = false;
+    interfaces."enp2s0".useDHCP = true;
+    firewall = {
+      enable = true;
+      trustedInterfaces = [ "tailscale0" ]; # allow connections come from tailscale network.
+    };
+  };
+
+  virtualisation.quadlet.enable = true;
+
+  home-manager.users.podman = {pkgs, homeconfig, ...}: {
+    imports = [ inputs.quadlet-nix.homeManagerModules.quadlet ];
+    home.stateVersion = "25.05";
+    home.file."traefik.yml".text = (pkgs.formats.yaml {}).generate "traefik-config" {
       web = {
         address = ":80";
         asDefault = true;
@@ -122,7 +179,7 @@ let hostconfig = config;
       };
       certificationResolvers.letsencrypt.acme = {
         email = secrets.acme.email;
-        storage = "${config.services.traefik.dataDir}/acme.json";
+        storage = "/etc/traefik/certificate/wildcard/acme.json";
         caServer = "https://acme-staging-v02.api.letsencrypt.org/directory";
         dnsChallenge = {
           provider = "cloudflare";
@@ -130,50 +187,32 @@ let hostconfig = config;
         };
       };
       providers.docker = {
-        endpoint = "unix://run/user/${toString config.users.users.podman.uid}/podman/podman.sock";
         exposedByDefault = false;
       };
       api.dashboard = true;
     };
-  };
-
-  services.prometheus.exporters.node = {
-    enable = true;
-    port = 9000;
-    enabledCollectors = ["systemd"];
-    listenAddress = hostAddress;
-  };
-
-  security.polkit.enable = true;
-
-  networking = {
-    bridges.containers0.interfaces = [];
-    useDHCP = false;
-    interfaces."enp2s0".useDHCP = true;
-    interfaces."containers0".ipv4.addresses = [{
-      address = hostAddress;
-      prefixLength = 24;
-    }];
-    firewall = {
-      enable = true;
-      trustedInterfaces = [ "tailscale0" "containers0"]; # allow connections come from tailscale network.
-    };
-    nat = {
-      enable = true;
-      internalInterfaces = [ "containers0" ];
-      externalInterface = "enp2s0";
-    };
-  };
-
-  virtualisation.quadlet.enable = true;
-
-  home-manager.users.podman = {pkgs, config, ...}: {
-    imports = [ inputs.quadlet-nix.homeManagerModules.quadlet ];
-    home.stateVersion = "25.05";
     virtualisation.quadlet = let
       inherit (config.virtualisation.quadlet) networks pods volumes;
     in {
-      
+      containers = {
+        traefik = {
+          containerConfig = {
+            image = "docker.com/library/traefik:v3.6.6";
+            publishPorts = [ "80:80" "443:443" "8080:8080" ];
+            networks = [ "podman" ];
+            environmentFiles = [
+              "${homeconfig.home.homeDirectory}/acme-cf-dns-api-token"
+            ];
+            volumes = [
+              "/run/user/${toString config.users.users.podman.uid}/podman/podman.sock:/var/run/docker.sock:ro"
+              "${homeconfig.home.homeDirectory}/traefik.yml:/etc/traefik/traefik.yml:ro"
+            ];
+            labels = {
+              
+            };
+          }; 
+        };
+      };
     };
   };
 
