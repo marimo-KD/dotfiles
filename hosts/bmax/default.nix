@@ -72,9 +72,13 @@ let hostconfig = config;
     isSystemUser = true;
     home = "/var/lib/podman";
     createHome = true;
+    group = "podman";
+    uid = 993;
     linger = true;
     autoSubUidGidRange = true;
   };
+
+  users.groups.podman = {};
 
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
@@ -101,6 +105,7 @@ let hostconfig = config;
     enable = true;
     dataDir = "/var/lib/traefik";
     environmentFiles = [ "/home/marimo/.acme-credentials/env" ];
+    group = "podman";
     staticConfigOptions = {
       web = {
         address = ":80";
@@ -125,7 +130,7 @@ let hostconfig = config;
         };
       };
       providers.docker = {
-        endpoint = "";
+        endpoint = "unix://run/user/${toString config.users.users.podman.uid}/podman/podman.sock";
         exposedByDefault = false;
       };
       api.dashboard = true;
@@ -160,8 +165,11 @@ let hostconfig = config;
     };
   };
 
+  virtualisation.quadlet.enable = true;
+
   home-manager.users.podman = {pkgs, config, ...}: {
     imports = [ inputs.quadlet-nix.homeManagerModules.quadlet ];
+    home.stateVersion = "25.05";
     virtualisation.quadlet = let
       inherit (config.virtualisation.quadlet) networks pods volumes;
     in {

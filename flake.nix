@@ -13,7 +13,7 @@
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    quatlet-nix.url = "github:SEIAROTg/quadlet-nix";
+    quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
   };
 
   outputs = inputs@{self, nixpkgs-unstable, nixpkgs, nix-darwin, home-manager, ...}:
