@@ -384,6 +384,7 @@ let hostconfig = config;
       localAddress = "${storageAddress}/24";
       config = {config, pkgs, lib, ...}: {
         system.stateVersion = "25.05";
+        imports = [ ../../modules/rustfs ];
         services.postgresql = {
           enable = true;
           enableJIT = true;
@@ -417,6 +418,9 @@ let hostconfig = config;
         };
         services.rustfs = {
           enable = true;
+          package = inputs.rustfs.packages.${pkgs.system}.default;
+          address = storageAddress;
+          consoleAddress = storageAddress;
           port = rustfsPort;
           consolePort = rustfsConsolePort;
           rootCredentialsFile = null;

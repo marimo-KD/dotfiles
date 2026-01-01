@@ -15,7 +15,6 @@
     };
     rustfs = {
       url = "github:rustfs/rustfs?ref=refs/tags/1.0.0-alpha.78";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -61,9 +60,6 @@
                     )
                     old.checkFlags;
                 });
-              })
-              (_: _: {
-                rustfs = inputs.rustfs.packages.${pkgs.system}.default;
               })
             ];
           }
