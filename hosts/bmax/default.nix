@@ -71,6 +71,10 @@ let hostconfig = config;
     extraGroups = ["wheel"];
   };
 
+  home-manager.users.marimo = {
+    imports = [ ../../home/programs/helix ];
+  };
+
   users.users.podman = {
     isSystemUser = true;
     home = "/var/lib/podman";
@@ -103,42 +107,6 @@ let hostconfig = config;
       credentialsFile = "/home/marimo/.cloudflared/3cbf78f1-2bb7-482d-99ea-e7dd3994d0c9.json";
     };
   };
-
-  # services.traefik = {
-  #   enable = false;
-  #   dataDir = "/var/lib/traefik";
-  #   environmentFiles = [ "/home/marimo/.acme-credentials/env" ];
-  #   group = "podman";
-  #   staticConfigOptions = {
-  #     web = {
-  #       address = ":80";
-  #       asDefault = true;
-  #       http.redirections.entrypoint = {
-  #         to = "websecure";
-  #         scheme = "https";
-  #       };
-  #     };
-  #     websecure = {
-  #       address = ":443";
-  #       asDefault = true;
-  #       http.tls.certResolver = "letsencrypt";
-  #     };
-  #     certificationResolvers.letsencrypt.acme = {
-  #       email = secrets.acme.email;
-  #       storage = "${config.services.traefik.dataDir}/acme.json";
-  #       caServer = "https://acme-staging-v02.api.letsencrypt.org/directory";
-  #       dnsChallenge = {
-  #         provider = "cloudflare";
-  #         resolvers = ["1.1.1.1:53" "8.8.8.8:53"];
-  #       };
-  #     };
-  #     providers.docker = {
-  #       endpoint = "unix:///run/user/${toString config.users.users.podman.uid}/podman/podman.sock";
-  #       exposedByDefault = false;
-  #     };
-  #     api.dashboard = true;
-  #   };
-  # };
 
   services.prometheus.exporters.node = {
     enable = true;
@@ -176,12 +144,17 @@ let hostconfig = config;
         websecure = {
           address = ":443";
           asDefault = true;
-          http.tls.certResolver = "letsencrypt";
+          http.tls = {
+            certResolver = "letsencrypt";
+            domains = {
+              main = "aegagropila.org";
+              sans = "*.aegagropila.org";
+            };
         };
       };
       certificatesResolvers.letsencrypt.acme = {
         email = secrets.acme.email;
-        storage = "/etc/traefik/certificate/wildcard/acme.json";
+        storage = "/etc/traefik/acme.json";
         caServer = "https://acme-staging-v02.api.letsencrypt.org/directory";
         dnsChallenge = {
           provider = "cloudflare";
@@ -225,6 +198,23 @@ let hostconfig = config;
               "traefik.http.routers.dashboard.rule" = "PathPrefix(`/traefik`)";
             };
           }; 
+        };
+        pihole = {
+          containerConfig = {
+            image = "docker.io/pihole/pihole:2025.11.1";
+            publishPorts = [ "53:53/tcp" "53:53/udp" "8081:80" ];
+            environmentFiles = [
+              "${config.home.homeDirectory}/pihole-env"
+            ];
+            volumes = [
+              "${config.home.homeDirectory}/pihole:/etc/pihole"
+            ];
+            labels = {
+              "traefik.enable" = "true";
+              "traefik.http.routers.pihole.entrypoints" = "websecure";
+              "traefik.http.routers.pihole.rule" = "Host(`pihole.aegagropila.org`)"
+            };
+          };
         };
       };
     };
