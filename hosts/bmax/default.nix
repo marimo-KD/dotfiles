@@ -53,7 +53,7 @@ let hostconfig = config;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernel.sysctl = {
-    "net.ipv4.ip_unprivileged_port_start = 80";
+    "net.ipv4.ip_unprivileged_port_start" = 80;
   };
 
   networking.hostName = "bmax"; # Define your hostname.
@@ -160,36 +160,48 @@ let hostconfig = config;
 
   virtualisation.quadlet.enable = true;
 
-  home-manager.users.podman = {pkgs, homeconfig, ...}: {
+  home-manager.users.podman = {pkgs, config, ...}: {
     imports = [ inputs.quadlet-nix.homeManagerModules.quadlet ];
     home.stateVersion = "25.05";
-    home.file."traefik.yml".text = (pkgs.formats.yaml {}).generate "traefik-config" {
-      web = {
-        address = ":80";
-        asDefault = true;
-        http.redirections.entrypoint = {
-          to = "websecure";
-          scheme = "https";
+    home.file."traefik.yml".source = (pkgs.formats.yaml {}).generate "traefik-config" {
+      entryPoints = {
+        web = {
+          address = ":80";
+          asDefault = true;
+          http.redirections.entrypoint = {
+            to = "websecure";
+            scheme = "https";
+          };
+        };
+        websecure = {
+          address = ":443";
+          asDefault = true;
+          http.tls.certResolver = "letsencrypt";
         };
       };
-      websecure = {
-        address = ":443";
-        asDefault = true;
-        http.tls.certResolver = "letsencrypt";
-      };
-      certificationResolvers.letsencrypt.acme = {
+      certificatesResolvers.letsencrypt.acme = {
         email = secrets.acme.email;
         storage = "/etc/traefik/certificate/wildcard/acme.json";
         caServer = "https://acme-staging-v02.api.letsencrypt.org/directory";
         dnsChallenge = {
           provider = "cloudflare";
           resolvers = ["1.1.1.1:53" "8.8.8.8:53"];
+          propagation = {
+            delayBeforeChecks = "60s";
+            disableChecks = true;
+          };
         };
+      };
+      log = {
+        level = "DEBUG";
+        filePath = "/etc/traefik/traefik.log";
+        format = "common";
       };
       providers.docker = {
         exposedByDefault = false;
       };
       api.dashboard = true;
+      api.insecure = true;
     };
     virtualisation.quadlet = let
       inherit (config.virtualisation.quadlet) networks pods volumes;
@@ -197,18 +209,20 @@ let hostconfig = config;
       containers = {
         traefik = {
           containerConfig = {
-            image = "docker.com/library/traefik:v3.6.6";
+            image = "docker.io/library/traefik:v3.6.6";
             publishPorts = [ "80:80" "443:443" "8080:8080" ];
             networks = [ "podman" ];
             environmentFiles = [
-              "${homeconfig.home.homeDirectory}/acme-cf-dns-api-token"
+              "${config.home.homeDirectory}/acme-cf-dns-api-token"
             ];
             volumes = [
-              "/run/user/${toString config.users.users.podman.uid}/podman/podman.sock:/var/run/docker.sock:ro"
-              "${homeconfig.home.homeDirectory}/traefik.yml:/etc/traefik/traefik.yml:ro"
+              "/run/user/${toString hostconfig.users.users.podman.uid}/podman/podman.sock:/var/run/docker.sock:ro"
+              "${config.home.homeDirectory}/traefik.yml:/etc/traefik/traefik.yml:ro"
             ];
             labels = {
-              
+              "traefik.enable" = "true";
+              "traefik.http.routers.dashboard.service" = "api@internal";
+              "traefik.http.routers.dashboard.rule" = "PathPrefix(`/traefik`)";
             };
           }; 
         };
