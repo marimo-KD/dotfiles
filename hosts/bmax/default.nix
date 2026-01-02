@@ -181,12 +181,17 @@ let hostconfig = config;
     virtualisation.quadlet = let
       inherit (config.virtualisation.quadlet) networks pods volumes;
     in {
+      networks = {
+        internal.networkConfig = {
+          subnets = [ "10.0.111.1/24" ];
+        };
+      };
       containers = {
         traefik = {
           containerConfig = {
             image = "docker.io/library/traefik:v3.6.6";
             publishPorts = [ "80:80" "443:443" "8080:8080" ];
-            networks = [ "podman" ];
+            networks = [ networks.internal.ref ];
             environmentFiles = [
               "${config.home.homeDirectory}/acme-cf-dns-api-token"
             ];
@@ -198,6 +203,7 @@ let hostconfig = config;
               "traefik.enable" = "true";
               "traefik.http.routers.dashboard.service" = "api@internal";
               "traefik.http.routers.dashboard.rule" = "PathPrefix(`/traefik`)";
+              "traefik.http.routers.dashboard.entrypoints" = "websecure";
             };
           }; 
         };
@@ -205,6 +211,7 @@ let hostconfig = config;
           containerConfig = {
             image = "docker.io/pihole/pihole:2025.11.1";
             publishPorts = [ "53:53/tcp" "53:53/udp" "8081:80" ];
+            networks = [ networks.internal.ref ];
             environmentFiles = [
               "${config.home.homeDirectory}/pihole-env"
             ];
