@@ -147,10 +147,6 @@ let hostconfig = config;
           asDefault = true;
           http.tls = {
             certResolver = "letsencrypt";
-            domains = {
-              main = "aegagropila.org";
-              sans = "*.aegagropila.org";
-            };
           };
         };
       };
@@ -204,6 +200,7 @@ let hostconfig = config;
               "traefik.http.routers.dashboard.service" = "api@internal";
               "traefik.http.routers.dashboard.rule" = "Host(`traefik.aegagropila.org`)";
               "traefik.http.routers.dashboard.entrypoints" = "websecure";
+              "traefik.http.routers.dashboard.tls.domains[0].main" = "*.aegagropila.org";
             };
           }; 
         };
@@ -222,6 +219,7 @@ let hostconfig = config;
               "traefik.enable" = "true";
               "traefik.http.routers.pihole.entrypoints" = "websecure";
               "traefik.http.routers.pihole.rule" = "Host(`pihole.aegagropila.org`)";
+              "traefik.http.services.pihole.loadbalancer.server.port" = "80";
             };
           };
         };
