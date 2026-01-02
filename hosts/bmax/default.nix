@@ -157,10 +157,6 @@ let hostconfig = config;
         dnsChallenge = {
           provider = "cloudflare";
           resolvers = ["1.1.1.1:53" "8.8.8.8:53"];
-          propagation = {
-            delayBeforeChecks = "60s";
-            disableChecks = true;
-          };
         };
       };
       log = {
@@ -200,7 +196,9 @@ let hostconfig = config;
               "traefik.http.routers.dashboard.service" = "api@internal";
               "traefik.http.routers.dashboard.rule" = "Host(`traefik.aegagropila.org`)";
               "traefik.http.routers.dashboard.entrypoints" = "websecure";
-              "traefik.http.routers.dashboard.tls.domains[0].main" = "*.aegagropila.org";
+              "traefik.http.routers.dashboard.tls.certresolver" = "letsencrypt";
+              "traefik.http.routers.dashboard.tls.domains[0].main" = "aegagropila.org";
+              "traefik.http.routers.dashboard.tls.domains[0].sans" = "*.aegagropila.org";
             };
           }; 
         };
@@ -219,6 +217,8 @@ let hostconfig = config;
               "traefik.enable" = "true";
               "traefik.http.routers.pihole.entrypoints" = "websecure";
               "traefik.http.routers.pihole.rule" = "Host(`pihole.aegagropila.org`)";
+              "traefik.http.routers.tls" = "true";
+              "traefik.http.routers.tls.certresolver" = "letsencrypt";
               "traefik.http.services.pihole.loadbalancer.server.port" = "80";
             };
           };
