@@ -71,8 +71,9 @@ let hostconfig = config;
     extraGroups = ["wheel"];
   };
 
-  home-manager.users.marimo = {
-    imports = [ ../../home/programs/helix ];
+  home-manager.users.marimo = {...}: {
+    import = [ ../../home/programs/helix ];
+    home.stateVersion = "25.05";
   };
 
   users.users.podman = {
@@ -150,6 +151,7 @@ let hostconfig = config;
               main = "aegagropila.org";
               sans = "*.aegagropila.org";
             };
+          };
         };
       };
       certificatesResolvers.letsencrypt.acme = {
@@ -212,7 +214,7 @@ let hostconfig = config;
             labels = {
               "traefik.enable" = "true";
               "traefik.http.routers.pihole.entrypoints" = "websecure";
-              "traefik.http.routers.pihole.rule" = "Host(`pihole.aegagropila.org`)"
+              "traefik.http.routers.pihole.rule" = "Host(`pihole.aegagropila.org`)";
             };
           };
         };
