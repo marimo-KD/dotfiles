@@ -53,7 +53,7 @@ let hostconfig = config;
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernel.sysctl = {
-    "net.ipv4.ip_unprivileged_port_start" = 80;
+    "net.ipv4.ip_unprivileged_port_start" = 0;
   };
 
   networking.hostName = "bmax"; # Define your hostname.
@@ -72,7 +72,7 @@ let hostconfig = config;
   };
 
   home-manager.users.marimo = {...}: {
-    import = [ ../../home/programs/helix ];
+    imports = [ ../../home/programs/helix ];
     home.stateVersion = "25.05";
   };
 
@@ -110,7 +110,7 @@ let hostconfig = config;
   };
 
   services.prometheus.exporters.node = {
-    enable = true;
+    enable = false;
     port = 9000;
     enabledCollectors = ["systemd"];
     listenAddress = hostAddress;
@@ -191,7 +191,7 @@ let hostconfig = config;
           containerConfig = {
             image = "docker.io/library/traefik:v3.6.6";
             publishPorts = [ "80:80" "443:443" "8080:8080" ];
-            networks = [ networks.internal.ref ];
+            networks = [ "podman" networks.internal.ref ];
             environmentFiles = [
               "${config.home.homeDirectory}/acme-cf-dns-api-token"
             ];
@@ -202,7 +202,7 @@ let hostconfig = config;
             labels = {
               "traefik.enable" = "true";
               "traefik.http.routers.dashboard.service" = "api@internal";
-              "traefik.http.routers.dashboard.rule" = "PathPrefix(`/traefik`)";
+              "traefik.http.routers.dashboard.rule" = "Host(`traefik.aegagropila.org`)";
               "traefik.http.routers.dashboard.entrypoints" = "websecure";
             };
           }; 
@@ -211,7 +211,7 @@ let hostconfig = config;
           containerConfig = {
             image = "docker.io/pihole/pihole:2025.11.1";
             publishPorts = [ "53:53/tcp" "53:53/udp" "8081:80" ];
-            networks = [ networks.internal.ref ];
+            networks = [ "podman" networks.internal.ref ];
             environmentFiles = [
               "${config.home.homeDirectory}/pihole-env"
             ];
