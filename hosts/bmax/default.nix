@@ -133,7 +133,7 @@ let hostconfig = config;
     imports = [ inputs.quadlet-nix.homeManagerModules.quadlet ];
     home.stateVersion = "25.05";
     virtualisation.quadlet = let
-      inherit (config.virtualisation.quadlet) networks pods volumes;
+      inherit (config.virtualisation.quadlet) networks pods volumes builds;
       traefik-config = (pkgs.formats.yaml {}).generate "traefik-config" {
         entryPoints = {
           web = {
@@ -155,23 +155,24 @@ let hostconfig = config;
         certificatesResolvers.letsencrypt.acme = {
           email = secrets.acme.email;
           storage = "/etc/traefik/acme.json";
-          caServer = "https://acme-staging-v02.api.letsencrypt.org/directory";
+          # caServer = "https://acme-staging-v02.api.letsencrypt.org/directory";
+          caServer = "https://acme-v02.api.letsencrypt.org/directory";
           dnsChallenge = {
             provider = "cloudflare";
             resolvers = ["1.1.1.1:53" "8.8.8.8:53"];
           };
         };
         log = {
-          level = "DEBUG";
-          filePath = "/etc/traefik/traefik.log";
+          level = "INFO";
           format = "common";
         };
         providers.docker = {
           exposedByDefault = false;
+          watch = true;
         };
         api.dashboard = true;
       };
-      couchdb-config = (pkgs.format.ini {}).generate "couchdb-config" {
+      couchdb-config = (pkgs.formats.ini {}).generate "couchdb-config" {
         couchdb = {
           single_node = true;
           max_document_size = 50000000;
@@ -196,6 +197,12 @@ let hostconfig = config;
           max_age = 3600;
         };
       };
+      couchdb-containerfile = pkgs.writeText "Containerfile" ''
+        FROM docker.io/library/couchdb:3
+        RUN cat <<-EOF > /opt/couchdb/etc/local.ini
+        ${couchdb-config.text}
+        EOF
+      '';
     in {
       networks = {
         internal.networkConfig = {
@@ -208,13 +215,13 @@ let hostconfig = config;
           device = "${config.home.homeDirectory}/pihole";
         };
         couchdb-datastore.volumeConfig = {
-          type = "bind";
-          device = "${config.home.homeDirectory}/couchdb/data";
         };
         couchdb-locald.volumeConfig = {
-          type = "bind";
-          device = "${config.home.homeDirectory}/couchdb/local.d";
         };
+      };
+      builds.couchdb.buildConfig = {
+        file = couchdb-containerfile.outPath;
+        workdir = "/";
       };
       containers = {
         traefik.containerConfig = {
@@ -259,14 +266,13 @@ let hostconfig = config;
           };
         };
         couchdb.containerConfig = {
-          image = "docker.io/library/couchdb:3";
+          image = builds.couchdb.ref;
           networks = [ "podman" networks.internal.ref ];
           environments = {
             "COUCHDB_USER" = secrets.couchdb.user;
             "COUCHDB_PASSWORD" = secrets.couchdb.password;
           };
           volumes = [
-            "${couchdb-config}:/opt/couchdb/etc/local.ini:ro"
             "${volumes.couchdb-datastore.ref}:/opt/couchdb/data"
             "${volumes.couchdb-locald.ref}:/opt/couchdb/etc/local.d"
           ];
