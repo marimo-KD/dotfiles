@@ -47,6 +47,7 @@
         modules = [
           inputs.quadlet-nix.nixosModules.quadlet
           home-manager.nixosModules.home-manager
+          { home-manager.extraSpecialArgs = { inherit secrets; }; }
           {
             nixpkgs.overlays = [
               (_: prev: {
