@@ -38,9 +38,10 @@
     gnuplot
     slack
     lean4
+    julia-lts
     (prismlauncher.override {
       jdks = [
-        graalvm-ce
+        graalvmPackages.graalvm-ce
         zulu8
         zulu17
         zulu
