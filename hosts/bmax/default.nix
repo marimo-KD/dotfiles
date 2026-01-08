@@ -3,46 +3,6 @@
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
 { inputs, config, lib, pkgs, secrets, ... }:
-let hostconfig = config;
-  hostAddress = "192.168.100.1";
-  dnsAddress = "192.168.100.100";
-  nginxAddress = "192.168.100.101";
-  nginxExporterPort = 9113;
-  prometheusAddress = "192.168.100.11";
-  prometheusPort = 9090;
-  blackboxAddress = "192.168.100.31";
-  blackboxPort = 9115;
-  grafanaAddress = "192.168.100.12";
-  grafanaPort = 3000;
-  silverbulletAddress = "192.168.100.14";
-  silverbulletPort = 7000;
-  couchdbAddress = "192.168.100.41";
-  couchdbPort = 5984;
-  storageAddress = "192.168.100.40";
-  postgresqlPort = 5432;
-  postgresqlExporterPort = 9115;
-  rustfsConsolePort = 9001;
-  rustfsPort = 9000;
-  minifluxAddress = "192.168.100.15";
-  minifluxPort = 8080;
-  webdavAddress = "192.168.100.16";
-  webdavPort = 6065;
-  container-extraHosts = ''
-    ${hostAddress} host
-    ${dnsAddress} dns.containers
-    ${nginxAddress} nginx.containers
-    ${prometheusAddress} prometheus.containers
-    ${blackboxAddress} blackbox-exporter.containers
-    ${grafanaAddress} grafana.containers
-    ${silverbulletAddress} silverbullet.containers
-    ${couchdbAddress} couchdb.containers
-    ${storageAddress} postgresql.containers
-    ${storageAddress} rustfs.containers
-    ${storageAddress} storage.containers
-    ${minifluxAddress} miniflux.containers
-    ${webdavAddress} webdav.containers
-  '';
-  in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -113,7 +73,6 @@ let hostconfig = config;
     enable = false;
     port = 9000;
     enabledCollectors = ["systemd"];
-    listenAddress = hostAddress;
   };
 
   security.polkit.enable = true;
@@ -130,158 +89,17 @@ let hostconfig = config;
   virtualisation.quadlet.enable = true;
 
   home-manager.users.podman = {pkgs, config, ...}: {
-    imports = [ inputs.quadlet-nix.homeManagerModules.quadlet ];
+    imports = [
+      inputs.quadlet-nix.homeManagerModules.quadlet
+      "./containers/traefik.nix"
+      "./containers/pihole.nix"
+      "./containers/couchdb.nix"
+    ];
     home.stateVersion = "25.05";
-    virtualisation.quadlet = let
-      inherit (config.virtualisation.quadlet) networks pods volumes builds;
-      traefik-config = (pkgs.formats.yaml {}).generate "traefik-config" {
-        entryPoints = {
-          web = {
-            address = ":80";
-            asDefault = true;
-            http.redirections.entrypoint = {
-              to = "websecure";
-              scheme = "https";
-            };
-          };
-          websecure = {
-            address = ":443";
-            asDefault = true;
-            http.tls = {
-              certResolver = "letsencrypt";
-            };
-          };
-        };
-        certificatesResolvers.letsencrypt.acme = {
-          email = secrets.acme.email;
-          storage = "/etc/traefik/acme.json";
-          # caServer = "https://acme-staging-v02.api.letsencrypt.org/directory";
-          caServer = "https://acme-v02.api.letsencrypt.org/directory";
-          dnsChallenge = {
-            provider = "cloudflare";
-            resolvers = ["1.1.1.1:53" "8.8.8.8:53"];
-          };
-        };
-        log = {
-          level = "INFO";
-          format = "common";
-        };
-        providers.docker = {
-          exposedByDefault = false;
-          watch = true;
-        };
-        api.dashboard = true;
-      };
-      couchdb-config = (pkgs.formats.ini {}).generate "couchdb-config" {
-        couchdb = {
-          single_node = true;
-          max_document_size = 50000000;
-        };
-        chttpd = {
-          require_valid_user = true;
-          max_http_request_size = 4294967296;
-        };
-        chttpd_auth = {
-          require_valid_user = true;
-          authentication_redirect = "/_utils/session.html";
-        };
-        httpd = {
-          WWW-Authenticate = "Basic realm=\"couchdb\"";
-          enable_cors = true;
-        };
-        cors = {
-          origins = "app://obsidian.md,capacitor://localhost,http://localhost";
-          credentials = true;
-          headers = "accept, authorization, content-type, origin, referer";
-          methods = "GET, PUT, POST, HEAD, DELETE";
-          max_age = 3600;
-        };
-      };
-      couchdb-containerfile = pkgs.writeText "Containerfile" ''
-        FROM docker.io/library/couchdb:3
-        RUN cat <<-EOF > /opt/couchdb/etc/local.ini
-        ${couchdb-config.text}
-        EOF
-      '';
-    in {
+    virtualisation.quadlet = {
       networks = {
         internal.networkConfig = {
           subnets = [ "10.0.111.1/24" ];
-        };
-      };
-      volumes = {
-        pihole-store.volumeConfig = {
-          type = "bind";
-          device = "${config.home.homeDirectory}/pihole";
-        };
-        couchdb-datastore.volumeConfig = {
-        };
-        couchdb-locald.volumeConfig = {
-        };
-      };
-      builds.couchdb.buildConfig = {
-        file = couchdb-containerfile.outPath;
-        workdir = "/";
-      };
-      containers = {
-        traefik.containerConfig = {
-          image = "docker.io/library/traefik:v3.6.6";
-          publishPorts = [ "80:80" "443:443" ];
-          networks = [ "podman" networks.internal.ref ];
-          environments = {
-            "CF_DNS_API_TOKEN" = secrets.acme.cf-dns-api-token;
-          };
-          volumes = [
-            "/run/user/${toString hostconfig.users.users.podman.uid}/podman/podman.sock:/var/run/docker.sock:ro"
-            "${traefik-config}:/etc/traefik/traefik.yml:ro"
-          ];
-          labels = {
-            "traefik.enable" = "true";
-            "traefik.http.routers.dashboard.service" = "api@internal";
-            "traefik.http.routers.dashboard.rule" = "Host(`traefik.aegagropila.org`)";
-            "traefik.http.routers.dashboard.entrypoints" = "websecure";
-            "traefik.http.routers.dashboard.tls.certresolver" = "letsencrypt";
-            "traefik.http.routers.dashboard.tls.domains[0].main" = "aegagropila.org";
-            "traefik.http.routers.dashboard.tls.domains[0].sans" = "*.aegagropila.org";
-          };
-        };
-        pihole.containerConfig = {
-          image = "docker.io/pihole/pihole:2025.11.1";
-          publishPorts = [ "53:53/tcp" "53:53/udp" ];
-          networks = [ "podman" networks.internal.ref ];
-          environments = {
-            "TZ" = "Asia/Tokyo";
-            "FTLCONF_webserver_api_password" = secrets.pihole.password;
-            "FTLCONF_dns_upstreams" = "1.1.1.1;1.0.0.1";
-            "FTLCONF_misc_dnsmasq_lines" = "address=/.aegagropila.org/100.106.235.8";
-          };
-          volumes = [
-            "${volumes.pihole-store.ref}:/etc/pihole"
-          ];
-          labels = {
-            "traefik.enable" = "true";
-            "traefik.http.routers.pihole.entrypoints" = "websecure";
-            "traefik.http.routers.pihole.rule" = "Host(`pihole.aegagropila.org`)";
-            "traefik.http.services.pihole.loadbalancer.server.port" = "80";
-          };
-        };
-        couchdb.containerConfig = {
-          image = builds.couchdb.ref;
-          networks = [ "podman" networks.internal.ref ];
-          environments = {
-            "COUCHDB_USER" = secrets.couchdb.user;
-            "COUCHDB_PASSWORD" = secrets.couchdb.password;
-          };
-          volumes = [
-            "${volumes.couchdb-datastore.ref}:/opt/couchdb/data"
-            "${volumes.couchdb-locald.ref}:/opt/couchdb/etc/local.d"
-          ];
-          labels = {
-            "traefik.enable" = "true";
-            "traefik.http.routers.couchdb.entrypoints" = "websecure";
-            "traefik.http.routers.couchdb.rule" = "Host(`couchdb.aegagropila.org`)";
-            "traefik.http.services.couchdb.loadbalancer.server.port" = "5984";
-          };
         };
       };
     };
