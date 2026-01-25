@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   programs.bash = {
     enable = true;
     # affects on interactive shell only

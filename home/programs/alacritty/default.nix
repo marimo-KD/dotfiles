@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   programs.alacritty = {
     enable = true;
     settings = {
@@ -20,8 +21,15 @@
       # };
       keyboard = {
         bindings = [
-          { key = "¥"; chars = "\\\\";}
-          { key = "¥"; mods = "Alt"; chars = "\\\\";}
+          {
+            key = "¥";
+            chars = "\\\\";
+          }
+          {
+            key = "¥";
+            mods = "Alt";
+            chars = "\\\\";
+          }
         ];
       };
     };

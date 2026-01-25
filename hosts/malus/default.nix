@@ -1,5 +1,6 @@
-{pkgs, ...}:{
-  imports = [];
+{ pkgs, ... }:
+{
+  imports = [ ];
   users.users.marimo = {
     home = "/Users/marimo";
     shell = pkgs.zsh;
@@ -24,7 +25,7 @@
   environment.shells = [ pkgs.zsh ];
 
   nix.settings = {
-    trusted-users = ["marimo"];
+    trusted-users = [ "marimo" ];
     experimental-features = "nix-command flakes";
   };
 

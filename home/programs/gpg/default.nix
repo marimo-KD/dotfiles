@@ -1,4 +1,5 @@
-{pkgs, lib, ...}: lib.mkMerge [
+{ pkgs, lib, ... }:
+lib.mkMerge [
   {
     programs.gpg.enable = true;
     services.gpg-agent = {

@@ -2,12 +2,19 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ inputs, config, lib, pkgs, secrets, ... }:
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  inputs,
+  config,
+  lib,
+  pkgs,
+  secrets,
+  ...
+}:
+{
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -17,7 +24,7 @@
   };
 
   networking.hostName = "bmax"; # Define your hostname.
-  networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.wireless.enable = true; # Enables wireless support via wpa_supplicant.
 
   # Set your time zone.
   time.timeZone = "Asia/Tokyo";
@@ -28,13 +35,15 @@
   users.users.marimo = {
     isNormalUser = true;
     home = "/home/marimo";
-    extraGroups = ["wheel"];
+    extraGroups = [ "wheel" ];
   };
 
-  home-manager.users.marimo = {...}: {
-    imports = [ ../../home/programs/helix ];
-    home.stateVersion = "25.05";
-  };
+  home-manager.users.marimo =
+    { ... }:
+    {
+      imports = [ ../../home/programs/helix ];
+      home.stateVersion = "25.05";
+    };
 
   users.users.podman = {
     isSystemUser = true;
@@ -46,7 +55,7 @@
     autoSubUidGidRange = true;
   };
 
-  users.groups.podman = {};
+  users.groups.podman = { };
 
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
@@ -72,7 +81,7 @@
   services.prometheus.exporters.node = {
     enable = false;
     port = 9000;
-    enabledCollectors = ["systemd"];
+    enabledCollectors = [ "systemd" ];
   };
 
   security.polkit.enable = true;
@@ -88,21 +97,23 @@
 
   virtualisation.quadlet.enable = true;
 
-  home-manager.users.podman = {...}: {
-    imports = [
-      inputs.quadlet-nix.homeManagerModules.quadlet
-      ./containers/traefik.nix
-      ./containers/couchdb.nix
-    ];
-    home.stateVersion = "25.05";
-    virtualisation.quadlet = {
-      networks = {
-        internal.networkConfig = {
-          subnets = [ "10.0.111.1/24" ];
+  home-manager.users.podman =
+    { ... }:
+    {
+      imports = [
+        inputs.quadlet-nix.homeManagerModules.quadlet
+        ./containers/traefik.nix
+        ./containers/couchdb.nix
+      ];
+      home.stateVersion = "25.05";
+      virtualisation.quadlet = {
+        networks = {
+          internal.networkConfig = {
+            subnets = [ "10.0.111.1/24" ];
+          };
         };
       };
     };
-  };
 
   # containers = {
   #   dns = {
@@ -250,7 +261,7 @@
   #             enable_gzip = true;
   #           };
   #         };
-  #         openFirewall = true;      
+  #         openFirewall = true;
   #       };
   #       networking = {
   #         firewall.enable = true;
@@ -466,7 +477,10 @@
   nix = {
     settings = {
       auto-optimise-store = true;
-      experimental-features = ["nix-command" "flakes"];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
     };
     gc = {
       automatic = true;
@@ -476,4 +490,3 @@
   };
   nixpkgs.config.allowUnfree = true;
 }
-

@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   programs.waybar = {
     enable = true;
     style = ./style.css;
@@ -44,7 +45,11 @@
         "wireplumber" = {
           format = "{volume}% {icon}";
           format-muted = "";
-          format-icons = ["" "" ""];
+          format-icons = [
+            ""
+            ""
+            ""
+          ];
           on-click = "pwvucontrol";
         };
         "network" = {
@@ -64,7 +69,11 @@
         };
         "temperature" = {
           format = "{temperatureC}°C {icon}";
-          format-icons = ["" "" ""];
+          format-icons = [
+            ""
+            ""
+            ""
+          ];
         };
         "keyboard-state" = {
           numlock = true;

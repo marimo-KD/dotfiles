@@ -1,8 +1,13 @@
-{lib, pkgs, emacs, ...}:
+{
+  lib,
+  pkgs,
+  emacs,
+  ...
+}:
 pkgs.stdenv.mkDerivation rec {
   name = "emacs-init-el";
   src = lib.cleanSource ./.;
-  buildInputs = [emacs];
+  buildInputs = [ emacs ];
   substituted-init-org = pkgs.substituteAll {
     src = ./init.org;
     cmigemo = pkgs.cmigemo;

@@ -2,20 +2,28 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ inputs, config, pkgs, lib,... }:
+{
+  inputs,
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      # <nixpkgs/nixos/modules/services/hardware/sane_extrabackends/brscan4.nix>
-      ./hardware-configuration.nix
-    ] ++ (with inputs.nixos-hardware.nixosModules; [
-      common-cpu-amd
-      common-gpu-amd
-      common-pc-ssd
-    ]) ++ [
-      #inputs.xremap.nixosModules.default
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    # <nixpkgs/nixos/modules/services/hardware/sane_extrabackends/brscan4.nix>
+    ./hardware-configuration.nix
+  ]
+  ++ (with inputs.nixos-hardware.nixosModules; [
+    common-cpu-amd
+    common-gpu-amd
+    common-pc-ssd
+  ])
+  ++ [
+    #inputs.xremap.nixosModules.default
+  ];
 
   # Bootloader
   boot = {
@@ -84,7 +92,7 @@
     openFirewall = true;
     defaultWindowManager = "xfce4-session";
   };
-  services.xserver= {
+  services.xserver = {
     desktopManager = {
       enable = true;
     };
@@ -106,8 +114,16 @@
   users.users.marimo = {
     isNormalUser = true;
     description = "marimo";
-    extraGroups = [ "audio" "input" "networkmanager" "wheel" "lp" "libvirtd" "gamemode"];
-    packages = with pkgs; [];
+    extraGroups = [
+      "audio"
+      "input"
+      "networkmanager"
+      "wheel"
+      "lp"
+      "libvirtd"
+      "gamemode"
+    ];
+    packages = with pkgs; [ ];
   };
 
   programs = {
@@ -116,7 +132,14 @@
       remotePlay.openFirewall = true;
       gamescopeSession = {
         enable = true;
-        args = ["-r" "60" "-W" "1920" "-H" "1080"];
+        args = [
+          "-r"
+          "60"
+          "-W"
+          "1920"
+          "-H"
+          "1080"
+        ];
         env = {
           STEAM_MULTIPLE_XWAYLANDS = "1";
         };
@@ -150,16 +173,25 @@
       source-han-mono
       source-han-serif
       noto-fonts-emoji
-      (nerdfonts.override { fonts = ["NerdFontsSymbolsOnly"]; })
+      (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
       udev-gothic-nf
     ];
     fontDir.enable = true;
     fontconfig = {
       defaultFonts = {
-        serif = ["Source Han Sans" "Noto Color Emoji"];
-        sansSerif = ["Source Han Serif" "Noto Color Emoji"];
-        monospace = ["Source Han Mono" "Noto Color Emoji"];
-        emoji = ["Noto Color Emoji"];
+        serif = [
+          "Source Han Sans"
+          "Noto Color Emoji"
+        ];
+        sansSerif = [
+          "Source Han Serif"
+          "Noto Color Emoji"
+        ];
+        monospace = [
+          "Source Han Mono"
+          "Noto Color Emoji"
+        ];
+        emoji = [ "Noto Color Emoji" ];
       };
       allowBitmaps = false;
     };
@@ -178,8 +210,8 @@
   services.tailscale.enable = true;
   networking.firewall = {
     enable = true;
-    trustedInterfaces = ["tailscale0"];
-    allowedUDPPorts = [config.services.tailscale.port];
+    trustedInterfaces = [ "tailscale0" ];
+    allowedUDPPorts = [ config.services.tailscale.port ];
   };
 
   services.syncthing = {
@@ -261,13 +293,19 @@
     docker = {
       enable = true;
       daemon.settings = {
-        dns = ["8.8.8.8" "8.8.4.4"];
+        dns = [
+          "8.8.8.8"
+          "8.8.4.4"
+        ];
       };
       rootless = {
         enable = true;
         setSocketVariable = true;
         daemon.settings = {
-          dns = ["8.8.8.8" "8.8.4.4"];
+          dns = [
+            "8.8.8.8"
+            "8.8.4.4"
+          ];
         };
       };
     };
@@ -285,7 +323,10 @@
   nix = {
     settings = {
       auto-optimise-store = true;
-      experimental-features = ["nix-command" "flakes"];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
     };
     gc = {
       automatic = true;

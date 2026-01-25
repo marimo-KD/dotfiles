@@ -1,7 +1,8 @@
 {
   trivialBuild,
   fetchFromGitHub,
-}:trivialBuild rec {
+}:
+trivialBuild rec {
   pname = "setup.el";
   version = "2022-04-14";
   src = fetchFromGitHub {
