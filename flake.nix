@@ -48,22 +48,22 @@
           inputs.quadlet-nix.nixosModules.quadlet
           home-manager.nixosModules.home-manager
           { home-manager.extraSpecialArgs = { inherit secrets; }; }
-          {
-            nixpkgs.overlays = [
-              (_: prev: {
-                tailscale = prev.tailscale.overrideAttrs (old: {
-                  checkFlags =
-                    builtins.map (
-                      flag:
-                        if prev.lib.hasPrefix "-skip=" flag
-                        then flag + "|^TestGetList$|^TestIgnoreLocallyBoundPorts$|^TestPoller$"
-                        else flag
-                    )
-                    old.checkFlags;
-                });
-              })
-            ];
-          }
+          # {
+          #   nixpkgs.overlays = [
+          #     (_: prev: {
+          #       tailscale = prev.tailscale.overrideAttrs (old: {
+          #         checkFlags =
+          #           builtins.map (
+          #             flag:
+          #               if prev.lib.hasPrefix "-skip=" flag
+          #               then flag + "|^TestGetList$|^TestIgnoreLocallyBoundPorts$|^TestPoller$"
+          #               else flag
+          #           )
+          #           old.checkFlags;
+          #       });
+          #     })
+          #   ];
+          # }
           ./hosts/bmax
         ];
       };

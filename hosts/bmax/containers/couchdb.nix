@@ -54,8 +54,8 @@
       ];
       labels = {
         "traefik.enable" = "true";
+        "traefik.http.routers.couchdb.rule" = "Host(`couchdb.vpn.aegagropila.org`)";
         "traefik.http.routers.couchdb.entrypoints" = "websecure";
-        "traefik.http.routers.couchdb.rule" = "Host(`couchdb.aegagropila.org`)";
         "traefik.http.services.couchdb.loadbalancer.server.port" = "5984";
       };
     };

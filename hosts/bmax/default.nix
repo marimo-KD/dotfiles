@@ -88,12 +88,11 @@
 
   virtualisation.quadlet.enable = true;
 
-  home-manager.users.podman = {pkgs, config, ...}: {
+  home-manager.users.podman = {...}: {
     imports = [
       inputs.quadlet-nix.homeManagerModules.quadlet
-      "./containers/traefik.nix"
-      "./containers/pihole.nix"
-      "./containers/couchdb.nix"
+      ./containers/traefik.nix
+      ./containers/couchdb.nix
     ];
     home.stateVersion = "25.05";
     virtualisation.quadlet = {

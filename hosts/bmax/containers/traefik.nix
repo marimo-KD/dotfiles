@@ -1,6 +1,6 @@
 {pkgs, config, secrets, ...}: {
   virtualisation.quadlet = let
-    inherit (config.virtualisation.quadlet) networks;
+    inherit (config.virtualisation.quadlet) networks volumes;
     traefik-config = (pkgs.formats.yaml {}).generate "traefik-config" {
       entryPoints = {
         web = {
@@ -30,7 +30,8 @@
         };
       };
       log = {
-        level = "INFO";
+        level = "DEBUG";
+        filePath = "/etc/traefik/traefik.log";
         format = "common";
       };
       providers.docker = {
@@ -48,17 +49,18 @@
         "CF_DNS_API_TOKEN" = secrets.acme.cf-dns-api-token;
       };
       volumes = [
-        "/run/user/${toString config.home.uid}/podman/podman.sock:/var/run/docker.sock:ro"
+        "/run/user/${toString 993}/podman/podman.sock:/var/run/docker.sock:ro"
+        # "/run/user/${toString config.home.uid}/podman/podman.sock:/var/run/docker.sock:ro"
         "${traefik-config}:/etc/traefik/traefik.yml:ro"
       ];
       labels = {
         "traefik.enable" = "true";
         "traefik.http.routers.dashboard.service" = "api@internal";
-        "traefik.http.routers.dashboard.rule" = "Host(`traefik.aegagropila.org`)";
+        "traefik.http.routers.dashboard.rule" = "Host(`traefik.vpn.aegagropila.org`)";
         "traefik.http.routers.dashboard.entrypoints" = "websecure";
         "traefik.http.routers.dashboard.tls.certresolver" = "letsencrypt";
-        "traefik.http.routers.dashboard.tls.domains[0].main" = "aegagropila.org";
-        "traefik.http.routers.dashboard.tls.domains[0].sans" = "*.aegagropila.org";
+        "traefik.http.routers.dashboard.tls.domains[0].main" = "vpn.aegagropila.org";
+        "traefik.http.routers.dashboard.tls.domains[0].sans" = "*.vpn.aegagropila.org";
       };
     };
   };
