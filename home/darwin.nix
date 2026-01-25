@@ -6,7 +6,8 @@
   };
   programs.home-manager.enable = true;
   imports = [
-    ./programs/alacritty
+    # ./programs/alacritty
+    ./programs/ghostty
     ./programs/bash
     ./programs/bat
     ./programs/carapace
@@ -32,13 +33,9 @@
     # ./packages.nix
   ];
   home.packages = with pkgs; [
-    nixd
-    typst
-    tinymist
+    tdf
     gnuplot
-    slack
     lean4
-    julia-lts
     (prismlauncher.override {
       jdks = [
         graalvmPackages.graalvm-ce

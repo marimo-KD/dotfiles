@@ -2,13 +2,17 @@
   inputs = {
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-    nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-25.11";
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin/nix-darwin-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    flake-parts.url = "github:hercules-ci/flake-parts";
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -89,6 +93,20 @@
             ];
           }
           ./hosts/malus
+        ];
+      };
+    };
+  } // inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+    systems = [
+      "aarch64-darwin"
+      "aarch64-linux"
+      "x86_64-darwin"
+      "x86_64-linux"
+    ];
+    perSystem = { pkgs, ... }: {
+      devShells.default = pkgs.mkShell {
+        buildInputs = with pkgs; [
+          nixd
         ];
       };
     };

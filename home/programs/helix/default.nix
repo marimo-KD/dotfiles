@@ -2,7 +2,7 @@
   programs.helix = {
     enable = true;
     settings = {
-      theme = "gruvbox_light_hard";
+      theme = "catppuccin_mocha";
       keys.insert = {
         "C-n" = "move_line_down";
         "C-p" = "move_line_up";

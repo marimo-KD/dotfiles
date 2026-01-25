@@ -34,15 +34,13 @@
   };
 
   fonts.packages = with pkgs; [
-    noto-fonts
     noto-fonts-cjk-sans
     noto-fonts-cjk-serif
     noto-fonts-color-emoji
     source-han-mono
-    udev-gothic
-    udev-gothic-nf
-    ibm-plex
-    nerd-fonts.iosevka
+    plemoljp-nf
+    roboto # for reapertips
+    fira # for reapertips
     nerd-fonts.symbols-only
   ];
 }

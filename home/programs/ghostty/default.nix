@@ -13,7 +13,21 @@
     installBatSyntax = true;
     systemd.enable = if pkgs.stdenv.isLinux then true else false;
     settings = {
-      
+      font-family = "PlemolJP Console NF";
+      font-size = 14;
+      font-thicken = true;
+      alpha-blending = "linear-corrected";
+
+      theme = "light:Gruvbox Light Hard,dark:Catppuccin Mocha";
+
+      mouse-hide-while-typing = true;
+      mouse-scroll-multiplier = 2;
+
+      fullscreen = true;
+      resize-overlay = "never";
+
+      macos-titlebar-style = "tabs";
+      macos-option-as-alt = true;
     };
   };
 }
