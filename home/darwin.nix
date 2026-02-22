@@ -7,33 +7,24 @@
   };
   programs.home-manager.enable = true;
   imports = [
-    # ./programs/alacritty
     ./programs/ghostty
     ./programs/bash
     ./programs/bat
     ./programs/carapace
     ./programs/direnv
-    # ./programs/discord
-    # ./programs/emacs
-    # ./programs/faust
     ./programs/fd
-    # ./programs/firefox
     ./programs/fzf
     ./programs/git
     ./programs/gpg
     ./programs/helix
     ./programs/latex
-    ./programs/neovim
-    # ./programs/nushell
-    # ./programs/puredata
     ./programs/ripgrep
     ./programs/starship
     ./programs/zoxide
     ./programs/zsh
-
-    # ./packages.nix
   ];
   home.packages = with pkgs; [
+    inputs.neovim.packages.${pkgs.stdenv.system}.default
     tdf
     gnuplot
     lean4

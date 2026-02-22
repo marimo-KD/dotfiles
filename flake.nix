@@ -16,10 +16,15 @@
     };
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
     };
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    neovim = {
+      url = "github:marimo-KD/neovim-config";
+      # inputs.nixpkgs.follows = "nixpkgs"; # see https://github.com/NotAShelf/nvf/issues/1312
     };
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
