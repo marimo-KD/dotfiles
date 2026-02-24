@@ -104,6 +104,7 @@
         inputs.quadlet-nix.homeManagerModules.quadlet
         ./containers/traefik.nix
         ./containers/couchdb.nix
+        ./containers/opencloud.nix
       ];
       home.stateVersion = "25.05";
       virtualisation.quadlet = {
