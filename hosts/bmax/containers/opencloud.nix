@@ -17,12 +17,22 @@
       };
       containers.opencloud.containerConfig = {
         image = "docker.io/opencloudeu/opencloud-rolling:5.1.0";
-        exec = [ "/bin/sh" "-c" "opencloud init || true; opencloud server"];
+        entrypoint = "/bin/sh";
+        exec = [ "-c" "opencloud init || true; opencloud server" ];
         networks = [ networks.internal.ref ];
+        publishPorts = [
+          "9200:9200"
+        ];
         environments = {
           "PROXY_TLS" = "false";
+          "PROXY_HTTP_ADDR" = "0.0.0.0:9200";
+          "PROXY_ENABLE_BASIC_AUTH" = "true";
+          "OC_URL" = "https://cloud.vpn.aegagropila.org";
+          "OC_INSECURE" = "true";
+
+          "OC_LOG_LEVEL" = "info";
+
           "IDM_ADMIN_PASSWORD" = secrets.opencloud.password;
-          "OC_DOMAIN" = "cloud.vpn.aegagropila.org";
 
           "STORAGE_USERS_DRIVER" = "posix";
           "STORAGE_USERS_ID_CACHE_STORE" = "nats-js-kv";
