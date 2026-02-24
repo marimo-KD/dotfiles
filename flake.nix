@@ -119,6 +119,7 @@
           devShells.default = pkgs.mkShell {
             buildInputs = with pkgs; [
               nixd
+              git-crypt
             ];
           };
           treefmt = {
