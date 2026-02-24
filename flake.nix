@@ -104,30 +104,30 @@
           ];
         };
       };
-    }
-    // inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [
-        "aarch64-darwin"
-        "aarch64-linux"
-        "x86_64-darwin"
-        "x86_64-linux"
-      ];
-      imports = [ inputs.treefmt-nix.flakeModule ];
-      perSystem =
-        { pkgs, ... }:
-        {
-          devShells.default = pkgs.mkShell {
-            buildInputs = with pkgs; [
-              nixd
-              git-crypt
-            ];
-          };
-          treefmt = {
-            projectRootFile = "flake.nix";
-            programs = {
-              nixfmt.enable = true;
-            };
-          };
-        };
     };
+#    // inputs.flake-parts.lib.mkFlake { inherit inputs; } {
+#      systems = [
+#        "aarch64-darwin"
+#        "aarch64-linux"
+#        "x86_64-darwin"
+#        "x86_64-linux"
+#      ];
+#      imports = [ inputs.treefmt-nix.flakeModule ];
+#      perSystem =
+#        { pkgs, ... }:
+#        {
+#          devShells.default = pkgs.mkShell {
+#            buildInputs = with pkgs; [
+#              nixd
+#              git-crypt
+#            ];
+#          };
+#          treefmt = {
+#            projectRootFile = "flake.nix";
+#            programs = {
+#              nixfmt.enable = true;
+#            };
+#          };
+#        };
+#    };
 }
