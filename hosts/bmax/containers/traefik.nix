@@ -52,6 +52,9 @@
       };
     in
     {
+      volumes = {
+        traefik-certificate.volumeConfig = {};
+      };
       containers.traefik.containerConfig = {
         image = "docker.io/library/traefik:v3.6.6";
         publishPorts = [
@@ -65,6 +68,7 @@
         volumes = [
           "/run/user/${toString 993}/podman/podman.sock:/var/run/docker.sock:ro"
           # "/run/user/${toString config.home.uid}/podman/podman.sock:/var/run/docker.sock:ro"
+          "${volumes.traefik-certificate.ref}:/etc/traefik"
           "${traefik-config}:/etc/traefik/traefik.yml:ro"
         ];
         labels = {
