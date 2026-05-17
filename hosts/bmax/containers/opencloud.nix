@@ -20,9 +20,6 @@
         entrypoint = "/bin/sh";
         exec = [ "-c" "opencloud init || true; opencloud server" ];
         networks = [ "podman" ];
-        publishPorts = [
-          "9200:9200"
-        ];
         environments = {
           "PROXY_TLS" = "false";
           "PROXY_HTTP_ADDR" = "0.0.0.0:9200";
