@@ -28,7 +28,7 @@
       resize-overlay = "never";
 
       macos-titlebar-style = "tabs";
-      macos-option-as-alt = true;
+      macos-option-as-alt = false;
     };
   };
 }
