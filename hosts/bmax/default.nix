@@ -67,6 +67,9 @@
     enable = true;
     openFirewall = true; # Open a UDP Port that tailscale uses.
     useRoutingFeatures = "both";
+    extraSetFlags = [
+      "--accept-dns=false"
+    ];
   };
 
   services.cloudflared = {
@@ -84,11 +87,14 @@
     enabledCollectors = [ "systemd" ];
   };
 
+  # services.resolved.enable = true; # see https://github.com/tailscale/tailscale/issues/4254
+
   security.polkit.enable = true;
 
   networking = {
     useDHCP = false;
     interfaces."enp2s0".useDHCP = true;
+    nameservers = [ "1.1.1.1" "1.0.0.1" "2606:4700:4700::1111" "2606:4700:4700::1001" ];
     firewall = {
       enable = true;
       trustedInterfaces = [ "tailscale0" ]; # allow connections come from tailscale network.
@@ -96,6 +102,7 @@
   };
 
   virtualisation.quadlet.enable = true;
+  virtualisation.podman.defaultNetwork.settings.dns_enabled = true;
 
   home-manager.users.podman =
     { ... }:
@@ -108,11 +115,6 @@
       ];
       home.stateVersion = "25.05";
       virtualisation.quadlet = {
-        networks = {
-          internal.networkConfig = {
-            subnets = [ "10.0.111.1/24" ];
-          };
-        };
       };
     };
 

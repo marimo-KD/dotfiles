@@ -51,7 +51,7 @@
       };
       containers.couchdb.containerConfig = {
         image = builds.couchdb.ref;
-        networks = [ networks.internal.ref ];
+        networks = [ "podman" ];
         environments = {
           "COUCHDB_USER" = secrets.couchdb.user;
           "COUCHDB_PASSWORD" = secrets.couchdb.password;

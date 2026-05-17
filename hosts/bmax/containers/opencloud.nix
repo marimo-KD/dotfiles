@@ -19,7 +19,7 @@
         image = "docker.io/opencloudeu/opencloud-rolling:5.1.0";
         entrypoint = "/bin/sh";
         exec = [ "-c" "opencloud init || true; opencloud server" ];
-        networks = [ networks.internal.ref ];
+        networks = [ "podman" ];
         publishPorts = [
           "9200:9200"
         ];

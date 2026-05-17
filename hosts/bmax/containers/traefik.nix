@@ -61,7 +61,7 @@
           "80:80"
           "443:443"
         ];
-        networks = [ networks.internal.ref ];
+        networks = [ "podman" ];
         environments = {
           "CF_DNS_API_TOKEN" = secrets.acme.cf-dns-api-token;
         };
