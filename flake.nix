@@ -1,13 +1,13 @@
 {
   inputs = {
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     nix-darwin = {
-      url = "github:LnL7/nix-darwin/nix-darwin-25.11";
+      url = "github:LnL7/nix-darwin/nix-darwin-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -24,7 +24,6 @@
     };
     neovim = {
       url = "github:marimo-KD/neovim-config";
-      # inputs.nixpkgs.follows = "nixpkgs"; # see https://github.com/NotAShelf/nvf/issues/1312
     };
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
