@@ -113,11 +113,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1782586338,
-        "narHash": "sha256-SSMnlzDHYx3MGJzW7+1J6u1VD/A+lFIWQf9JRqt0NTs=",
+        "lastModified": 1782587651,
+        "narHash": "sha256-Xg77AUDLa+ISFazORpn6Qh7+mgagNuVifQ6TAg/Zs2M=",
         "owner": "marimo-KD",
         "repo": "neovim-config",
-        "rev": "094708d541869b9a0f4626029f6e6952a42d2b14",
+        "rev": "9a61474b034c04a6fcafd4cbb7bdf64ba7a6e5ba",
         "type": "github"
       },
       "original": {
