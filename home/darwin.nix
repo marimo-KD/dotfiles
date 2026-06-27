@@ -17,7 +17,7 @@
     ./programs/git
     ./programs/gpg
     ./programs/helix
-    ./programs/latex
+    # ./programs/latex
     ./programs/ripgrep
     ./programs/starship
     ./programs/zoxide
