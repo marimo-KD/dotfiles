@@ -11,6 +11,7 @@
     ./programs/bash
     ./programs/bat
     ./programs/carapace
+    ./programs/codex
     ./programs/direnv
     ./programs/fd
     ./programs/fzf
