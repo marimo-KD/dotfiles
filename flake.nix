@@ -96,6 +96,8 @@
                 inputs.emacs-overlay.overlay
                 (final: prev: {
                   ghostscript = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.ghostscript;
+                  codex = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.codex;
+                  codex-acp = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.codex-acp;
                 })
               ];
             }
