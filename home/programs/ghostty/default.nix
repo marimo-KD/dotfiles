@@ -31,7 +31,7 @@
       macos-titlebar-style = "tabs";
       macos-option-as-alt = false;
 
-      keybinds = [
+      keybind = [
         "cmd+h=goto_split:left"
         "cmd+j=goto_split:down"
         "cmd+k=goto_split:up"
