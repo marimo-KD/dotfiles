@@ -113,6 +113,7 @@
         ./containers/couchdb.nix
         ./containers/opencloud.nix
         ./containers/forgejo.nix
+        ./containers/fastnotesync.nix
       ];
       home.stateVersion = "25.05";
       virtualisation.quadlet = {
