@@ -16,6 +16,7 @@
       };
       containers.forgejo.containerConfig = {
         image = "codeberg.org/forgejo/forgejo:15-rootless";
+        autoUpdate = "registry";
         networks = [ "podman" ];
         environments = {
           "FORGEJO__database__DB_TYPE" = "sqlite3";

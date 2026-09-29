@@ -16,7 +16,8 @@
         opencloud-data.volumeConfig = {};
       };
       containers.opencloud.containerConfig = {
-        image = "docker.io/opencloudeu/opencloud-rolling:5.1.0";
+        image = "docker.io/opencloudeu/opencloud-rolling:latest";
+        autoUpdate = "registry";
         entrypoint = "/bin/sh";
         exec = [ "-c" "opencloud init || true; opencloud server" ];
         networks = [ "podman" ];

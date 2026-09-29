@@ -56,7 +56,8 @@
         traefik-certificate.volumeConfig = {};
       };
       containers.traefik.containerConfig = {
-        image = "docker.io/library/traefik:v3.6.6";
+        image = "docker.io/library/traefik:v3";
+        autoUpdate = "registry";
         publishPorts = [
           "80:80"
           "443:443"
