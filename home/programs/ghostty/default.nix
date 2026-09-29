@@ -32,24 +32,35 @@
       macos-option-as-alt = false;
 
       keybind = [
-        "cmd+h=goto_split:left"
-        "cmd+j=goto_split:down"
-        "cmd+k=goto_split:up"
-        "cmd+l=goto_split:right"
+        "super+c=copy_to_clipboard"
+        "super+v=paste_from_clipboard"
 
-        "cmd+w>h=new_split:left"
-        "cmd+w>j=new_split:down"
-        "cmd+w>k=new_split:up"
-        "cmd+w>l=new_split:right"
+        "super+h=goto_split:left"
+        "super+j=goto_split:down"
+        "super+k=goto_split:up"
+        "super+l=goto_split:right"
 
-        "cmd+w>shift+h=resize_split:left,20"
-        "cmd+w>shift+j=resize_split:down,20"
-        "cmd+w>shift+k=resize_split:up,20"
-        "cmd+w>shift+l=resize_split:right,20"
+        "super+w>h=new_split:left"
+        "super+w>j=new_split:down"
+        "super+w>k=new_split:up"
+        "super+w>l=new_split:right"
 
-        "cmd+t=new_tab"
+        "super+w>shift+h=resize_split:left,20"
+        "super+w>shift+j=resize_split:down,20"
+        "super+w>shift+k=resize_split:up,20"
+        "super+w>shift+l=resize_split:right,20"
 
-        "cmd+q=close_surface"
+        "super+t=new_tab"
+        "super+1=goto_tab:1"
+        "super+2=goto_tab:2"
+        "super+3=goto_tab:3"
+        "super+4=goto_tab:4"
+        "super+5=goto_tab:5"
+        "super+6=goto_tab:6"
+        "super+7=goto_tab:7"
+        "super+8=goto_tab:8"
+
+        "super+q=close_surface"
       ];
     };
   };

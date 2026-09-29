@@ -11,7 +11,7 @@
       ".DS_Store"
     ];
     signing = {
-      key = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
+      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKY4MD0f6uLSChlKFmYBxs1th1tHUYYci3+y8sYSTfVC";
       format = "ssh";
     };
     settings = {

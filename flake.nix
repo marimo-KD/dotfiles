@@ -83,7 +83,7 @@
         malus = nix-darwin.lib.darwinSystem rec {
           system = "aarch64-darwin";
           specialArgs = {
-            inherit inputs;
+            inherit inputs secrets;
           };
           modules = [
             home-manager.darwinModules.home-manager
@@ -97,7 +97,7 @@
                 (final: prev: {
                   ghostscript = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.ghostscript;
                   codex = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.codex;
-                  codex-acp = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.codex-acp;
+                  codex-acp = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.codex;
                 })
               ];
             }

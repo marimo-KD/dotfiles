@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, inputs, secrets, ... }:
 {
   home = rec {
     username = "marimo";
@@ -32,10 +32,13 @@
     (prismlauncher.override {
       jdks = [
         graalvmPackages.graalvm-ce
-        zulu8
-        zulu17
         zulu
       ];
     })
   ];
+  home.sessionVariables = {
+    FAST_NOTE_SYNC_MCP_TOKEN_RO = secrets.fast_note_sync.bearer_ro;
+    FAST_NOTE_SYNC_MCP_TOKEN_RW = secrets.fast_note_sync.bearer_rw;
+  };
+  sshAuthSock.initialization.bash = "export SSH_AUTH_SOCK=$HOME/Library/Containers/com.bitwarden.desktop/Data/.bitwarden-ssh-agent.sock";
 }
