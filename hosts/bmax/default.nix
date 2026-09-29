@@ -114,6 +114,7 @@
         ./containers/opencloud.nix
         ./containers/forgejo.nix
         ./containers/fastnotesync.nix
+        ./containers/silverbullet.nix
       ];
       home.stateVersion = "25.05";
       virtualisation.quadlet = {
