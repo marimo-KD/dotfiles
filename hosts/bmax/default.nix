@@ -115,6 +115,7 @@
         ./containers/forgejo.nix
         ./containers/fastnotesync.nix
         ./containers/silverbullet.nix
+        ./containers/zotero-translator.nix
       ];
       home.stateVersion = "25.05";
       virtualisation.quadlet = {
