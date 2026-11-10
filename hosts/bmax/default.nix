@@ -110,12 +110,10 @@
       imports = [
         inputs.quadlet-nix.homeManagerModules.quadlet
         ./containers/traefik.nix
-        ./containers/couchdb.nix
-        ./containers/opencloud.nix
         ./containers/forgejo.nix
-        ./containers/fastnotesync.nix
         ./containers/silverbullet.nix
         ./containers/zotero-translator.nix
+        ./containers/openai-secure-mcp-tunnel.nix
       ];
       home.stateVersion = "25.05";
       virtualisation.quadlet = {
