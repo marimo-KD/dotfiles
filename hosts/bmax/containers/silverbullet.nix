@@ -12,7 +12,7 @@
         silverbullet-data.volumeConfig = {};
       };
       containers.silverbullet.containerConfig = {
-        image = "ghcr.io/silverbulletmd/silverbullet:latest";
+        image = "ghcr.io/silverbulletmd/silverbullet:edge";
         autoUpdate = "registry";
         networks = [ "podman" ];
         volumes = [
